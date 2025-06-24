@@ -37,15 +37,15 @@ const data = {
     },
     {
       title: "Painel de Controle",
-      url: "#",
+      url: "/painel-controle",
       items: [
         {
           title: "Usuários",
-          url: "#",
+          url: "/usuarios",
         },
         {
           title: "Dashboard",
-          url: "#"
+          url: "/dashboard",
         },
       ],
     },
@@ -83,7 +83,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenu>
                     {item.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild isActive={item.isActive}>
+                        <SidebarMenuButton asChild>
                           <a href={item.url}>{item.title}</a>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
