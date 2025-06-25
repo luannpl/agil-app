@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import "../app/globals.css";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import {
   SidebarInset,
   SidebarProvider,

@@ -9,22 +9,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 
 export type Veiculo = {
   id: string;
-  name: string;
+  modelo: string;
+  ano: number;
   placa: string;
   valor: number;
 };
 
 export const columns: ColumnDef<Veiculo>[] = [
   {
-    accessorKey: "id",
-    header: "ID",
+    accessorKey: "modelo",
+    header: "Modelo",
   },
   {
-    accessorKey: "name",
-    header: "Nome",
+    accessorKey: "ano",
+    header: "Ano",
   },
   {
     accessorKey: "placa",
@@ -48,12 +50,13 @@ export const columns: ColumnDef<Veiculo>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => alert(`Editando ${veiculo.name}`)}
               >
-                Editar
+              <Link href={`/veiculos/detalhes/${veiculo.id}`}>
+                Ver detalhes
+              </Link>
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => alert(`Excluindo ${veiculo.name}`)}
+                onClick={() => alert(`Excluindo ${veiculo.modelo}`)}
               >
                 Excluir
               </DropdownMenuItem>

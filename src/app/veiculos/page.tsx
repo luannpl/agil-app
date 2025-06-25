@@ -22,7 +22,6 @@ export default function CadastroVeiculo() {
         variant="default"
         onClick={() =>
           toast("Evento criado!", {
-            description: "Hoje às 14:00",
             position: "top-right",
             style: {
               backgroundColor: "#4A90E2",
@@ -34,7 +33,7 @@ export default function CadastroVeiculo() {
           })
         }
       >
-        Mostrar Toast
+        Cadastrar Veículo
       </Button>
     </>
   );
