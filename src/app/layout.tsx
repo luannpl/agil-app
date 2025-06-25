@@ -1,15 +1,27 @@
 import type { ReactNode } from "react";
 import "../app/globals.css";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-separator";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
+        <Toaster richColors closeButton />
         <div className="flex min-h-screen">
           <SidebarProvider>
             <AppSidebar />
@@ -31,9 +43,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   </BreadcrumbList>
                 </Breadcrumb>
               </header>
-              <div className="flex flex-1 flex-col gap-4 p-4">
-                {children}
-              </div>
+              <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
             </SidebarInset>
           </SidebarProvider>
         </div>

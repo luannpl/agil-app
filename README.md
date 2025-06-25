@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Agil App
 
-## Getting Started
+**Agil App** é uma aplicação web desenvolvida com foco em desempenho, tipagem segura e uma interface moderna. Utiliza **Next.js**, **TypeScript**, **Tailwind CSS** e os componentes acessíveis do **shadcn/ui**.
 
-First, run the development server:
+## 🛠️ Tecnologias
+
+- **Next.js** – Framework React para aplicações web modernas e otimizadas
+- **TypeScript** – Tipagem estática para maior segurança e produtividade
+- **Tailwind CSS** – Utilitários CSS para construir interfaces responsivas rapidamente
+- **shadcn/ui** – Conjunto de componentes acessíveis e integrados com Tailwind CSS
+- **Radix UI** – Sistema de componentes que serve de base para o shadcn
+
+## 📦 Instalação
+
+### Pré-requisitos
+
+- Node.js `>= 18`
+- npm ou yarn
+
+### Passos
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone o repositório
+git clone https://github.com/luannpl/agil-app.git
+cd agil-app
+
+# Instale as dependências
+npm install
+# ou
+yarn install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔥 Rodando o Projeto
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Inicie o ambiente de desenvolvimento
+npm run dev
+# ou
+yarn dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Acesse [http://localhost:3000](http://localhost:3000) no navegador.
 
-## Learn More
+## 📁 Estrutura do Projeto
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+agil-app/
+├── app/                # App Router do Next.js (páginas, layouts, etc.)
+├── components/         # Componentes reutilizáveis
+├── lib/                # Funções utilitárias, validações, hooks, etc.
+├── public/             # Arquivos públicos (imagens, favicon, etc.)
+├── tailwind.config.ts  # Configuração do Tailwind CSS
+├── tsconfig.json       # Configuração do TypeScript
+└── ...
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ✨ shadcn/ui
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Adicione componentes com o CLI:
 
-## Deploy on Vercel
+```bash
+npx shadcn-ui@latest add button
+npx shadcn-ui@latest add input
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Documentação completa: [ui.shadcn.dev](https://ui.shadcn.dev)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🧪 Scripts
+
+```bash
+npm run dev       # Inicia o servidor de desenvolvimento
+npm run build     # Gera build de produção
+npm run lint      # Verifica problemas de lint
+npm run format    # Formata o código com Prettier
+```
+
+## 📄 Licença
+
+Este projeto está licenciado sob a **MIT License**.
+
+---
+
+Feito com 💙 por Paulo Luan • Projeto **Agil App**
