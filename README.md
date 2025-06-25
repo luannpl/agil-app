@@ -59,8 +59,8 @@ agil-app/
 Adicione componentes com o CLI:
 
 ```bash
-npx shadcn-ui@latest add button
-npx shadcn-ui@latest add input
+npx shadcn@latest add button
+npx shadcn@latest add input
 ```
 
 Documentação completa: [ui.shadcn.dev](https://ui.shadcn.dev)
@@ -74,10 +74,5 @@ npm run lint      # Verifica problemas de lint
 npm run format    # Formata o código com Prettier
 ```
 
-## 📄 Licença
-
-Este projeto está licenciado sob a **MIT License**.
-
----
 
 Feito com 💙 por Paulo Luan • Projeto **Agil App**
