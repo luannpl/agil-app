@@ -21,7 +21,7 @@ export default function CadastroVeiculo() {
         className="cursor-pointer mt-4"
         variant="default"
         onClick={() =>
-          toast("Evento criado!", {
+          toast("Veículo cadastrado!", {
             position: "top-right",
             style: {
               backgroundColor: "#4A90E2",
