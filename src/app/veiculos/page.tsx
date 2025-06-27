@@ -18,7 +18,7 @@ export default function CadastroVeiculo() {
       <Input placeholder="Digite a cor do veículo" type="text" />
       <Input placeholder="Digite o tipo do veículo" type="text" />
       <Button
-        className="cursor-pointer mt-4"
+        className="cursor-pointer mt-4 text-foreground"
         variant="default"
         onClick={() =>
           toast("Veículo cadastrado!", {

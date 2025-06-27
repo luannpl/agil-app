@@ -14,7 +14,7 @@ export default function CadastroUsuario() {
       </div>
       <Input placeholder="Digite a senha do usuário" type="password" />
       <Button
-        className="cursor-pointer mt-4"
+        className="cursor-pointer mt-4 text-white"
         variant="default"
         onClick={() => {
           toast("Usuário cadastrado com sucesso!", {
