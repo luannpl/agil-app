@@ -17,6 +17,7 @@ export type Veiculo = {
   ano: number;
   placa: string;
   valor: number;
+  vendido: boolean;
 };
 
 export const columns: ColumnDef<Veiculo>[] = [
@@ -49,11 +50,10 @@ export const columns: ColumnDef<Veiculo>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-              >
-              <Link href={`/veiculos/detalhes/${veiculo.id}`}>
-                Ver detalhes
-              </Link>
+              <DropdownMenuItem>
+                <Link href={`/veiculos/detalhes/${veiculo.id}`}>
+                  Ver detalhes
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => alert(`Excluindo ${veiculo.modelo}`)}
