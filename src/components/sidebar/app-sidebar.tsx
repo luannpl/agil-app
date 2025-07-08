@@ -44,6 +44,10 @@ const data = {
           url: "/usuarios",
         },
         {
+          title: "Ver Usuários",
+          url: "/usuarios/view",
+        },
+        {
           title: "Dashboard",
           url: "/dashboard",
         },

@@ -1,6 +1,8 @@
-import { columns, Veiculo } from "@/components/table/columns";
+'use client'
+import { useColumns } from "@/hooks/useColumns";
 import { DataTable } from "@/components/table/data-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Veiculo } from "@/types/veiculo";
 
 const veiculos: Veiculo[] = [
   {
@@ -33,6 +35,9 @@ const veiculosDisponiveis: Veiculo[] = veiculos.filter((v) => !v.vendido);
 const veiculosVendidos: Veiculo[] = veiculos.filter((v) => v.vendido);
 
 export default function ListaVeiculos() {
+  const columns = useColumns<Veiculo>(veiculos,"veiculos", {
+    exclude: ["id", "vendido"],
+  });
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Lista de Veículos</h1>
