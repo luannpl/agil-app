@@ -15,9 +15,9 @@ type ColumnOptions = {
   exclude?: string[];
 };
 
-type GenericObject = Record<string, any>;
 
-export function useColumns<T extends GenericObject>(
+
+export function useColumns<T extends Record<string, unknown>>(
   data: T[],
   basePath?: string,
   options?: ColumnOptions
