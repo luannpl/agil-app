@@ -1,27 +1,29 @@
-import { columns, Usuario } from "@/components/table/columnsUsers";
+'use client'
+import { useColumns } from "@/hooks/useColumns";
 import { DataTable } from "@/components/table/data-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Usuario } from "@/types/usuario";
 
 const usuarios: Usuario[] = [
   {
     id: "1",
     nome: "jefferson",
     email: "jefferson413@gmail.com",
-    valor: 10000,
+    salario: 10000,
     ativo: true
   },
   {
     id: "2",
     nome: "william",
     email: "william413@gmail.com",
-    valor: 10000,
+    salario: 10000,
     ativo: true
   },
   {
     id: "3",
     nome: "cibeli",
     email: "maria413@gmail.com",
-    valor: 1000,
+    salario: 1000,
     ativo: false
   },
 ];
@@ -30,6 +32,9 @@ const usuarioAtivo: Usuario[] = usuarios.filter((u) => u.ativo);
 const usuarioInativo: Usuario[] = usuarios.filter((u) => !u.ativo);
 
 export default function ListaUsuarios() {
+  const columns = useColumns<Usuario>(usuarios, "usuarios", {
+    exclude: ["id", "ativo"],
+  });
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Lista de usuarios</h1>
