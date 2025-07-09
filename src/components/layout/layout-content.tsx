@@ -23,12 +23,9 @@ export default function LayoutContent({ children }: { children: ReactNode }) {
   const isLoginPage = pathname === "/login";
 
   if (isLoginPage) {
-    return (
-      <div className="flex min-h-screen">
-        <div className="flex-1 flex flex-col gap-4 p-4">{children}</div>
-      </div>
-    );
+    return <>{children}</>;
   }
+  
 
   return (
     <div className="flex min-h-screen">
