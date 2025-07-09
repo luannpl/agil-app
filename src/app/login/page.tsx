@@ -11,6 +11,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
+// import z from "zod"
+
+// const loginSchema = z.object({
+//     email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
+//     senha: z.string().min(1, "Senha é obrigatória"),
+// })
 
 export default function LoginPage() {
     const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
