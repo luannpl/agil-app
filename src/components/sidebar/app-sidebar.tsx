@@ -40,7 +40,7 @@ const data = {
       url: "/painel-controle",
       items: [
         {
-          title: "Usuários",
+          title: "Cadastrar Usuário",
           url: "/usuarios",
         },
         {
