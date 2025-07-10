@@ -51,6 +51,7 @@ export default function CadastroVeiculo() {
 
   const { mutate: cadastrarVeiculo, isPending } = useCreateVeiculo();
   const onSubmit = (data: VeiculoFormData) => {
+    console.log(data);
     cadastrarVeiculo(data, {
       onSuccess: (res) => {
         toast.success(res.message || "Veículo cadastrado com sucesso!");
@@ -58,7 +59,9 @@ export default function CadastroVeiculo() {
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onError: (error: AxiosError<any>) => {
-        toast.error(error?.response?.data?.message || "Erro ao cadastrar o veículo.");
+        toast.error(
+          error?.response?.data?.message || "Erro ao cadastrar o veículo."
+        );
       },
     });
   };
@@ -67,16 +70,23 @@ export default function CadastroVeiculo() {
     <>
       <h1 className="text-2xl font-bold">Cadastrar veículo</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-
         <div className="flex gap-4">
           <div className="flex flex-col w-full">
-            <Input className={errors.nome? "border-error border-dashed" : ""} placeholder="Digite o nome do veículo" {...register("nome")} />
+            <Input
+              className={errors.nome ? "border-error border-dashed" : ""}
+              placeholder="Digite o nome do veículo"
+              {...register("nome")}
+            />
             {errors.nome && (
               <p className="text-sm text-error ml-2">{errors.nome.message}</p>
             )}
           </div>
           <div className="flex flex-col w-full">
-            <Input className={errors.nome? "border-error border-dashed" : ""} placeholder="Digite a placa do veículo" {...register("placa")} />
+            <Input
+              className={errors.nome ? "border-error border-dashed" : ""}
+              placeholder="Digite a placa do veículo"
+              {...register("placa")}
+            />
             {errors.placa && (
               <p className="text-sm text-error ml-2">{errors.placa.message}</p>
             )}
@@ -85,13 +95,23 @@ export default function CadastroVeiculo() {
 
         <div className="flex gap-4">
           <div className="flex flex-col w-full">
-            <Input className={errors.nome? "border-error border-dashed" : ""} placeholder="Digite o modelo do veículo" {...register("modelo")} />
+            <Input
+              className={errors.nome ? "border-error border-dashed" : ""}
+              placeholder="Digite o modelo do veículo"
+              {...register("modelo")}
+            />
             {errors.modelo && (
-              <p className="text-sm text-error ml-2 ">{errors.modelo.message}</p>
+              <p className="text-sm text-error ml-2 ">
+                {errors.modelo.message}
+              </p>
             )}
           </div>
           <div className="flex flex-col w-full">
-            <Input className={errors.nome? "border-error border-dashed" : ""} placeholder="Digite o ano do veículo" {...register("ano")} />
+            <Input
+              className={errors.nome ? "border-error border-dashed" : ""}
+              placeholder="Digite o ano do veículo"
+              {...register("ano")}
+            />
             {errors.ano && (
               <p className="text-sm text-error ml-2">{errors.ano.message}</p>
             )}
@@ -100,13 +120,21 @@ export default function CadastroVeiculo() {
 
         <div className="flex gap-4">
           <div className="flex flex-col w-full">
-            <Input className={errors.nome? "border-error border-dashed" : ""} placeholder="Digite o valor do veículo" {...register("valor")} />
+            <Input
+              className={errors.nome ? "border-error border-dashed" : ""}
+              placeholder="Digite o valor do veículo"
+              {...register("valor")}
+            />
             {errors.valor && (
               <p className="text-sm text-error ml-2">{errors.valor.message}</p>
             )}
           </div>
           <div className="flex flex-col w-full">
-            <Input className={errors.nome? "border-error border-dashed" : ""} placeholder="Digite a cor do veículo" {...register("cor")} />
+            <Input
+              className={errors.nome ? "border-error border-dashed" : ""}
+              placeholder="Digite a cor do veículo"
+              {...register("cor")}
+            />
             {errors.cor && (
               <p className="text-sm text-error ml-2">{errors.cor.message}</p>
             )}
@@ -118,9 +146,13 @@ export default function CadastroVeiculo() {
             control={control}
             name="tipo"
             render={({ field }) => (
-              <Select  onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger className={errors.nome? "border-error border-dashed w-full" : "w-full"} >
-                  <SelectValue  placeholder="Escolha o tipo do veículo" />
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger
+                  className={
+                    errors.nome ? "border-error border-dashed w-full" : "w-full"
+                  }
+                >
+                  <SelectValue placeholder="Escolha o tipo do veículo" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="carro">Carro</SelectItem>
@@ -135,7 +167,12 @@ export default function CadastroVeiculo() {
           )}
         </div>
 
-        <Button className="cursor-pointer text-foreground" variant="default" type="submit" disabled={isPending}>
+        <Button
+          className="cursor-pointer text-foreground"
+          variant="default"
+          type="submit"
+          disabled={isPending}
+        >
           {isPending ? "Cadastrando..." : "Cadastrar Veículo"}
         </Button>
       </form>
