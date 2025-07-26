@@ -25,7 +25,6 @@ export default function LayoutContent({ children }: { children: ReactNode }) {
   if (isLoginPage) {
     return <>{children}</>;
   }
-  
 
   return (
     <div className="flex min-h-screen">

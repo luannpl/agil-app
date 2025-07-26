@@ -18,38 +18,39 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 const data = {
   navMain: [
     {
       title: "Veiculos",
-      url: "/veiculos",
+      url: "/admin/veiculos",
       items: [
         {
           title: "Cadastar Veiculo",
-          url: "/veiculos",
+          url: "/admin/veiculos",
         },
         {
           title: "Ver Veiculos",
-          url: "/veiculos/view",
+          url: "/admin/veiculos/view",
         },
       ],
     },
     {
       title: "Painel de Controle",
-      url: "/painel-controle",
+      url: "/admin/painel-controle",
       items: [
         {
           title: "Cadastrar Usuário",
-          url: "/usuarios",
+          url: "/admin/usuarios",
         },
         {
           title: "Ver Usuários",
-          url: "/usuarios/view",
+          url: "/admin/usuarios/view",
         },
         {
           title: "Dashboard",
-          url: "/dashboard",
+          url: "/admin/dashboard",
         },
       ],
     },
@@ -87,7 +88,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     {item.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton asChild>
-                          <a href={item.url}>{item.title}</a>
+                          <Link prefetch href={item.url}>
+                            {item.title}
+                          </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}
