@@ -1,12 +1,7 @@
-import Link from "next/link";
+import HeroSection from "@/components/client/hero-section/hero-section";
 
 export default function HomeClient() {
   return (
-    <div className="flex items-center justify-center w-full min-h-screen">
-      <h1>Home Cliente</h1>
-      <Link href={"/admin"} className="text-blue-500 hover:underline">
-        Ir para Admin
-      </Link>
-    </div>
+    <HeroSection/>
   );
 }

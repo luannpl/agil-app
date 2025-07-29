@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ChevronRight } from "lucide-react";
-import { VersionSwitcher } from "@/components/sidebar/version-switcher";
+import { VersionSwitcher } from "@/components/admin/sidebar/version-switcher";
 import {
   Collapsible,
   CollapsibleContent,

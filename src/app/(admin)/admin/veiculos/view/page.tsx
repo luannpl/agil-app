@@ -1,6 +1,6 @@
 'use client'
 import { useColumns } from "@/hooks/useColumns";
-import { DataTable } from "@/components/table/data-table";
+import { DataTable } from "@/components/admin/table/data-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Veiculo } from "@/types/veiculo";
 

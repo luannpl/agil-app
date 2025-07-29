@@ -1,5 +1,5 @@
 // src/app/(admin)/admin/layout.tsx
-import LayoutContent from "@/components/layout/layout-content";
+import LayoutContent from "@/components/admin/layout/layout-content";
 
 export default function AdminLayout({
   children,
