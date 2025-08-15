@@ -1,3 +1,5 @@
+"use client";
+import { CardHoverEffectDemo } from "@/components/client/cardHoverEffect/cardHoverEffect";
 import CardVeiculos from "@/components/client/cardVeiculos/cardVeiculos";
 import HeroSection from "@/components/client/hero-section/hero-section";
 import Marcas from "@/components/client/marcas/marcas";
@@ -64,6 +66,12 @@ export default function HomeClient() {
             ))}
           </div>
         </div>
+      </div>
+      <h3 className="text-yellow-500 font-semibold text-2xl mb-8 text-center">
+        Motivos para nos escolher
+      </h3>
+      <div>
+        <CardHoverEffectDemo />
       </div>
     </div>
   );
