@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Instagram, MessageCircleMore, Phone, MapPin } from "lucide-react";
-import Image from "next/image";
 
 export default function Footer() {
   const footerNavs = [
@@ -25,7 +24,7 @@ export default function Footer() {
   return (
     <footer className="text-gray-500 border-t bg-background w-full px-4 pb-4 max-w-screen-xl mt-16 mx-auto md:px-8">
       <div className="max-w-lg mx-auto text-center">
-        <Image src="/agil-logo.png" alt="Agil Logo" className="w-32 mx-auto" />
+        <img src="/agil-logo.png" alt="Agil Logo" className="w-32 mx-auto" />
         <p className="leading-relaxed mt-2 text-[15px]">
           Somos uma empresa especializada na compra e venda de veículos,
           oferecendo as melhores condições de financiamento, consórcio e
