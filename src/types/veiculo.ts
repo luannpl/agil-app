@@ -30,4 +30,7 @@ export type CardVeiculosProps = {
   cambio: string;
   localizacao: string;
   imagem: string;
+  cor?: string;
+  marca?: string;
+  tipo?: string;
 };
