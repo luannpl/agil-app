@@ -2,11 +2,12 @@ import { HoverEffect } from "@/components/ui/card-hover-effect";
 
 export function CardHoverEffectDemo() {
   return (
-    <div className="max-w-5xl mx-auto px-0 py-0">
-      <HoverEffect className="py-0" items={projects} />
+    <div className="max-w-screen-xl mx-auto px-0">
+      <HoverEffect items={projects} />
     </div>
   );
 }
+
 export const projects = [
   {
     title: "Financiamnento",
@@ -40,5 +41,17 @@ export const projects = [
     description:
       "Oferecemos veículos de alta qualidade, com garantia e procedência.",
     link: "https://qualidade.com",
+  },
+  {
+    title: "Atendimento",
+    description:
+      "Oferecemos um atendimento personalizado e de qualidade para nossos clientes.",
+    link: "https://atendimento.com",
+  },
+  {
+    title: "Agilidade",
+    description:
+      "Agilidade na compra e venda de veículos, com processos rápidos e eficientes.",
+    link: "https://agilidade.com",
   },
 ];

@@ -191,9 +191,8 @@ export default function Veiculos() {
 
   return (
     <div>
-      <div className="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8 py-14 pt-4 flex flex-wrap gap-x-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8 py-6">
         <Input
-          className="w-[calc(25%-6px)]"
           placeholder="Buscar veículos..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -203,21 +202,21 @@ export default function Veiculos() {
           selected={selectedColors}
           onChange={setSelectedColors}
           placeholder="Cor"
-          className="w-[calc(25%-6px)]"
+          className="w-full"
         />
         <MultiSelect
           options={brandOrder}
           selected={selectedBrands}
           onChange={setSelectedBrands}
           placeholder="Marca"
-          className="w-[calc(25%-6px)]"
+          className="w-full"
         />
         <MultiSelect
           options={vehicleOptions}
           selected={selectedTypes}
           onChange={setSelectedTypes}
           placeholder="Tipo de veículo"
-          className="w-[calc(25%-6px)]"
+          className="w-full"
         />
       </div>
 
@@ -238,7 +237,7 @@ export default function Veiculos() {
             </p>
           </div>
         ) : (
-          <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-x-8 lg:gap-x-12 xl:gap-x-8 2xl:gap-x-32 gap-y-6 justify-items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
             {filteredVeiculos.map((veiculo) => (
               <CardVeiculos key={veiculo.id} {...veiculo} />
             ))}

@@ -42,6 +42,17 @@ export default function HomeClient() {
       localizacao: "Fortaleza - CE",
       imagem: "/jeep.jpeg",
     },
+    {
+      id: "4",
+      nome: "Jeep Renegade",
+      descricao: "2.0 16V DIESEL LIMITED 4X4 AUTOMÁTICO",
+      ano: 2020,
+      preco: 80000,
+      quilometragem: 54000,
+      cambio: "Automático",
+      localizacao: "Fortaleza - CE",
+      imagem: "/jeep.jpeg",
+    },
   ];
   return (
     <div>
@@ -52,20 +63,20 @@ export default function HomeClient() {
           <h3 className="text-yellow-500 font-semibold text-2xl mb-8 text-center">
             Veículos em Destaque
           </h3>
-          <div className="grid xl:grid-cols-3 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 gap-x-8 lg:gap-x-12 xl:gap-x-8 gap-y-6 justify-items-center max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
             {veiculos.map((veiculo) => (
               <CardVeiculos key={veiculo.id} {...veiculo} />
             ))}
           </div>
         </div>
       </div>
-      <h3 className="text-yellow-500 font-semibold text-2xl mb-8 text-center">
-        Motivos para nos escolher
-      </h3>
-      <div>
+      <div className="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8 pb-14 pt-4">
+        <h3 className="text-yellow-500 font-semibold text-2xl mb-8 text-center">
+          Motivos para nos escolher
+        </h3>
         <CardHoverEffectDemo />
       </div>
-      <div className="max-w-screen-xl mx-auto px-4 text-gray-500 md:px-8 py-14 flex flex-col justify-center items-center gap-4 pb-0">
+      <div className="max-w-screen-xl mx-auto px-4 text-gray-500 md:px-8 py-4 flex flex-col justify-center items-center gap-4 pb-0">
         <h3 className="text-yellow-500 font-semibold text-2xl text-center">
           Encontre seu veiculos ideal hoje
         </h3>

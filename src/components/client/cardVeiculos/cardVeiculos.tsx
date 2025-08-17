@@ -22,7 +22,7 @@ export default function CardVeiculos(props: CardVeiculosProps) {
   return (
     <>
       <Link href={`/veiculo/${props.id}`}>
-        <Card className="w-full min-w-xs overflow-hidden hover:shadow-xl hover:shadow-yellow-500/20 transition-shadow duration-300 py-0 gap-0 ">
+        <Card className="h-full overflow-hidden hover:shadow-xl hover:shadow-yellow-500/20 transition-shadow duration-300">
           <div className="relative aspect-[5/3] overflow-hidden">
             <Image
               src={props.imagem}
@@ -32,11 +32,11 @@ export default function CardVeiculos(props: CardVeiculosProps) {
             />
           </div>
 
-          <CardHeader className="pb-6 px-2 m-0 gap-0 pt-2">
+          <CardHeader className="pb-4 px-2 m-0 gap-0 pt-0">
             <CardTitle className="text-xl font-bold text-gray-400 line-clamp-2">
               {props.nome}
             </CardTitle>
-            <CardDescription className="text-sm text-gray-500">
+            <CardDescription className="text-sm text-gray-500 line-clamp-1">
               {props.descricao || "Sem descrição disponível."}
             </CardDescription>
           </CardHeader>
@@ -47,7 +47,7 @@ export default function CardVeiculos(props: CardVeiculosProps) {
             </p>
           </CardContent>
 
-          <CardFooter className="px-2 py-4">
+          <CardFooter className="px-2 pb-4">
             <div className="pt-2 border-t w-full text-gray-500 border-gray-600 flex justify-between">
               <div className="">
                 <p className="flex items-center gap-1">
