@@ -33,7 +33,7 @@ export default function CardVeiculos(props: CardVeiculosProps) {
           </div>
 
           <CardHeader className="pb-6 px-2 m-0 gap-0 pt-2">
-            <CardTitle className="text-xl font-bold text-gray-600 line-clamp-2">
+            <CardTitle className="text-xl font-bold text-gray-400 line-clamp-2">
               {props.nome}
             </CardTitle>
             <CardDescription className="text-sm text-gray-500">
