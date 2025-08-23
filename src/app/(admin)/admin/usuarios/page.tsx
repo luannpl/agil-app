@@ -2,36 +2,118 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useCreateUsuario } from "@/hooks/useUsuario";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
+import z from "zod";
 
+const usuarioSchema = z.object({
+  nome: z.string().min(1, "Nome é obrigatório"),
+  email: z.string().email("Email inválido"),
+  senha: z.string().min(4, "Senha deve ter no mínimo 4 caracteres"),
+  tipo: z.enum(["admin", "vendedor", "despachante", "cliente"], {
+    errorMap: () => {
+      return { message: "Tipo é obrigatório" };
+    },
+  }),
+});
+
+type UsuarioFormData = z.infer<typeof usuarioSchema>;
 export default function CadastroUsuario() {
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<UsuarioFormData>({
+    mode: "onSubmit",
+    resolver: zodResolver(usuarioSchema),
+  });
+
+  const { mutate: cadastrarUsuario, isPending } = useCreateUsuario();
+
+  const onSubmit = (data: UsuarioFormData) => {
+    console.log(data);
+    cadastrarUsuario(data, {
+      onSuccess: (res) => {
+        toast.success(res.message || "Usuário cadastrado com sucesso!");
+        router.push("/admin/usuarios");
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onError: (error: AxiosError<any>) => {
+        toast.error(
+          error?.response?.data?.message || "Erro ao cadastrar usuário"
+        );
+      },
+    });
+  };
   return (
     <>
       <h1 className="text-2xl font-bold text-foreground">Cadastrar usuário</h1>
-      <div className="flex gap-4 mt-4">
-        <Input placeholder="Digite o nome do usuário" type="text" />
-        <Input placeholder="Digite o email do usuário" type="email" />
-      </div>
-      <Input placeholder="Digite a senha do usuário" type="password" />
-      <Button
-        className="cursor-pointer mt-4 text-white"
-        variant="default"
-        onClick={() => {
-          toast("Usuário cadastrado com sucesso!", {
-            description: "Você pode agora fazer login com suas credenciais.",
-            position: "top-right",
-            style: {
-              backgroundColor: "#4A90E2",
-              color: "#FFFFFF",
-              borderRadius: "8px",
-              padding: "12px 16px",
-              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-            },
-          });
-        }}
-      >
-        Cadastrar Usuário
-      </Button>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex gap-4 mt-4">
+          <Input
+            className={errors.nome ? "border-error border-dashed" : ""}
+            placeholder="Nome do usuário"
+            type="text"
+            {...register("nome")}
+          />
+          <Input
+            className={errors.email ? "border-error border-dashed" : ""}
+            placeholder="Email do usuário"
+            type="email"
+            {...register("email")}
+          />
+        </div>
+        <div className="flex gap-4 mt-4">
+          <Input
+            className={errors.senha ? "border-error border-dashed" : ""}
+            placeholder="Senha do usuário"
+            type="password"
+            {...register("senha")}
+          />
+          <Controller
+            control={control}
+            name="tipo"
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger
+                  className={
+                    errors.tipo ? "border-error border-dashed w-full" : "w-full"
+                  }
+                >
+                  <SelectValue placeholder="Escolha o tipo do usuário" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="vendedor">Vendedor</SelectItem>
+                  <SelectItem value="despachante">Despachante</SelectItem>
+                  <SelectItem value="cliente">Cliente</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </div>
+        <Button
+          className="cursor-pointer mt-4 text-white w-full"
+          variant="auth"
+          type="submit"
+          disabled={isPending}
+        >
+          {isPending ? "Cadastrando..." : "Cadastrar Usuário"}
+        </Button>
+      </form>
     </>
   );
 }

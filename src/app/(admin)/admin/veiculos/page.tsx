@@ -112,7 +112,7 @@ export default function CadastroVeiculo() {
           <div className="w-full">
             <Input
               className={errors.nome ? "border-error border-dashed" : ""}
-              placeholder="Digite o nome do veículo"
+              placeholder="Nome do veículo"
               {...register("nome")}
             />
             {errors.nome && (
@@ -122,7 +122,7 @@ export default function CadastroVeiculo() {
           <div className="w-full">
             <Input
               className={errors.descricao ? "border-error border-dashed" : ""}
-              placeholder="Digite a descrição do veículo"
+              placeholder="Descrição do veículo"
               {...register("descricao")}
             />
             {errors.descricao && (
@@ -137,7 +137,7 @@ export default function CadastroVeiculo() {
           <div className="w-full">
             <Input
               className={errors.marca ? "border-error border-dashed" : ""}
-              placeholder="Digite a marca do veículo"
+              placeholder="Marca do veículo"
               {...register("marca")}
             />
             {errors.marca && (
@@ -147,7 +147,7 @@ export default function CadastroVeiculo() {
           <div className="w-full">
             <Input
               className={errors.ano ? "border-error border-dashed" : ""}
-              placeholder="Digite o ano do veículo"
+              placeholder="Ano do veículo"
               {...register("ano")}
             />
             {errors.ano && (
@@ -160,7 +160,7 @@ export default function CadastroVeiculo() {
           <div className="w-full">
             <Input
               className={errors.placa ? "border-error border-dashed" : ""}
-              placeholder="Digite a placa do veículo"
+              placeholder="Placa do veículo"
               {...register("placa")}
             />
             {errors.placa && (
@@ -170,7 +170,7 @@ export default function CadastroVeiculo() {
           <div className="w-full">
             <Input
               className={errors.valor ? "border-error border-dashed" : ""}
-              placeholder="Digite o valor do veículo"
+              placeholder="Valor do veículo"
               {...register("valor")}
             />
             {errors.valor && (
@@ -183,7 +183,7 @@ export default function CadastroVeiculo() {
           <div className="w-full">
             <Input
               className={errors.cor ? "border-error border-dashed" : ""}
-              placeholder="Digite a cor do veículo"
+              placeholder="Cor do veículo"
               {...register("cor")}
             />
             {errors.cor && (
@@ -195,7 +195,7 @@ export default function CadastroVeiculo() {
               className={
                 errors.quilometragem ? "border-error border-dashed" : ""
               }
-              placeholder="Digite a quilometragem do veículo"
+              placeholder="Quilometragem do veículo"
               {...register("quilometragem")}
             />
             {errors.quilometragem && (
