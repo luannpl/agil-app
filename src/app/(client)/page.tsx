@@ -78,7 +78,7 @@ export default function HomeClient() {
       </div>
       <div className="max-w-screen-xl mx-auto px-4 text-gray-500 md:px-8 py-4 flex flex-col justify-center items-center gap-4 pb-0">
         <h3 className="text-yellow-500 font-semibold text-2xl text-center">
-          Encontre seu veiculos ideal hoje
+          Encontre seu veiculo ideal hoje
         </h3>
         <p className="text-center text-lg px-4 md:px-0">
           Navegue por nosso catálogo completo de veículos seminovos e encontre o
