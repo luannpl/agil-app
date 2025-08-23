@@ -8,10 +8,12 @@ export type Veiculo = {
 };
 export type VeiculoFormValues = {
   nome: string;
-  modelo: string;
-  ano: string;
+  descricao?: string;
+  marca: string;
+  ano: number;
   placa: string;
-  valor: string;
+  valor: number;
+  quilometragem: number;
   cor: string;
   tipo: "carro" | "moto" | "caminhao";
 };

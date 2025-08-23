@@ -17,14 +17,20 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useCreateVeiculo } from "@/hooks/useVeiculos";
 import { AxiosError } from "axios";
+import UploadImage from "@/components/admin/uploadImage/uploadImage";
 
 const veiculoSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
+  descricao: z.string().min(1, "Descrição é obrigatória"),
+  marca: z.string().min(1, "Marca é obrigatória"),
+  ano: z.coerce
+    .number()
+    .min(1900, "Ano inválido")
+    .max(new Date().getFullYear(), "Ano inválido"),
   placa: z.string().min(1, "Placa é obrigatória"),
-  modelo: z.string().min(1, "Modelo é obrigatório"),
-  ano: z.string().min(4, "Ano é obrigatório").max(4, "Ano deve ter 4 dígitos"),
-  valor: z.string().min(1, "Valor é obrigatório"),
+  valor: z.coerce.number().min(1, "Valor é obrigatório"),
   cor: z.string().min(1, "Cor é obrigatória"),
+  quilometragem: z.coerce.number().min(1, "Quilometragem é obrigatória"),
   tipo: z.enum(["carro", "moto", "caminhao"], {
     errorMap: (issue) => {
       if (issue.code === "invalid_type") {
@@ -33,6 +39,21 @@ const veiculoSchema = z.object({
       return { message: "Tipo é obrigatório" };
     },
   }),
+  sistema: z.enum(
+    [
+      "manual",
+      "automatico",
+      "cvt",
+      "semi-automatico",
+      "carburador",
+      "injetado",
+    ],
+    {
+      errorMap: () => {
+        return { message: "Sistema é obrigatório" };
+      },
+    }
+  ),
 });
 
 type VeiculoFormData = z.infer<typeof veiculoSchema>;
@@ -71,7 +92,7 @@ export default function CadastroVeiculo() {
       <h1 className="text-2xl font-bold">Cadastrar veículo</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div className="flex gap-4">
-          <div className="flex flex-col w-full">
+          <div className="w-full">
             <Input
               className={errors.nome ? "border-error border-dashed" : ""}
               placeholder="Digite o nome do veículo"
@@ -81,34 +102,34 @@ export default function CadastroVeiculo() {
               <p className="text-sm text-error ml-2">{errors.nome.message}</p>
             )}
           </div>
-          <div className="flex flex-col w-full">
+          <div className="w-full">
             <Input
-              className={errors.nome ? "border-error border-dashed" : ""}
-              placeholder="Digite a placa do veículo"
-              {...register("placa")}
+              className={errors.descricao ? "border-error border-dashed" : ""}
+              placeholder="Digite a descrição do veículo"
+              {...register("descricao")}
             />
-            {errors.placa && (
-              <p className="text-sm text-error ml-2">{errors.placa.message}</p>
+            {errors.descricao && (
+              <p className="text-sm text-error ml-2">
+                {errors.descricao.message}
+              </p>
             )}
           </div>
         </div>
 
         <div className="flex gap-4">
-          <div className="flex flex-col w-full">
+          <div className="w-full">
             <Input
-              className={errors.nome ? "border-error border-dashed" : ""}
-              placeholder="Digite o modelo do veículo"
-              {...register("modelo")}
+              className={errors.marca ? "border-error border-dashed" : ""}
+              placeholder="Digite a marca do veículo"
+              {...register("marca")}
             />
-            {errors.modelo && (
-              <p className="text-sm text-error ml-2 ">
-                {errors.modelo.message}
-              </p>
+            {errors.marca && (
+              <p className="text-sm text-error ml-2 ">{errors.marca.message}</p>
             )}
           </div>
-          <div className="flex flex-col w-full">
+          <div className="w-full">
             <Input
-              className={errors.nome ? "border-error border-dashed" : ""}
+              className={errors.ano ? "border-error border-dashed" : ""}
               placeholder="Digite o ano do veículo"
               {...register("ano")}
             />
@@ -119,9 +140,19 @@ export default function CadastroVeiculo() {
         </div>
 
         <div className="flex gap-4">
-          <div className="flex flex-col w-full">
+          <div className="w-full">
             <Input
-              className={errors.nome ? "border-error border-dashed" : ""}
+              className={errors.placa ? "border-error border-dashed" : ""}
+              placeholder="Digite a placa do veículo"
+              {...register("placa")}
+            />
+            {errors.placa && (
+              <p className="text-sm text-error ml-2">{errors.placa.message}</p>
+            )}
+          </div>
+          <div className="w-full">
+            <Input
+              className={errors.valor ? "border-error border-dashed" : ""}
               placeholder="Digite o valor do veículo"
               {...register("valor")}
             />
@@ -129,9 +160,12 @@ export default function CadastroVeiculo() {
               <p className="text-sm text-error ml-2">{errors.valor.message}</p>
             )}
           </div>
-          <div className="flex flex-col w-full">
+        </div>
+
+        <div className="flex gap-4">
+          <div className="w-full">
             <Input
-              className={errors.nome ? "border-error border-dashed" : ""}
+              className={errors.cor ? "border-error border-dashed" : ""}
               placeholder="Digite a cor do veículo"
               {...register("cor")}
             />
@@ -139,37 +173,91 @@ export default function CadastroVeiculo() {
               <p className="text-sm text-error ml-2">{errors.cor.message}</p>
             )}
           </div>
-        </div>
-
-        <div className="flex flex-col w-full">
-          <Controller
-            control={control}
-            name="tipo"
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger
-                  className={
-                    errors.nome ? "border-error border-dashed w-full" : "w-full"
-                  }
-                >
-                  <SelectValue placeholder="Escolha o tipo do veículo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="carro">Carro</SelectItem>
-                  <SelectItem value="moto">Moto</SelectItem>
-                  <SelectItem value="caminhao">Caminhão</SelectItem>
-                </SelectContent>
-              </Select>
+          <div className="w-full">
+            <Input
+              className={
+                errors.quilometragem ? "border-error border-dashed" : ""
+              }
+              placeholder="Digite a quilometragem do veículo"
+              {...register("quilometragem")}
+            />
+            {errors.quilometragem && (
+              <p className="text-sm text-error ml-2">
+                {errors.quilometragem.message}
+              </p>
             )}
-          />
-          {errors.tipo && (
-            <p className="text-sm text-error ml-2">{errors.tipo.message}</p>
-          )}
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="w-full">
+            <Controller
+              control={control}
+              name="tipo"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger
+                    className={
+                      errors.tipo
+                        ? "border-error border-dashed w-full"
+                        : "w-full"
+                    }
+                  >
+                    <SelectValue placeholder="Escolha o tipo do veículo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="carro">Carro</SelectItem>
+                    <SelectItem value="moto">Moto</SelectItem>
+                    <SelectItem value="caminhao">Caminhão</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.tipo && (
+              <p className="text-sm text-error ml-2">{errors.tipo.message}</p>
+            )}
+          </div>
+          <div className="w-full">
+            <Controller
+              control={control}
+              name="sistema"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger
+                    className={
+                      errors.sistema
+                        ? "border-error border-dashed w-full"
+                        : "w-full"
+                    }
+                  >
+                    <SelectValue placeholder="Escolha o sistema do veículo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="manual">Manual</SelectItem>
+                    <SelectItem value="automatico">Automático</SelectItem>
+                    <SelectItem value="cvt">CVT</SelectItem>
+                    <SelectItem value="semi-automatico">
+                      Semi-Automático
+                    </SelectItem>
+                    <SelectItem value="carburador">Carburador</SelectItem>
+                    <SelectItem value="injeção">Injeção</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.sistema && (
+              <p className="text-sm text-error ml-2">
+                {errors.sistema.message}
+              </p>
+            )}
+          </div>
+        </div>
+        <div className="w-full">
+          <UploadImage />
         </div>
 
         <Button
           className="cursor-pointer text-foreground"
-          variant="default"
+          variant="auth"
           type="submit"
           disabled={isPending}
         >
