@@ -11,12 +11,22 @@ export async function getVeiculoById(id: string): Promise<VeiculoFormValues> {
   return data;
 }
 
-export async function createVeiculo(veiculo: Partial<VeiculoFormValues>): Promise<CreateVeiculoResponse> {
-  const { data } = await api.post("/veiculos", veiculo);
+export async function createVeiculo(
+  veiculo: FormData
+): Promise<CreateVeiculoResponse> {
+  console.log(veiculo.get("imagem"));
+  const { data } = await api.post("/veiculos", veiculo, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return data;
 }
 
-export async function updateVeiculo(id: string, veiculo: Partial<VeiculoFormValues>): Promise<VeiculoFormValues> {
+export async function updateVeiculo(
+  id: string,
+  veiculo: Partial<VeiculoFormValues>
+): Promise<VeiculoFormValues> {
   const { data } = await api.put(`/veiculos/${id}`, veiculo);
   return data;
 }

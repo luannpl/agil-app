@@ -31,7 +31,7 @@ export function useVeiculo(id: string) {
 export function useCreateVeiculo() {
     const queryClient = useQueryClient();
 
-    return useMutation<CreateVeiculoResponse, AxiosError, VeiculoFormValues>({
+    return useMutation<CreateVeiculoResponse, AxiosError, FormData>({
         mutationFn: createVeiculo,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["veiculos"] });

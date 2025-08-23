@@ -16,6 +16,7 @@ export type VeiculoFormValues = {
   quilometragem: number;
   cor: string;
   tipo: "carro" | "moto" | "caminhao";
+  imagem?: File;
 };
 
 export type CreateVeiculoResponse = {

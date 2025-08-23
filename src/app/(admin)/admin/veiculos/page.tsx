@@ -12,7 +12,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useCreateVeiculo } from "@/hooks/useVeiculos";
@@ -54,12 +54,18 @@ const veiculoSchema = z.object({
       },
     }
   ),
+  imagem: z
+    .custom<File>((val) => val instanceof File, {
+      message: "Imagem deve ser um arquivo válido",
+    })
+    .optional(),
 });
 
 type VeiculoFormData = z.infer<typeof veiculoSchema>;
 
 export default function CadastroVeiculo() {
   const router = useRouter();
+  const [files, setFiles] = useState<File[] | undefined>();
   const {
     register,
     handleSubmit,
@@ -73,10 +79,21 @@ export default function CadastroVeiculo() {
   const { mutate: cadastrarVeiculo, isPending } = useCreateVeiculo();
   const onSubmit = (data: VeiculoFormData) => {
     console.log(data);
-    cadastrarVeiculo(data, {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (key !== "imagem") {
+        formData.append(key, String(value));
+      }
+    });
+    console.log(files);
+    if (files && files.length > 0) {
+      formData.append("imagem", files[0]);
+    }
+
+    cadastrarVeiculo(formData, {
       onSuccess: (res) => {
         toast.success(res.message || "Veículo cadastrado com sucesso!");
-        router.push("/veiculos/view");
+        router.push("/admin/veiculos/view");
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onError: (error: AxiosError<any>) => {
@@ -252,7 +269,7 @@ export default function CadastroVeiculo() {
           </div>
         </div>
         <div className="w-full">
-          <UploadImage />
+          <UploadImage files={files} onFilesChange={setFiles} />
         </div>
 
         <Button
