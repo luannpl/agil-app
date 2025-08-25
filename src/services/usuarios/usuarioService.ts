@@ -17,3 +17,8 @@ export async function createUsuario(
   const { data } = await api.post("/usuarios", usuario);
   return data;
 }
+
+export async function getUsuarios(): Promise<UsuarioResponse[]> {
+  const { data } = await api.get("/usuarios");
+  return data;
+}

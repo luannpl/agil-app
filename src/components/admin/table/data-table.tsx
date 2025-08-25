@@ -105,7 +105,7 @@ export function DataTable<TData, TValue>({
           Anterior
         </Button>
         <Button
-          variant="default"
+          variant="auth"
           size="sm"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}

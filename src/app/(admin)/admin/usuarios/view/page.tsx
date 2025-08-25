@@ -1,53 +1,52 @@
-'use client'
+"use client";
 import { useColumns } from "@/hooks/useColumns";
 import { DataTable } from "@/components/admin/table/data-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Usuario } from "@/types/usuario";
-
-const usuarios: Usuario[] = [
-  {
-    id: "1",
-    nome: "jefferson",
-    email: "jefferson413@gmail.com",
-    salario: 10000,
-    ativo: true
-  },
-  {
-    id: "2",
-    nome: "william",
-    email: "william413@gmail.com",
-    salario: 10000,
-    ativo: true
-  },
-  {
-    id: "3",
-    nome: "cibeli",
-    email: "maria413@gmail.com",
-    salario: 1000,
-    ativo: false
-  },
-];
-
-const usuarioAtivo: Usuario[] = usuarios.filter((u) => u.ativo);
-const usuarioInativo: Usuario[] = usuarios.filter((u) => !u.ativo);
+import { UsuarioResponse } from "@/types/usuario";
+import { useUsuarios } from "@/hooks/useUsuario";
 
 export default function ListaUsuarios() {
-  const columns = useColumns<Usuario>(usuarios, "usuarios", {
-    exclude: ["id", "ativo"],
+  const { data: usuarios } = useUsuarios();
+
+  const usuarioAdmin: UsuarioResponse[] | undefined = usuarios?.filter(
+    (u) => u.tipo == "admin"
+  );
+  const usuarioCliente: UsuarioResponse[] | undefined = usuarios?.filter(
+    (u) => u.tipo == "cliente"
+  );
+
+  const usuarioVendedor: UsuarioResponse[] | undefined = usuarios?.filter(
+    (u) => u.tipo == "vendedor"
+  );
+
+  const usuarioDespachante: UsuarioResponse[] | undefined = usuarios?.filter(
+    (u) => u.tipo == "despachante"
+  );
+
+  const columns = useColumns<UsuarioResponse>(usuarios ?? [], "usuarios", {
+    only: ["id", "nome", "email", "tipo"],
   });
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Lista de usuarios</h1>
-      <Tabs defaultValue="ativos" className="mb-4 ">
+      <Tabs defaultValue="admin" className="mb-4 ">
         <TabsList>
-          <TabsTrigger value="ativos">Ativos</TabsTrigger>
-          <TabsTrigger value="inativos">Inativos</TabsTrigger>
+          <TabsTrigger value="admin">Admin</TabsTrigger>
+          <TabsTrigger value="cliente">Cliente</TabsTrigger>
+          <TabsTrigger value="vendedor">Vendedor</TabsTrigger>
+          <TabsTrigger value="despachante">Despachante</TabsTrigger>
         </TabsList>
-        <TabsContent value="ativos">
-          <DataTable columns={columns} data={usuarioAtivo} />
+        <TabsContent value="admin">
+          <DataTable columns={columns} data={usuarioAdmin ?? []} />
         </TabsContent>
-        <TabsContent value="inativos">
-          <DataTable columns={columns} data={usuarioInativo} />
+        <TabsContent value="cliente">
+          <DataTable columns={columns} data={usuarioCliente ?? []} />
+        </TabsContent>
+        <TabsContent value="vendedor">
+          <DataTable columns={columns} data={usuarioVendedor ?? []} />
+        </TabsContent>
+        <TabsContent value="despachante">
+          <DataTable columns={columns} data={usuarioDespachante ?? []} />
         </TabsContent>
       </Tabs>
     </div>
