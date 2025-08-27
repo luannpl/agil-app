@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { MultiSelect, Option } from "@/components/ui/multi-select";
 import CardVeiculos from "@/components/client/cardVeiculos/cardVeiculos";
-import { CardVeiculosProps } from "@/types/veiculo";
+import { Veiculo } from "@/types/veiculo";
 
 export default function Veiculos() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,15 +11,15 @@ export default function Veiculos() {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
 
-  const veiculos: CardVeiculosProps[] = [
+  const veiculos: Veiculo[] = [
     {
       id: "1",
       nome: "Jeep Renegade Sport",
       descricao: "2.0 16V DIESEL LIMITED 4X4 AUTOMÁTICO",
       ano: 2020,
-      preco: 80000,
+      valor: 80000,
       quilometragem: 54000,
-      cambio: "Automático",
+      sistema: "Automático",
       localizacao: "Fortaleza - CE",
       imagem: "/jeep.jpeg",
       cor: "preto",
@@ -31,9 +31,9 @@ export default function Veiculos() {
       nome: "Honda Civic Touring",
       descricao: "1.5 TURBO 16V CVT",
       ano: 2022,
-      preco: 120000,
+      valor: 120000,
       quilometragem: 25000,
-      cambio: "CVT",
+      sistema: "CVT",
       localizacao: "São Paulo - SP",
       imagem: "/jeep.jpeg",
       cor: "branco",
@@ -45,9 +45,9 @@ export default function Veiculos() {
       nome: "Toyota Corolla XEI",
       descricao: "2.0 16V FLEX AUTOMÁTICO",
       ano: 2021,
-      preco: 95000,
+      valor: 95000,
       quilometragem: 35000,
-      cambio: "Automático",
+      sistema: "Automático",
       localizacao: "Rio de Janeiro - RJ",
       imagem: "/jeep.jpeg",
       cor: "prata",
@@ -59,9 +59,9 @@ export default function Veiculos() {
       nome: "Ford Ka SE Plus",
       descricao: "1.0 12V FLEX MANUAL",
       ano: 2019,
-      preco: 45000,
+      valor: 45000,
       quilometragem: 68000,
-      cambio: "Manual",
+      sistema: "Manual",
       localizacao: "Belo Horizonte - MG",
       imagem: "/jeep.jpeg",
       cor: "vermelho",
@@ -73,9 +73,9 @@ export default function Veiculos() {
       nome: "Chevrolet Onix LT",
       descricao: "1.0 12V FLEX MANUAL",
       ano: 2020,
-      preco: 52000,
+      valor: 52000,
       quilometragem: 42000,
-      cambio: "Manual",
+      sistema: "Manual",
       localizacao: "Salvador - BA",
       imagem: "/jeep.jpeg",
       cor: "azul",
@@ -87,9 +87,9 @@ export default function Veiculos() {
       nome: "Honda CB 600F Hornet",
       descricao: "600CC INJEÇÃO ELETRÔNICA",
       ano: 2018,
-      preco: 32000,
+      valor: 32000,
       quilometragem: 15000,
-      cambio: "Manual",
+      sistema: "Manual",
       localizacao: "Curitiba - PR",
       imagem: "/jeep.jpeg",
       cor: "amarelo",
@@ -101,9 +101,9 @@ export default function Veiculos() {
       nome: "Nissan Versa SV",
       descricao: "1.6 16V FLEX CVT",
       ano: 2021,
-      preco: 75000,
+      valor: 75000,
       quilometragem: 28000,
-      cambio: "CVT",
+      sistema: "CVT",
       localizacao: "Recife - PE",
       imagem: "/jeep.jpeg",
       cor: "cinza",
@@ -115,9 +115,9 @@ export default function Veiculos() {
       nome: "Toyota Hilux SRX",
       descricao: "2.8 DIESEL 4X4 AUTOMÁTICO",
       ano: 2022,
-      preco: 180000,
+      valor: 180000,
       quilometragem: 18000,
-      cambio: "Automático",
+      sistema: "Automático",
       localizacao: "Brasília - DF",
       imagem: "/jeep.jpeg",
       cor: "branco",

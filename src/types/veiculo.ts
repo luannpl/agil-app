@@ -1,16 +1,22 @@
 export type Veiculo = {
   id: string;
-  modelo: string;
+  nome: string;
+  descricao: string;
   ano: number;
-  placa: string;
   valor: number;
-  vendido: boolean;
+  quilometragem: number;
+  sistema: string;
+  localizacao: string;
+  imagem: string;
+  cor: string;
+  marca: string;
+  tipo: string;
 };
 export type VeiculoFormValues = {
   nome: string;
   descricao?: string;
-  marca: string;
   ano: number;
+  marca: string;
   placa: string;
   valor: number;
   quilometragem: number;
@@ -28,9 +34,9 @@ export type CardVeiculosProps = {
   nome: string;
   descricao?: string;
   ano: number;
-  preco: number;
+  valor: number;
   quilometragem: number;
-  cambio: string;
+  sistema: string;
   localizacao: string;
   imagem: string;
   cor?: string;

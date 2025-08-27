@@ -1,7 +1,11 @@
-import { CreateVeiculoResponse, VeiculoFormValues } from "@/types/veiculo";
+import {
+  CreateVeiculoResponse,
+  Veiculo,
+  VeiculoFormValues,
+} from "@/types/veiculo";
 import { api } from "../api";
 
-export async function getVeiculos(): Promise<VeiculoFormValues[]> {
+export async function getVeiculos(): Promise<Veiculo[]> {
   const { data } = await api.get("/veiculos");
   return data;
 }

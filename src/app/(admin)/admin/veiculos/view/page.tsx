@@ -1,42 +1,15 @@
-'use client'
+"use client";
 import { useColumns } from "@/hooks/useColumns";
 import { DataTable } from "@/components/admin/table/data-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Veiculo } from "@/types/veiculo";
 
-const veiculos: Veiculo[] = [
-  {
-    id: "1",
-    modelo: "Civic",
-    ano: 2020,
-    placa: "HYZ-0101",
-    valor: 10000,
-    vendido: false,
-  },
-  {
-    id: "2",
-    modelo: "Corolla",
-    ano: 2020,
-    placa: "HYZ-0102",
-    valor: 15000,
-    vendido: false,
-  },
-  {
-    id: "3",
-    modelo: "SW4",
-    ano: 2020,
-    placa: "HYZ-0103",
-    valor: 20000,
-    vendido: true,
-  },
-];
-
-const veiculosDisponiveis: Veiculo[] = veiculos.filter((v) => !v.vendido);
-const veiculosVendidos: Veiculo[] = veiculos.filter((v) => v.vendido);
+import { useVeiculos } from "@/hooks/useVeiculos";
 
 export default function ListaVeiculos() {
-  const columns = useColumns<Veiculo>(veiculos,"veiculos", {
-    exclude: ["id", "vendido"],
+  const { data: veiculos } = useVeiculos();
+  const columns = useColumns<Veiculo>(veiculos ?? [], "veiculos", {
+    only: ["id", "nome", "ano", "valor"],
   });
   return (
     <div className="p-4">
@@ -47,10 +20,10 @@ export default function ListaVeiculos() {
           <TabsTrigger value="vendidos">Vendidos</TabsTrigger>
         </TabsList>
         <TabsContent value="disponiveis">
-          <DataTable columns={columns} data={veiculosDisponiveis} />
+          <DataTable columns={columns} data={veiculos ?? []} />
         </TabsContent>
         <TabsContent value="vendidos">
-          <DataTable columns={columns} data={veiculosVendidos} />
+          <DataTable columns={columns} data={veiculos ?? []} />
         </TabsContent>
       </Tabs>
     </div>

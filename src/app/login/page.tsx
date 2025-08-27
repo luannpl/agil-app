@@ -68,7 +68,7 @@ export default function LoginPage() {
       </div>
 
       <div className="flex items-center justify-center flex-1 p-6 bg-gradient-to-br from-stone-900 to-yellow-600/80 md:p-10">
-        <Card className="w-full max-w-sm shadow-yellow-500/50 bg-stone-950">
+        <Card className="w-full max-w-sm shadow-yellow-500/50 bg-stone-950 py-8">
           <CardHeader>
             <CardTitle>Entre na sua conta</CardTitle>
             <CardDescription>
