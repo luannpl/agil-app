@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { MultiSelect, Option } from "@/components/ui/multi-select";
 import CardVeiculos from "@/components/client/cardVeiculos/cardVeiculos";
-import { Veiculo } from "@/types/veiculo";
+import { useVeiculos } from "@/hooks/useVeiculos";
 
 export default function Veiculos() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,120 +11,7 @@ export default function Veiculos() {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
 
-  const veiculos: Veiculo[] = [
-    {
-      id: "1",
-      nome: "Jeep Renegade Sport",
-      descricao: "2.0 16V DIESEL LIMITED 4X4 AUTOMÁTICO",
-      ano: 2020,
-      valor: 80000,
-      quilometragem: 54000,
-      sistema: "Automático",
-      localizacao: "Fortaleza - CE",
-      imagem: "/jeep.jpeg",
-      cor: "preto",
-      marca: "jeep",
-      tipo: "carro",
-    },
-    {
-      id: "2",
-      nome: "Honda Civic Touring",
-      descricao: "1.5 TURBO 16V CVT",
-      ano: 2022,
-      valor: 120000,
-      quilometragem: 25000,
-      sistema: "CVT",
-      localizacao: "São Paulo - SP",
-      imagem: "/jeep.jpeg",
-      cor: "branco",
-      marca: "honda",
-      tipo: "carro",
-    },
-    {
-      id: "3",
-      nome: "Toyota Corolla XEI",
-      descricao: "2.0 16V FLEX AUTOMÁTICO",
-      ano: 2021,
-      valor: 95000,
-      quilometragem: 35000,
-      sistema: "Automático",
-      localizacao: "Rio de Janeiro - RJ",
-      imagem: "/jeep.jpeg",
-      cor: "prata",
-      marca: "toyota",
-      tipo: "carro",
-    },
-    {
-      id: "4",
-      nome: "Ford Ka SE Plus",
-      descricao: "1.0 12V FLEX MANUAL",
-      ano: 2019,
-      valor: 45000,
-      quilometragem: 68000,
-      sistema: "Manual",
-      localizacao: "Belo Horizonte - MG",
-      imagem: "/jeep.jpeg",
-      cor: "vermelho",
-      marca: "ford",
-      tipo: "carro",
-    },
-    {
-      id: "5",
-      nome: "Chevrolet Onix LT",
-      descricao: "1.0 12V FLEX MANUAL",
-      ano: 2020,
-      valor: 52000,
-      quilometragem: 42000,
-      sistema: "Manual",
-      localizacao: "Salvador - BA",
-      imagem: "/jeep.jpeg",
-      cor: "azul",
-      marca: "chevrolet",
-      tipo: "carro",
-    },
-    {
-      id: "6",
-      nome: "Honda CB 600F Hornet",
-      descricao: "600CC INJEÇÃO ELETRÔNICA",
-      ano: 2018,
-      valor: 32000,
-      quilometragem: 15000,
-      sistema: "Manual",
-      localizacao: "Curitiba - PR",
-      imagem: "/jeep.jpeg",
-      cor: "amarelo",
-      marca: "honda",
-      tipo: "moto",
-    },
-    {
-      id: "7",
-      nome: "Nissan Versa SV",
-      descricao: "1.6 16V FLEX CVT",
-      ano: 2021,
-      valor: 75000,
-      quilometragem: 28000,
-      sistema: "CVT",
-      localizacao: "Recife - PE",
-      imagem: "/jeep.jpeg",
-      cor: "cinza",
-      marca: "nissan",
-      tipo: "carro",
-    },
-    {
-      id: "8",
-      nome: "Toyota Hilux SRX",
-      descricao: "2.8 DIESEL 4X4 AUTOMÁTICO",
-      ano: 2022,
-      valor: 180000,
-      quilometragem: 18000,
-      sistema: "Automático",
-      localizacao: "Brasília - DF",
-      imagem: "/jeep.jpeg",
-      cor: "branco",
-      marca: "toyota",
-      tipo: "caminhao",
-    },
-  ];
+  const {data: veiculos} = useVeiculos();
 
   const vehicleOptions: Option[] = [
     { label: "Carro", value: "carro" },
@@ -167,6 +54,7 @@ export default function Veiculos() {
   );
 
   const filteredVeiculos = useMemo(() => {
+    if (!veiculos) return [];
     return veiculos.filter((veiculo) => {
       const matchesSearch =
         searchTerm === "" ||
