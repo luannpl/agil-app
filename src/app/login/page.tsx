@@ -29,7 +29,7 @@ const loginSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
-  const { user, isLoading } = useAuth(); // Pegue o isLoading também
+  const { user, isLoading, refetchUser } = useAuth(); // Pegue o isLoading também
 
   // Use useEffect para o redirecionamento
   useEffect(() => {
@@ -50,11 +50,9 @@ export default function LoginPage() {
   const { mutate: login, isPending } = useLoginUsuario();
   const handleLogin = (data: LoginForm) => {
     login(data, {
-      onSuccess: () => {
-        // O refetch do AuthContext cuidará de pegar o usuário
-        // e o useEffect acima fará o redirecionamento.
-        // Podemos manter este push como um fallback rápido.
-        router.push("/admin/");
+      onSuccess: async () => {
+        await refetchUser(); // 🔥 garante que o contexto esteja atualizado
+        router.replace("/admin/");
       },
       onError: (error) => {
         if (error.response?.status === 401) {
