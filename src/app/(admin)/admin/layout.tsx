@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import LayoutContent from "@/components/admin/layout/layout-content";
 import { Skeleton } from "@/components/ui/skeleton";
 // Importe o useRouter para navegação no cliente
@@ -28,24 +28,7 @@ function RoleBasedLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Se chegou aqui, o usuário existe e o carregamento terminou
-  // Lógica para trocar o layout com base na role
-  switch (user.tipo) {
-    case "admin":
-      return <LayoutContent>{children}</LayoutContent>;
-    case "vendedor":
-      // TODO: Substituir pelo layout do Vendedor
-      return <div>Layout Vendedor {children}</div>;
-    case "despachante":
-      // TODO: Substituir pelo layout do Despachante
-      return <div>Layout Despachante {children}</div>;
-    default:
-      return (
-        <div className="flex h-screen w-full items-center justify-center">
-          <h1>Tipo de usuário não reconhecido.</h1>
-        </div>
-      );
-  }
+  return <LayoutContent>{children}</LayoutContent>;
 }
 
 // O layout principal do admin agora provê o contexto de autenticação
@@ -54,9 +37,5 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <AuthProvider>
-      <RoleBasedLayout>{children}</RoleBasedLayout>
-    </AuthProvider>
-  );
+  return <RoleBasedLayout>{children}</RoleBasedLayout>;
 }

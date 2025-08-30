@@ -24,9 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        console.log("chegou aqui");
         const userData = await getMe();
-        console.log("User data:", userData);
         setUser(userData);
       } catch (error) {
         console.error("Failed to fetch user", error);

@@ -19,45 +19,133 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-
-const data = {
-  navMain: [
-    {
-      title: "Veiculos",
-      url: "/admin/veiculos",
-      items: [
-        {
-          title: "Cadastar Veiculo",
-          url: "/admin/veiculos",
-        },
-        {
-          title: "Ver Veiculos",
-          url: "/admin/veiculos/view",
-        },
-      ],
-    },
-    {
-      title: "Painel de Controle",
-      url: "/admin/painel-controle",
-      items: [
-        {
-          title: "Cadastrar Usuário",
-          url: "/admin/usuarios",
-        },
-        {
-          title: "Ver Usuários",
-          url: "/admin/usuarios/view",
-        },
-        {
-          title: "Dashboard",
-          url: "/admin/dashboard",
-        },
-      ],
-    },
-  ],
-};
+import { useAuth } from "@/contexts/AuthContext";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuth();
+
+  const getNavigationData = () => {
+    switch (user?.tipo) {
+      case "admin":
+        return {
+          navMain: [
+            {
+              title: "Veículos",
+              url: "/admin/veiculos",
+              items: [
+                {
+                  title: "Cadastrar Veículo",
+                  url: "/admin/veiculos",
+                },
+                {
+                  title: "Ver Veículos",
+                  url: "/admin/veiculos/view",
+                },
+              ],
+            },
+            {
+              title: "Painel de Controle",
+              url: "/admin/painel-controle",
+              items: [
+                {
+                  title: "Cadastrar Usuário",
+                  url: "/admin/usuarios",
+                },
+                {
+                  title: "Ver Usuários",
+                  url: "/admin/usuarios/view",
+                },
+                {
+                  title: "Dashboard",
+                  url: "/admin/dashboard",
+                },
+              ],
+            },
+          ],
+        };
+      case "vendedor":
+        return {
+          navMain: [
+            {
+              title: "Veículos",
+              url: "/admin/veiculos",
+              items: [
+                {
+                  title: "Cadastrar Veículo",
+                  url: "/admin/veiculos",
+                },
+                {
+                  title: "Ver Veículos",
+                  url: "/admin/veiculos/view",
+                },
+              ],
+            },
+            {
+              title: "Painel de Controle",
+              url: "/admin/painel-controle",
+              items: [
+                {
+                  title: "Dashboard",
+                  url: "/admin/dashboard",
+                },
+              ],
+            },
+          ],
+        };
+      case "despachante":
+        return {
+          navMain: [
+            {
+              title: "Veículos",
+              url: "/admin/veiculos",
+              items: [
+                {
+                  title: "Ver Veículos",
+                  url: "/admin/veiculos/view",
+                },
+              ],
+            },
+            {
+              title: "Painel de Controle",
+              url: "/admin/painel-controle",
+              items: [
+                {
+                  title: "Dashboard",
+                  url: "/admin/dashboard",
+                },
+              ],
+            },
+          ],
+        };
+      default:
+        return {
+          navMain: [
+            {
+              title: "Veículos",
+              url: "/admin/veiculos",
+              items: [
+                {
+                  title: "Ver Veículos",
+                  url: "/admin/veiculos/view",
+                },
+              ],
+            },
+            {
+              title: "Painel de Controle",
+              url: "/admin/painel-controle",
+              items: [
+                {
+                  title: "Dashboard",
+                  url: "/admin/dashboard",
+                },
+              ],
+            },
+          ],
+        };
+    }
+  };
+
+  const data = getNavigationData();
   return (
     <Sidebar {...props}>
       <SidebarHeader>

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/AuthContext";
 import { useLoginUsuario } from "@/hooks/useUsuario";
 import { LoginForm } from "@/types/usuario";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,6 +19,8 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
+import { useEffect } from "react"; // Importe o useEffect
+import { Skeleton } from "@/components/ui/skeleton";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email é obrigatório").email("Email inválido"),
@@ -26,6 +29,16 @@ const loginSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
+  const { user, isLoading } = useAuth(); // Pegue o isLoading também
+
+  // Use useEffect para o redirecionamento
+  useEffect(() => {
+    // Só redirecione se o carregamento terminou e o usuário existe
+    if (!isLoading && user) {
+      router.push("/admin/");
+    }
+  }, [user, isLoading, router]); // Dependências do efeito
+
   const {
     register,
     handleSubmit,
@@ -38,6 +51,9 @@ export default function LoginPage() {
   const handleLogin = (data: LoginForm) => {
     login(data, {
       onSuccess: () => {
+        // O refetch do AuthContext cuidará de pegar o usuário
+        // e o useEffect acima fará o redirecionamento.
+        // Podemos manter este push como um fallback rápido.
         router.push("/admin/");
       },
       onError: (error) => {
@@ -49,6 +65,17 @@ export default function LoginPage() {
       },
     });
   };
+
+  // Se estiver carregando ou se o usuário já estiver logado (e o redirect vai acontecer),
+  // mostre um loader para evitar um "flash" do formulário.
+  if (isLoading || user) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Skeleton className="h-32 w-32 rounded-full" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen md:flex-row bg-whiteF">
       <div className="relative hidden flex-1 md:block">
