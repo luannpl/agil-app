@@ -9,6 +9,7 @@ import {
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth();
@@ -149,7 +151,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <VersionSwitcher />
+        <VersionSwitcher user={user} />
       </SidebarHeader>
       <SidebarContent className="gap-0">
         {/* We create a collapsible SidebarGroup for each parent. */}
@@ -189,6 +191,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </Collapsible>
         ))}
       </SidebarContent>
+      <SidebarFooter>
+        <Button variant="destructive" className="w-full">
+          Sair
+        </Button>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
