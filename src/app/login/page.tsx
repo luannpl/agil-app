@@ -37,14 +37,8 @@ export default function LoginPage() {
   const { mutate: login, isPending } = useLoginUsuario();
   const handleLogin = (data: LoginForm) => {
     login(data, {
-      onSuccess: (res) => {
-        if (res.token) {
-          localStorage.setItem("token", res.token);
-          localStorage.setItem("usuario", JSON.stringify(res.usuario));
-          router.push("/");
-        } else {
-          toast.error("Token não encontrado na resposta");
-        }
+      onSuccess: () => {
+        router.push("/admin/");
       },
       onError: (error) => {
         if (error.response?.status === 401) {

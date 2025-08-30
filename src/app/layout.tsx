@@ -12,7 +12,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body>
         <Providers>
-          <Toaster richColors closeButton />
+          <Toaster richColors closeButton position="top-right" />
           {children}
         </Providers>
       </body>
