@@ -1,5 +1,16 @@
+"use client";
 import * as React from "react";
+import { useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChevronRight } from "lucide-react";
+import { toast } from "sonner"; // IMPORTANTE: Importe o 'toast' da sua biblioteca de notificações (ex: sonner, react-toastify)
+
+import { useAuth } from "@/contexts/AuthContext";
+import { useLogoutUsuario } from "@/hooks/useUsuario";
+
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { VersionSwitcher } from "@/components/admin/sidebar/version-switcher";
 import {
   Collapsible,
@@ -19,13 +30,67 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import Link from "next/link";
-import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useAuth();
+  const router = useRouter();
+  const { user, isLoading, refetchUser } = useAuth();
+  const { mutate: logout } = useLogoutUsuario();
 
+  // Efeito para redirecionar o usuário se ele não estiver autenticado
+  useEffect(() => {
+    // Apenas redirecione se o carregamento terminou e não há usuário
+    if (!isLoading && !user) {
+      router.push("/login");
+    }
+  }, [user, isLoading, router]);
+
+  const handleLogout = () => {
+    logout(undefined, {
+      // 1º arg: undefined (sem variáveis), 2º arg: objeto de opções
+      onSuccess: async () => {
+        await refetchUser();
+        router.push("/login");
+      },
+      onError: () => {
+        toast.error("Erro ao fazer logout. Tente novamente.");
+      },
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <Sidebar {...props}>
+        <SidebarHeader>
+          <Skeleton className="h-10 w-full" />
+        </SidebarHeader>
+        <SidebarContent className="gap-0">
+          <div className="p-4 space-y-6">
+            <div>
+              <Skeleton className="h-6 w-2/4 mb-3" />
+              <Skeleton className="h-5 w-full mb-2" />
+              <Skeleton className="h-5 w-full" />
+            </div>
+            <div>
+              <Skeleton className="h-6 w-3/4 mb-3" />
+              <Skeleton className="h-5 w-full mb-2" />
+              <Skeleton className="h-5 w-full mb-2" />
+              <Skeleton className="h-5 w-full" />
+            </div>
+          </div>
+        </SidebarContent>
+        <SidebarFooter>
+          <Skeleton className="h-10 w-full" />
+        </SidebarFooter>
+        <SidebarRail />
+      </Sidebar>
+    );
+  }
+
+  // Se o carregamento terminou e não há usuário, não renderiza nada
+  // (o useEffect cuidará do redirecionamento)
+  if (!user) {
+    return null;
+  }
   const getNavigationData = () => {
     switch (user?.tipo) {
       case "admin":
@@ -192,8 +257,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <Button variant="destructive" className="w-full">
-          Sair
+        <Button
+          variant="destructive"
+          className="w-full"
+          onClick={handleLogout}
+          disabled={isLoading}
+        >
+          {isLoading ? "Saindo..." : "Sair"}
         </Button>
       </SidebarFooter>
       <SidebarRail />

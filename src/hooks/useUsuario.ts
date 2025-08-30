@@ -2,6 +2,7 @@ import {
   createUsuario,
   getUsuarios,
   login,
+  logout,
 } from "@/services/usuarios/usuarioService";
 import {
   LoginResponse,
@@ -18,7 +19,16 @@ export function useLoginUsuario() {
     mutationFn: login,
     onSuccess: (data) => {
       queryClient.setQueryData(["usuario"], data.usuario);
-      localStorage.setItem("token", data.token);
+    },
+  });
+}
+
+export function useLogoutUsuario() {
+  const queryClient = useQueryClient();
+  return useMutation<void, AxiosError>({
+    mutationFn: logout,
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ["usuario"] });
     },
   });
 }

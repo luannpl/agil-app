@@ -11,6 +11,10 @@ export async function login(usuario: LoginForm): Promise<LoginResponse> {
   return data;
 }
 
+export async function logout(): Promise<void> {
+  await api.post("/auth/logout");
+}
+
 export async function createUsuario(
   usuario: CreateUsuarioDTO
 ): Promise<UsuarioResponse> {

@@ -37,7 +37,7 @@ export default function LoginPage() {
     if (!isLoading && user) {
       router.push("/admin/");
     }
-  }, [user, isLoading, router]); // Dependências do efeito
+  }, [user, isLoading, router]);
 
   const {
     register,
@@ -51,7 +51,7 @@ export default function LoginPage() {
   const handleLogin = (data: LoginForm) => {
     login(data, {
       onSuccess: async () => {
-        await refetchUser(); // 🔥 garante que o contexto esteja atualizado
+        await refetchUser();
         router.replace("/admin/");
       },
       onError: (error) => {
