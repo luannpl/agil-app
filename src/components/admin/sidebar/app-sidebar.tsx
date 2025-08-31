@@ -257,6 +257,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ))}
       </SidebarContent>
       <SidebarFooter>
+        <Link prefetch href="/admin/usuarios/perfil">
+          <Button variant="outline" className="w-full">
+            Perfil
+          </Button>
+        </Link>
         <Button
           variant="destructive"
           className="w-full"

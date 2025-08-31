@@ -15,8 +15,6 @@ type ColumnOptions = {
   exclude?: string[];
 };
 
-
-
 export function useColumns<T extends Record<string, unknown>>(
   data: T[],
   basePath?: string,
@@ -47,9 +45,7 @@ export function useColumns<T extends Record<string, unknown>>(
         return (
           <div className="flex items-center justify-between w-full">
             <span>
-              {value !== null && value !== undefined
-                ? value.toString()
-                : "N/A"}
+              {value !== null && value !== undefined ? value.toString() : "N/A"}
             </span>
 
             {isLast && (
@@ -61,13 +57,11 @@ export function useColumns<T extends Record<string, unknown>>(
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild>
-                    <Link href={`/${basePath}/detalhes/${id}`}>
+                    <Link href={`/admin/${basePath}/detalhes/${id}`}>
                       Ver detalhes
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => alert(`Excluindo ${id}`)}
-                  >
+                  <DropdownMenuItem onClick={() => alert(`Excluindo ${id}`)}>
                     Excluir
                   </DropdownMenuItem>
                 </DropdownMenuContent>
