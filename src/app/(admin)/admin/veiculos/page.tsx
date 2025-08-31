@@ -108,7 +108,7 @@ export default function CadastroVeiculo() {
     <>
       <h1 className="text-2xl font-bold">Cadastrar veículo</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <div className="w-full">
             <Input
               className={errors.nome ? "border-error border-dashed" : ""}
@@ -133,7 +133,7 @@ export default function CadastroVeiculo() {
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <div className="w-full">
             <Input
               className={errors.marca ? "border-error border-dashed" : ""}
@@ -156,7 +156,7 @@ export default function CadastroVeiculo() {
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <div className="w-full">
             <Input
               className={errors.placa ? "border-error border-dashed" : ""}
@@ -179,7 +179,7 @@ export default function CadastroVeiculo() {
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <div className="w-full">
             <Input
               className={errors.cor ? "border-error border-dashed" : ""}
@@ -205,7 +205,7 @@ export default function CadastroVeiculo() {
             )}
           </div>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <div className="w-full">
             <Controller
               control={control}

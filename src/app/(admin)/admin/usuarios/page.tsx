@@ -61,52 +61,74 @@ export default function CadastroUsuario() {
   return (
     <>
       <h1 className="text-2xl font-bold text-foreground">Cadastrar usuário</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex gap-4 mt-4">
-          <Input
-            className={errors.nome ? "border-error border-dashed" : ""}
-            placeholder="Nome do usuário"
-            type="text"
-            {...register("nome")}
-          />
-          <Input
-            className={errors.email ? "border-error border-dashed" : ""}
-            placeholder="Email do usuário"
-            type="email"
-            {...register("email")}
-          />
-        </div>
-        <div className="flex gap-4 mt-4">
-          <Input
-            className={errors.senha ? "border-error border-dashed" : ""}
-            placeholder="Senha do usuário"
-            type="password"
-            {...register("senha")}
-          />
-          <Controller
-            control={control}
-            name="tipo"
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger
-                  className={
-                    errors.tipo ? "border-error border-dashed w-full" : "w-full"
-                  }
-                >
-                  <SelectValue placeholder="Escolha o tipo do usuário" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="vendedor">Vendedor</SelectItem>
-                  <SelectItem value="despachante">Despachante</SelectItem>
-                  <SelectItem value="cliente">Cliente</SelectItem>
-                </SelectContent>
-              </Select>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="w-full">
+            <Input
+              className={errors.nome ? "border-error border-dashed" : ""}
+              placeholder="Nome do usuário"
+              type="text"
+              {...register("nome")}
+            />
+            {errors.nome && (
+              <p className="text-sm text-error ml-2">{errors.nome.message}</p>
             )}
-          />
+          </div>
+          <div className="w-full">
+            <Input
+              className={errors.email ? "border-error border-dashed" : ""}
+              placeholder="Email do usuário"
+              type="email"
+              {...register("email")}
+            />
+            {errors.email && (
+              <p className="text-sm text-error ml-2">{errors.email.message}</p>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="w-full">
+            <Input
+              className={errors.senha ? "border-error border-dashed" : ""}
+              placeholder="Senha do usuário"
+              type="password"
+              {...register("senha")}
+            />
+            {errors.senha && (
+              <p className="text-sm text-error ml-2">{errors.senha.message}</p>
+            )}
+          </div>
+          <div className="w-full">
+            <Controller
+              control={control}
+              name="tipo"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger
+                    className={
+                      errors.tipo
+                        ? "border-error border-dashed w-full"
+                        : "w-full"
+                    }
+                  >
+                    <SelectValue placeholder="Escolha o tipo do usuário" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="vendedor">Vendedor</SelectItem>
+                    <SelectItem value="despachante">Despachante</SelectItem>
+                    <SelectItem value="cliente">Cliente</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.tipo && (
+              <p className="text-sm text-error ml-2">{errors.tipo.message}</p>
+            )}
+          </div>
         </div>
         <Button
-          className="cursor-pointer mt-4 text-white w-full"
+          className="cursor-pointer text-white w-full"
           variant="auth"
           type="submit"
           disabled={isPending}
