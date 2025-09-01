@@ -13,6 +13,7 @@ import Link from "next/link";
 type ColumnOptions = {
   only?: string[];
   exclude?: string[];
+  onDelete?: (id: string) => void;
 };
 
 export function useColumns<T extends Record<string, unknown>>(
@@ -61,9 +62,15 @@ export function useColumns<T extends Record<string, unknown>>(
                       Ver detalhes
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => alert(`Excluindo ${id}`)}>
-                    Excluir
-                  </DropdownMenuItem>
+                  {options?.onDelete && (
+                    <DropdownMenuItem
+                      onClick={() =>
+                        options.onDelete && options.onDelete(String(id))
+                      }
+                    >
+                      Excluir
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
