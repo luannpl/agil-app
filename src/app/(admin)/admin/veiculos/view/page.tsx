@@ -15,11 +15,9 @@ export default function ListaVeiculos() {
       onSuccess: () => {
         toast.success("Veículo excluído com sucesso!");
       },
-      // onError: (error: AxiosError<any>) => {
-      //   toast.error(
-      //     error?.response?.data?.message || "Erro ao excluir o veículo."
-      //   );
-      // },
+      onError: () => {
+        toast.error("Erro ao excluir o veículo.");
+      },
     });
   };
 
