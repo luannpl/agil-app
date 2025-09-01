@@ -63,9 +63,6 @@ export default function LoginPage() {
       },
     });
   };
-
-  // Se estiver carregando ou se o usuário já estiver logado (e o redirect vai acontecer),
-  // mostre um loader para evitar um "flash" do formulário.
   if (isLoading || user) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -87,9 +84,9 @@ export default function LoginPage() {
       </div>
 
       <div className="flex items-center justify-center flex-1 p-6 bg-gradient-to-br from-stone-900 to-yellow-600/80 md:p-10">
-        <Card className="w-full max-w-sm shadow-yellow-500/50 bg-stone-950 py-8">
+        <Card className="w-full max-w-sm shadow-yellow-500/50 bg-stone-950 border-stone-950 py-8">
           <CardHeader>
-            <CardTitle>Entre na sua conta</CardTitle>
+            <CardTitle className="text-gray-200">Entre na sua conta</CardTitle>
             <CardDescription>
               Digite seu email e senha para acessar sua conta.
             </CardDescription>
@@ -98,9 +95,11 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit(handleLogin)} className="space-y-4">
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label className="text-gray-200" htmlFor="email">
+                    Email
+                  </Label>
                   <Input
-                    className="focus-visible:ring-yellow-500 focus-visible:border-yellow-500"
+                    className="focus-visible:ring-yellow-500 focus-visible:border-yellow-500 text-gray-200"
                     id="email"
                     type="text"
                     placeholder="agil@email.com"
@@ -114,10 +113,12 @@ export default function LoginPage() {
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
-                    <Label htmlFor="password">Senha</Label>
+                    <Label className="text-gray-200" htmlFor="password">
+                      Senha
+                    </Label>
                   </div>
                   <Input
-                    className="focus-visible:ring-yellow-500 focus-visible:border-yellow-500"
+                    className="text-gray-200"
                     id="senha"
                     type="password"
                     placeholder="senha"
