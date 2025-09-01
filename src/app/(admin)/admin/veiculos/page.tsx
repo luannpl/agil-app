@@ -18,6 +18,7 @@ import { z } from "zod";
 import { useCreateVeiculo } from "@/hooks/useVeiculos";
 import { AxiosError } from "axios";
 import UploadImage from "@/components/admin/uploadImage/uploadImage";
+import { formatarPreco } from "@/utils/formatarPreco";
 
 const veiculoSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -28,7 +29,14 @@ const veiculoSchema = z.object({
     .min(1900, "Ano inválido")
     .max(new Date().getFullYear(), "Ano inválido"),
   placa: z.string().min(1, "Placa é obrigatória"),
-  valor: z.coerce.number().min(1, "Valor é obrigatório"),
+  valor: z
+    .string()
+    .min(1, "Valor é obrigatório")
+    .refine((val) => {
+      const valorNumerico = val.replace(/[^\d,]/g, "").replace(",", ".");
+      const numero = parseFloat(valorNumerico);
+      return !isNaN(numero) && numero > 0;
+    }, "Valor deve ser maior que zero"),
   cor: z.string().min(1, "Cor é obrigatória"),
   quilometragem: z.coerce.number().min(1, "Quilometragem é obrigatória"),
   tipo: z.enum(["carro", "moto", "caminhao"], {
@@ -66,6 +74,23 @@ type VeiculoFormData = z.infer<typeof veiculoSchema>;
 export default function CadastroVeiculo() {
   const router = useRouter();
   const [files, setFiles] = useState<File[] | undefined>();
+
+  // Função para remover formatação e extrair valor numérico
+  const removerFormatacao = (valorFormatado: string): number => {
+    const valorNumerico = valorFormatado
+      .replace(/[^\d,]/g, "") // Remove tudo exceto dígitos e vírgula
+      .replace(",", "."); // Troca vírgula por ponto
+    return parseFloat(valorNumerico) || 0;
+  };
+
+  // Função para formatar valor enquanto digita
+  const formatarValorInput = (valor: string): string => {
+    const numeroLimpo = valor.replace(/[^\d]/g, ""); // Remove tudo que não é dígito
+    if (!numeroLimpo) return "";
+
+    const valorNumerico = parseFloat(numeroLimpo) / 100; // Divide por 100 para considerar centavos
+    return formatarPreco(valorNumerico);
+  };
   const {
     register,
     handleSubmit,
@@ -82,7 +107,13 @@ export default function CadastroVeiculo() {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key !== "imagem") {
-        formData.append(key, String(value));
+        // Se for o campo valor, converter de volta para número
+        if (key === "valor" && typeof value === "string") {
+          const valorNumerico = removerFormatacao(value);
+          formData.append(key, String(valorNumerico));
+        } else {
+          formData.append(key, String(value));
+        }
       }
     });
     console.log(files);
@@ -168,10 +199,20 @@ export default function CadastroVeiculo() {
             )}
           </div>
           <div className="w-full">
-            <Input
-              className={errors.valor ? "border-error border-dashed" : ""}
-              placeholder="Valor do veículo"
-              {...register("valor")}
+            <Controller
+              control={control}
+              name="valor"
+              render={({ field }) => (
+                <Input
+                  className={errors.valor ? "border-error border-dashed" : ""}
+                  placeholder="Valor do veículo"
+                  value={field.value || ""}
+                  onChange={(e) => {
+                    const valorFormatado = formatarValorInput(e.target.value);
+                    field.onChange(valorFormatado);
+                  }}
+                />
+              )}
             />
             {errors.valor && (
               <p className="text-sm text-error ml-2">{errors.valor.message}</p>

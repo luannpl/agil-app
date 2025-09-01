@@ -10,15 +10,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Calendar, Car, ChartCandlestick, MapPin } from "lucide-react";
 import { Veiculo } from "@/types/veiculo";
+import { formatarPreco } from "@/utils/formatarPreco";
 
 export default function CardVeiculos(props: Veiculo) {
-  const formatarPreco = (valor: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(valor);
-  };
-
   return (
     <>
       <Link href={`/veiculo/${props.id}`}>
@@ -66,7 +60,7 @@ export default function CardVeiculos(props: Veiculo) {
                 </p>
                 <p className="flex items-center gap-1">
                   <MapPin className="h-4 w-4 text-gray-500" />
-                  {props.localizacao}
+                  {props.localizacao || "Fortaleza - CE"}
                 </p>
               </div>
             </div>
