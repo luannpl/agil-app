@@ -17,7 +17,7 @@ export default function CardVeiculos(props: Veiculo) {
     <>
       <Link href={`/veiculo/${props.id}`}>
         <Card className="h-full overflow-hidden hover:shadow-xl hover:shadow-yellow-500/20 transition-shadow duration-300">
-          <div className="relative aspect-[5/3] overflow-hidden">
+          <div className="relative aspect-[4/3] overflow-hidden">
             <Image
               src={props.imagem}
               alt={props.nome}
@@ -56,7 +56,7 @@ export default function CardVeiculos(props: Veiculo) {
               <div className="">
                 <p className="flex items-center gap-1">
                   <ChartCandlestick className="h-4 w-4 text-gray-500" />
-                  {props.sistema}
+                  <span className="capitalize">{props.sistema}</span>
                 </p>
                 <p className="flex items-center gap-1">
                   <MapPin className="h-4 w-4 text-gray-500" />
