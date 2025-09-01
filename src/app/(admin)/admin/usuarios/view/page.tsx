@@ -24,7 +24,7 @@ export default function ListaUsuarios() {
   );
 
   const columns = useColumns<UsuarioResponse>(usuarios ?? [], "usuarios", {
-    only: ["id", "nome", "email", "tipo"],
+    only: ["id", "nome", "email"],
   });
   return (
     <div className="p-4">
