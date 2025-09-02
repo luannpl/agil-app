@@ -15,7 +15,7 @@ export async function getVeiculosDestaques(): Promise<Veiculo[]> {
   return data;
 }
 
-export async function getVeiculoById(id: string): Promise<VeiculoFormValues> {
+export async function getVeiculoById(id: string): Promise<Veiculo> {
   const { data } = await api.get(`/veiculos/${id}`);
   return data;
 }

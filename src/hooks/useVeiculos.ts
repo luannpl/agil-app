@@ -25,7 +25,7 @@ export function useVeiculos() {
 
 // GET um veículo por ID
 export function useVeiculo(id: string) {
-  return useQuery<VeiculoFormValues>({
+  return useQuery<Veiculo>({
     queryKey: ["veiculo", id],
     queryFn: () => getVeiculoById(id),
     enabled: !!id, // só faz a requisição se o ID existir

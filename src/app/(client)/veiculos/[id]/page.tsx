@@ -1,49 +1,30 @@
-import { Calendar, Fuel, Gauge, MapPin, Phone, Mail } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+"use client";
 
-// Mock data - em um projeto real, isso viria de uma API ou banco de dados
-const vehicleData = {
-  name: "Corolla XEi",
-  brand: "Toyota",
-  year: 2022,
-  price: 89900,
-  mileage: 25000,
-  fuel: "Flex",
-  transmission: "Automático",
-  color: "Prata",
-  location: "São Paulo - SP",
-  images: [
-    "/jeep.jpeg",
-  ],
-  features: [
-    "Ar condicionado",
-    "Direção hidráulica",
-    "Vidros elétricos",
-    "Trava elétrica",
-    "Airbag duplo",
-    "ABS",
-    "Som original",
-    "Rodas de liga leve",
-  ],
-  description: "Veículo em excelente estado de conservação, revisões em dia, único dono. Aceito financiamento e troca.",
-  seller: {
-    name: "João Silva",
-    phone: "(11) 99999-9999",
-    email: "joao@agilveiculos.com.br",
-  },
-}
+import { Calendar, Fuel, Gauge, MapPin, Phone, Mail, Cog } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useVeiculo } from "@/hooks/useVeiculos";
+import { formatarPreco } from "@/utils/formatarPreco";
+import { use } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default async function VehicleDetailsPage({
+export default function VehicleDetailsPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
-  return (
-     <div className="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8 py-14">
+  const { id } = use(params);
+  const { data: veiculo, isLoading } = useVeiculo(id);
 
+  if (isLoading)
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Skeleton className="h-32 w-32 rounded-full" />
+      </div>
+    );
+  return (
+    <div className="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8 py-14">
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Coluna principal - Imagens e detalhes */}
@@ -53,14 +34,14 @@ export default async function VehicleDetailsPage({
               <CardContent className="p-0">
                 <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
                   <img
-                    key={id}
-                    src={vehicleData.images[0] || "/placeholder.svg"}
-                    alt={vehicleData.name}
+                    key={veiculo?.id}
+                    src={veiculo?.imagem || "/placeholder.svg"}
+                    alt={veiculo?.nome}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="grid grid-cols-4 gap-2 p-4">
-                  {vehicleData.images.slice(1).map((image, index) => (
+                {/* <div className="grid grid-cols-4 gap-2 p-4">
+                  {veiculo?.imagens.slice(1).map((image, index) => (
                     <div
                       key={index}
                       className="aspect-video bg-gray-200 rounded overflow-hidden cursor-pointer hover:opacity-80"
@@ -70,10 +51,9 @@ export default async function VehicleDetailsPage({
                         alt={`${vehicleData.name} - ${index + 2}`}
                         className="w-full h-full object-cover"
                       />
-
                     </div>
                   ))}
-                </div>
+                </div> */}
               </CardContent>
             </Card>
 
@@ -83,19 +63,19 @@ export default async function VehicleDetailsPage({
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                      {vehicleData.brand} {vehicleData.name}
+                      {veiculo?.marca} {veiculo?.nome}
                     </h1>
                     <div className="flex items-center gap-2 text-gray-600">
                       <MapPin className="w-4 h-4" />
-                      {vehicleData.location}
+                      Fortaleza - CE
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="text-3xl font-bold text-yellow-600">
-                      R$ {vehicleData.price.toLocaleString("pt-BR")}
+                      {veiculo && <span>{formatarPreco(veiculo.valor)}</span>}
                     </div>
                     <Badge variant="secondary" className="mt-1">
-                      {vehicleData.year}
+                      {veiculo?.ano}
                     </Badge>
                   </div>
                 </div>
@@ -106,28 +86,30 @@ export default async function VehicleDetailsPage({
                     <Calendar className="w-5 h-5 text-gray-500" />
                     <div>
                       <div className="text-sm text-gray-500">Ano</div>
-                      <div className="font-semibold">{vehicleData.year}</div>
+                      <div className="font-semibold">{veiculo?.ano}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 p-3 bg-demo rounded-lg">
                     <Gauge className="w-5 h-5 text-gray-500" />
                     <div>
                       <div className="text-sm text-gray-500">KM</div>
-                      <div className="font-semibold">{vehicleData.mileage.toLocaleString("pt-BR")}</div>
+                      <div className="font-semibold">
+                        {veiculo?.quilometragem.toLocaleString("pt-BR")}
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 p-3 bg-demo rounded-lg">
                     <Fuel className="w-5 h-5 text-gray-500" />
                     <div>
                       <div className="text-sm text-gray-500">Combustível</div>
-                      <div className="font-semibold">{vehicleData.fuel}</div>
+                      <div className="font-semibold">{veiculo?.tipo}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 p-3 bg-demo rounded-lg">
-                    <div className="w-5 h-5 text-gray-500">⚙️</div>
+                    <Cog className="w-5 h-5 text-gray-500" />
                     <div>
                       <div className="text-sm text-gray-500">Câmbio</div>
-                      <div className="font-semibold">{vehicleData.transmission}</div>
+                      <div className="font-semibold">{veiculo?.tipo}</div>
                     </div>
                   </div>
                 </div>
@@ -135,7 +117,9 @@ export default async function VehicleDetailsPage({
                 {/* Descrição */}
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-3">Descrição</h3>
-                  <p className="text-gray-600 leading-relaxed">{vehicleData.description}</p>
+                  <p className="text-gray-600 leading-relaxed">
+                    {veiculo?.descricao}
+                  </p>
                 </div>
 
                 {/* Características */}
@@ -167,7 +151,7 @@ export default async function VehicleDetailsPage({
                     </div>
                     <div>
                       <div className="text-sm text-gray-500">Telefone</div>
-                      <div className="font-semibold">{vehicleData.seller.phone}</div>
+                      <div className="font-semibold">telefone</div>
                     </div>
                   </div>
 
@@ -177,7 +161,7 @@ export default async function VehicleDetailsPage({
                     </div>
                     <div>
                       <div className="text-sm text-gray-500">E-mail</div>
-                      <div className="font-semibold text-sm">{vehicleData.seller.email}</div>
+                      <div className="font-semibold text-sm">email</div>
                     </div>
                   </div>
                 </div>
@@ -188,15 +172,15 @@ export default async function VehicleDetailsPage({
                     Ligar agora
                   </Button>
 
-                  <Button
-                    variant="outline"
-                    className="w-full "
-                  >
+                  <Button variant="outline" className="w-full ">
                     <Mail className="w-4 h-4 mr-2" />
                     Enviar e-mail
                   </Button>
 
-                  <Button variant="outline" className="w-full font-semibold py-3 bg-transparent">
+                  <Button
+                    variant="outline"
+                    className="w-full font-semibold py-3 bg-transparent"
+                  >
                     💬 WhatsApp
                   </Button>
                 </div>
@@ -212,17 +196,21 @@ export default async function VehicleDetailsPage({
 
             <Card>
               <CardContent className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Simule seu financiamento</h3>
+                <h3 className="text-lg font-semibold mb-4">
+                  Simule seu financiamento
+                </h3>
                 <div className="space-y-3">
                   <div className="text-center p-4 bg-demo rounded-lg">
                     <div className="text-2xl font-bold text-gray-800">
-                      R$ {Math.round(vehicleData.price * 0.15).toLocaleString("pt-BR")}
+                      {veiculo && <span>{formatarPreco(veiculo.valor)}</span>}
                     </div>
-                    <div className="text-sm text-gray-500">Entrada sugerida (15%)</div>
+                    <div className="text-sm text-gray-500">
+                      Entrada sugerida (15%)
+                    </div>
                   </div>
                   <div className="text-center p-4 bg-demo rounded-lg">
                     <div className="text-2xl font-bold text-gray-800">
-                      R$ {Math.round((vehicleData.price * 0.85) / 48).toLocaleString("pt-BR")}
+                      {veiculo && <span>{formatarPreco(veiculo.valor)}</span>}
                     </div>
                     <div className="text-sm text-gray-500">48x sem juros*</div>
                   </div>
@@ -236,5 +224,5 @@ export default async function VehicleDetailsPage({
         </div>
       </div>
     </div>
-  )
+  );
 }
