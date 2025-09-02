@@ -15,7 +15,7 @@ import { formatarPreco } from "@/utils/formatarPreco";
 export default function CardVeiculos(props: Veiculo) {
   return (
     <>
-      <Link href={`/veiculo/${props.id}`}>
+      <Link href={`/veiculos/${props.id}`}>
         <Card className="h-full overflow-hidden hover:shadow-xl hover:shadow-yellow-500/20 transition-shadow duration-300">
           <div className="relative aspect-[4/3] overflow-hidden">
             <Image
