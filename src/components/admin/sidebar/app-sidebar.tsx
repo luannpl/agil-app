@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { toast } from "sonner"; // IMPORTANTE: Importe o 'toast' da sua biblioteca de notificações (ex: sonner, react-toastify)
 
@@ -33,6 +33,7 @@ import {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, isLoading, refetchUser } = useAuth();
   const { mutate: logout } = useLogoutUsuario();
 
@@ -234,7 +235,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarGroup>
               <SidebarGroupLabel
                 asChild
-                className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
+                className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-md font-extrabold"
               >
                 <CollapsibleTrigger>
                   {item.title}{" "}
@@ -246,7 +247,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenu>
                     {item.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === item.url}
+                        >
                           <Link prefetch href={item.url}>
                             {item.title}
                           </Link>
