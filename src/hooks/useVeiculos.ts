@@ -6,6 +6,7 @@ import {
   createVeiculo,
   updateVeiculo,
   deleteVeiculo,
+  getVeiculosDestaques,
 } from "@/services/veiculos/veiculosService";
 import {
   CreateVeiculoResponse,
@@ -28,6 +29,13 @@ export function useVeiculo(id: string) {
     queryKey: ["veiculo", id],
     queryFn: () => getVeiculoById(id),
     enabled: !!id, // só faz a requisição se o ID existir
+  });
+}
+
+export function useVeiculosDestaques() {
+  return useQuery<Veiculo[]>({
+    queryKey: ["veiculosDestaques"],
+    queryFn: getVeiculosDestaques,
   });
 }
 

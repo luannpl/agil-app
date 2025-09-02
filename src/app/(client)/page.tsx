@@ -4,69 +4,30 @@ import CardVeiculos from "@/components/client/cardVeiculos/cardVeiculos";
 import HeroSection from "@/components/client/hero-section/hero-section";
 import Marcas from "@/components/client/marcas/marcas";
 import { Button } from "@/components/ui/button";
-import { Veiculo } from "@/types/veiculo";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useVeiculosDestaques } from "@/hooks/useVeiculos";
 import { MoveRight, Car } from "lucide-react";
 import Link from "next/link";
 
 export default function HomeClient() {
-  const veiculos: Veiculo[] = [
-    {
-      id: "1",
-      nome: "Jeep Renegade Sport",
-      descricao: "2.0 16V DIESEL LIMITED 4X4 AUTOMÁTICO",
-      ano: 2020,
-      valor: 80000,
-      quilometragem: 54000,
-      sistema: "Automático",
-      localizacao: "Fortaleza - CE",
-      imagem: "/jeep.jpeg",
-      cor: "preto",
-      marca: "jeep",
-      tipo: "carro",
-    },
-    {
-      id: "2",
-      nome: "Honda Civic Touring",
-      descricao: "1.5 TURBO 16V CVT",
-      ano: 2022,
-      valor: 120000,
-      quilometragem: 25000,
-      sistema: "CVT",
-      localizacao: "São Paulo - SP",
-      imagem: "/jeep.jpeg",
-      cor: "branco",
-      marca: "honda",
-      tipo: "carro",
-    },
-    {
-      id: "3",
-      nome: "Toyota Corolla XEI",
-      descricao: "2.0 16V FLEX AUTOMÁTICO",
-      ano: 2021,
-      valor: 95000,
-      quilometragem: 35000,
-      sistema: "Automático",
-      localizacao: "Rio de Janeiro - RJ",
-      imagem: "/jeep.jpeg",
-      cor: "prata",
-      marca: "toyota",
-      tipo: "carro",
-    },
-    {
-      id: "4",
-      nome: "Ford Ka SE Plus",
-      descricao: "1.0 12V FLEX MANUAL",
-      ano: 2019,
-      valor: 45000,
-      quilometragem: 68000,
-      sistema: "Manual",
-      localizacao: "Belo Horizonte - MG",
-      imagem: "/jeep.jpeg",
-      cor: "vermelho",
-      marca: "ford",
-      tipo: "carro",
-    },
-  ];
+  const { data: veiculos, isLoading } = useVeiculosDestaques();
+
+  // Skeleton para os cards de veículos
+  const CardVeiculoSkeleton = () => (
+    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <Skeleton className="h-48 w-full" />
+      <div className="p-4 space-y-3">
+        <Skeleton className="h-6 w-3/4" />
+        <Skeleton className="h-4 w-1/2" />
+        <Skeleton className="h-4 w-full" />
+        <div className="flex justify-between items-center pt-2">
+          <Skeleton className="h-6 w-24" />
+          <Skeleton className="h-8 w-20" />
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div>
       <HeroSection />
@@ -77,9 +38,13 @@ export default function HomeClient() {
             Veículos em Destaque
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-            {veiculos.map((veiculo) => (
-              <CardVeiculos key={veiculo.id} {...veiculo} />
-            ))}
+            {isLoading
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  <CardVeiculoSkeleton key={index} />
+                ))
+              : veiculos?.map((veiculo) => (
+                  <CardVeiculos key={veiculo.id} {...veiculo} />
+                ))}
           </div>
         </div>
       </div>

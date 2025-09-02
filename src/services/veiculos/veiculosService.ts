@@ -10,6 +10,11 @@ export async function getVeiculos(): Promise<Veiculo[]> {
   return data;
 }
 
+export async function getVeiculosDestaques(): Promise<Veiculo[]> {
+  const { data } = await api.get("/veiculos/destaques");
+  return data;
+}
+
 export async function getVeiculoById(id: string): Promise<VeiculoFormValues> {
   const { data } = await api.get(`/veiculos/${id}`);
   return data;
