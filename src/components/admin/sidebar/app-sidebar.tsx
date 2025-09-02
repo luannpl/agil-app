@@ -123,6 +123,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   url: "/admin/usuarios/view",
                 },
                 {
+                  title: "Perfil",
+                  url: "/admin/usuarios/perfil",
+                },
+                {
                   title: "Dashboard",
                   url: "/admin/dashboard",
                 },
