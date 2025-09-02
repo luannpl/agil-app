@@ -11,6 +11,7 @@ export type Veiculo = {
   cor: string;
   marca: string;
   tipo: string;
+  vendido: boolean;
 };
 export type VeiculoFormValues = {
   nome: string;

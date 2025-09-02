@@ -21,6 +21,14 @@ export default function ListaVeiculos() {
     });
   };
 
+  const veiculosDisponiveis: Veiculo[] | undefined = veiculos?.filter(
+    (v) => v.vendido == false
+  );
+
+  const veiculosVendidos: Veiculo[] | undefined = veiculos?.filter(
+    (v) => v.vendido == true
+  );
+
   const columns = useColumns<Veiculo>(veiculos ?? [], "veiculos", {
     only: ["id", "nome", "ano", "valor"],
     onDelete: handleDelete,
@@ -35,10 +43,10 @@ export default function ListaVeiculos() {
           <TabsTrigger value="vendidos">Vendidos</TabsTrigger>
         </TabsList>
         <TabsContent value="disponiveis">
-          <DataTable columns={columns} data={veiculos ?? []} />
+          <DataTable columns={columns} data={veiculosDisponiveis ?? []} />
         </TabsContent>
         <TabsContent value="vendidos">
-          <DataTable columns={columns} data={veiculos ?? []} />
+          <DataTable columns={columns} data={veiculosVendidos ?? []} />
         </TabsContent>
       </Tabs>
     </div>
