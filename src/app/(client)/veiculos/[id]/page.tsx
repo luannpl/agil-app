@@ -1,6 +1,15 @@
 "use client";
 
-import { Calendar, Fuel, Gauge, MapPin, Phone, Mail, Cog } from "lucide-react";
+import {
+  Calendar,
+  Fuel,
+  Gauge,
+  MapPin,
+  Phone,
+  Mail,
+  Cog,
+  MessageCircleMore,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +17,10 @@ import { useVeiculo } from "@/hooks/useVeiculos";
 import { formatarPreco } from "@/utils/formatarPreco";
 import { use } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function VehicleDetailsPage({
   params,
@@ -32,12 +45,12 @@ export default function VehicleDetailsPage({
             {/* Galeria de imagens */}
             <Card>
               <CardContent className="p-0">
-                <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
+                <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
                   <img
                     key={veiculo?.id}
                     src={veiculo?.imagem || "/placeholder.svg"}
                     alt={veiculo?.nome}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-lg"
                   />
                 </div>
                 {/* <div className="grid grid-cols-4 gap-2 p-4">
@@ -62,12 +75,12 @@ export default function VehicleDetailsPage({
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                    <h1 className="text-3xl font-bold text-gray-500 mb-2">
                       {veiculo?.marca} {veiculo?.nome}
                     </h1>
                     <div className="flex items-center gap-2 text-gray-600">
                       <MapPin className="w-4 h-4" />
-                      Fortaleza - CE
+                      {veiculo?.localizacao}
                     </div>
                   </div>
                   <div className="text-right">
@@ -102,14 +115,18 @@ export default function VehicleDetailsPage({
                     <Fuel className="w-5 h-5 text-gray-500" />
                     <div>
                       <div className="text-sm text-gray-500">Combustível</div>
-                      <div className="font-semibold">{veiculo?.tipo}</div>
+                      <div className="font-semibold capitalize">
+                        {veiculo?.combustivel}
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 p-3 bg-demo rounded-lg">
                     <Cog className="w-5 h-5 text-gray-500" />
                     <div>
                       <div className="text-sm text-gray-500">Câmbio</div>
-                      <div className="font-semibold">{veiculo?.tipo}</div>
+                      <div className="font-semibold capitalize">
+                        {veiculo?.sistema}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -117,7 +134,7 @@ export default function VehicleDetailsPage({
                 {/* Descrição */}
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-3">Descrição</h3>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-500 leading-relaxed">
                     {veiculo?.descricao}
                   </p>
                 </div>
@@ -142,47 +159,60 @@ export default function VehicleDetailsPage({
           <div className="space-y-6">
             <Card className="top-4">
               <CardContent className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Entre em contato</h3>
+                <h3 className="text-lg font-semibold mb-4">Comprar Agora</h3>
 
                 <div className="space-y-4 mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                      <Phone className="w-5 h-5 text-yellow-600" />
+                    <div className="w-10 h-10 border rounded-full flex items-center justify-center hover:bg-gray-800 transition-colors">
+                      <MessageCircleMore className="w-5 h-5 text-yellow-600" />
                     </div>
                     <div>
                       <div className="text-sm text-gray-500">Telefone</div>
-                      <div className="font-semibold">telefone</div>
+                      <div className="font-semibold">
+                        {veiculo ? veiculo.usuario?.telefone : "N/A"}
+                      </div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 border rounded-full flex items-center justify-center hover:bg-gray-800 transition-colors">
                       <Mail className="w-5 h-5 text-yellow-600" />
                     </div>
                     <div>
                       <div className="text-sm text-gray-500">E-mail</div>
-                      <div className="font-semibold text-sm">email</div>
+                      <div className="font-semibold text-sm">
+                        {veiculo ? veiculo.usuario?.email : "N/A"}
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3">
-                    <Phone className="w-4 h-4 mr-2" />
-                    Ligar agora
-                  </Button>
+                <div className="space-y-3 flex flex-col gap-0.5">
+                  <Link
+                    href={`https://wa.me//55${veiculo?.usuario?.telefone}?text=Olá,%20vim%20pelo%20site%20e%20quero%20saber%20mais%20sobre%20o%20${veiculo?.marca}%20${veiculo?.nome}`}
+                  >
+                    <Button
+                      variant="auth"
+                      className="w-full font-semibold py-3"
+                    >
+                      <MessageCircleMore className="w-5 h-5 " /> WhatsApp
+                    </Button>
+                  </Link>
+                  <a
+                    href={`tel:+55${veiculo?.usuario?.telefone}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button variant="outline" className="w-full">
+                      <Phone className="w-4 h-4 " />
+                      Ligar agora
+                    </Button>
+                  </a>
 
-                  <Button variant="outline" className="w-full ">
+                  {/* <Button variant="outline" className="w-full ">
                     <Mail className="w-4 h-4 mr-2" />
                     Enviar e-mail
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    className="w-full font-semibold py-3 bg-transparent"
-                  >
-                    💬 WhatsApp
-                  </Button>
+                  </Button> */}
                 </div>
 
                 {/* <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
@@ -196,27 +226,37 @@ export default function VehicleDetailsPage({
 
             <Card>
               <CardContent className="p-6">
-                <h3 className="text-lg font-semibold mb-4">
-                  Simule seu financiamento
-                </h3>
-                <div className="space-y-3">
-                  <div className="text-center p-4 bg-demo rounded-lg">
-                    <div className="text-2xl font-bold text-gray-800">
-                      {veiculo && <span>{formatarPreco(veiculo.valor)}</span>}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      Entrada sugerida (15%)
-                    </div>
-                  </div>
-                  <div className="text-center p-4 bg-demo rounded-lg">
-                    <div className="text-2xl font-bold text-gray-800">
-                      {veiculo && <span>{formatarPreco(veiculo.valor)}</span>}
-                    </div>
-                    <div className="text-sm text-gray-500">48x sem juros*</div>
-                  </div>
-                  <Button variant="outline" className="w-full bg-transparent">
-                    Simular financiamento
-                  </Button>
+                <h3 className="text-lg font-semibold mb-4">Entre em Contato</h3>
+
+                <div className="text-sm text-gray-500">
+                  <form action="">
+                    <Label className="mb-2">Nome</Label>
+                    <Input
+                      className="mb-4"
+                      type="text"
+                      placeholder="Digite seu nome"
+                    />
+                    <Label className="mb-2">Email</Label>
+                    <Input
+                      className="mb-4"
+                      type="email"
+                      placeholder="Digite seu email"
+                    />
+                    <Label className="mb-2">Telefone</Label>
+                    <Input
+                      className="mb-4"
+                      type="text"
+                      placeholder="Digite seu telefone"
+                    />
+                    <Label className="mb-2">Mensagem</Label>
+                    <Textarea
+                      className="focus-visible:ring-yellow-500 focus-visible:border-yellow-500 min-h-[120px] mb-4"
+                      placeholder="Escreva sua mensagem aqui..."
+                    ></Textarea>
+                    <Button variant="outline" className="w-full bg-transparent">
+                      Enviar Mensagem
+                    </Button>
+                  </form>
                 </div>
               </CardContent>
             </Card>

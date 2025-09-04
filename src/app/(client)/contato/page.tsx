@@ -102,22 +102,21 @@ export default function Contato() {
                 <Input
                   type="text"
                   className="focus-visible:ring-yellow-500 focus-visible:border-yellow-500"
-                  required
                 />
               </div>
               <div className="flex flex-col gap-2">
                 <Label className="font-medium">Email</Label>
-                <Input type="email" required />
+                <Input type="email" />
               </div>
               <div className="flex flex-col gap-2">
                 <Label className="font-medium">Telefone</Label>
-                <Input type="text" required />
+                <Input type="text" />
               </div>
               <div className="flex flex-col gap-2">
                 <Label className="font-medium">Mensagem</Label>
                 <Textarea
                   className="focus-visible:ring-yellow-500 focus-visible:border-yellow-500 min-h-[120px]"
-                  required
+                  placeholder="Escreva sua mensagem aqui..."
                 ></Textarea>
               </div>
               <Button type="submit" variant="auth" className="w-full">

@@ -1,3 +1,5 @@
+import { Usuario } from "./usuario";
+
 export type Veiculo = {
   id: string;
   nome: string;
@@ -12,6 +14,8 @@ export type Veiculo = {
   marca: string;
   tipo: string;
   vendido: boolean;
+  combustivel: string;
+  usuario: Usuario;
 };
 export type VeiculoFormValues = {
   nome: string;
