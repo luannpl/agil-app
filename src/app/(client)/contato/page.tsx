@@ -4,8 +4,41 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useCreateContato } from "@/hooks/useContato";
+import { Contato } from "@/types/contato";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
 
-export default function Contato() {
+const contatoSchema = z.object({
+  nome: z.string().min(1, "Nome é obrigatório"),
+  email: z.string().min(1, "Email é obrigatório").email("Email inválido"),
+  telefone: z.string().min(1, "Telefone é obrigatório"),
+  mensagem: z.string().min(1, "Mensagem é obrigatória"),
+});
+
+export default function ContatoPage() {
+  const {
+    register,
+    handleSubmit,
+    // formState: { errors },
+  } = useForm<Contato>({
+    mode: "onSubmit",
+    resolver: zodResolver(contatoSchema),
+  });
+  const { mutate: createContato, isPending } = useCreateContato();
+  const handleCreateContato = (data: Contato) => {
+    createContato(data, {
+      onSuccess: async () => {
+        toast.success("Contato enviado com sucesso");
+      },
+      onError: () => {
+        toast.error("Erro ao enviar contato");
+      },
+    });
+  };
+
   const contactMethods = [
     {
       icon: (
@@ -96,31 +129,49 @@ export default function Contato() {
             </div>
           </div>
           <div className="flex-1 mt-12 sm:max-w-lg lg:max-w-md">
-            <form onSubmit={(e) => e.preventDefault()} className="space-y-5">
+            <form
+              onSubmit={handleSubmit(handleCreateContato)}
+              className="space-y-5"
+            >
               <div className="flex flex-col gap-2">
                 <Label className="font-medium">Nome Completo</Label>
                 <Input
                   type="text"
                   className="focus-visible:ring-yellow-500 focus-visible:border-yellow-500"
+                  {...register("nome")}
                 />
               </div>
               <div className="flex flex-col gap-2">
                 <Label className="font-medium">Email</Label>
-                <Input type="email" />
+                <Input
+                  type="email"
+                  className="focus-visible:ring-yellow-500 focus-visible:border-yellow-500"
+                  {...register("email")}
+                />
               </div>
               <div className="flex flex-col gap-2">
                 <Label className="font-medium">Telefone</Label>
-                <Input type="text" />
+                <Input
+                  type="text"
+                  className="focus-visible:ring-yellow-500 focus-visible:border-yellow-500"
+                  {...register("telefone")}
+                />
               </div>
               <div className="flex flex-col gap-2">
                 <Label className="font-medium">Mensagem</Label>
                 <Textarea
                   className="focus-visible:ring-yellow-500 focus-visible:border-yellow-500 min-h-[120px]"
                   placeholder="Escreva sua mensagem aqui..."
+                  {...register("mensagem")}
                 ></Textarea>
               </div>
-              <Button type="submit" variant="auth" className="w-full">
-                Enviar
+              <Button
+                type="submit"
+                variant="auth"
+                className="w-full"
+                disabled={isPending}
+              >
+                {isPending ? "Enviando..." : "Enviar Mensagem"}
               </Button>
             </form>
           </div>

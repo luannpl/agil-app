@@ -21,6 +21,19 @@ import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import z from "zod";
+import { useForm } from "react-hook-form";
+import { Contato } from "@/types/contato";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useCreateContato } from "@/hooks/useContato";
+import { toast } from "sonner";
+
+const contatoSchema = z.object({
+  nome: z.string().min(1, "Nome é obrigatório"),
+  email: z.string().min(1, "Email é obrigatório").email("Email inválido"),
+  telefone: z.string().min(1, "Telefone é obrigatório"),
+  mensagem: z.string().min(1, "Mensagem é obrigatória"),
+});
 
 export default function VehicleDetailsPage({
   params,
@@ -29,6 +42,26 @@ export default function VehicleDetailsPage({
 }) {
   const { id } = use(params);
   const { data: veiculo, isLoading } = useVeiculo(id);
+
+  const {
+    register,
+    handleSubmit,
+    // formState: { errors },
+  } = useForm<Contato>({
+    mode: "onSubmit",
+    resolver: zodResolver(contatoSchema),
+  });
+  const { mutate: createContato, isPending } = useCreateContato();
+  const handleCreateContato = (data: Contato) => {
+    createContato(data, {
+      onSuccess: async () => {
+        toast.success("Contato enviado com sucesso");
+      },
+      onError: () => {
+        toast.error("Erro ao enviar contato");
+      },
+    });
+  };
 
   if (isLoading)
     return (
@@ -229,32 +262,43 @@ export default function VehicleDetailsPage({
                 <h3 className="text-lg font-semibold mb-4">Entre em Contato</h3>
 
                 <div className="text-sm text-gray-500">
-                  <form action="">
+                  <form
+                    onSubmit={handleSubmit(handleCreateContato)}
+                    className="flex flex-col"
+                  >
                     <Label className="mb-2">Nome</Label>
                     <Input
                       className="mb-4"
                       type="text"
                       placeholder="Digite seu nome"
+                      {...register("nome")}
                     />
                     <Label className="mb-2">Email</Label>
                     <Input
                       className="mb-4"
                       type="email"
                       placeholder="Digite seu email"
+                      {...register("email")}
                     />
                     <Label className="mb-2">Telefone</Label>
                     <Input
                       className="mb-4"
                       type="text"
                       placeholder="Digite seu telefone"
+                      {...register("telefone")}
                     />
                     <Label className="mb-2">Mensagem</Label>
                     <Textarea
                       className="focus-visible:ring-yellow-500 focus-visible:border-yellow-500 min-h-[120px] mb-4"
                       placeholder="Escreva sua mensagem aqui..."
+                      {...register("mensagem")}
                     ></Textarea>
-                    <Button variant="outline" className="w-full bg-transparent">
-                      Enviar Mensagem
+                    <Button
+                      variant="outline"
+                      className="w-full bg-transparent"
+                      disabled={isPending}
+                    >
+                      {isPending ? "Enviando..." : "Enviar Mensagem"}
                     </Button>
                   </form>
                 </div>
