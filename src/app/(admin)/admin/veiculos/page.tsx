@@ -39,6 +39,15 @@ const veiculoSchema = z.object({
     }, "Valor deve ser maior que zero"),
   cor: z.string().min(1, "Cor é obrigatória"),
   quilometragem: z.coerce.number().min(1, "Quilometragem é obrigatória"),
+  localizacao: z.string().min(1, "Localização é obrigatória"),
+  combustivel: z.enum(
+    ["gasolina", "diesel", "etanol", "flex", "eletrico", "hibrido"],
+    {
+      errorMap: () => {
+        return { message: "Combustível é obrigatório" };
+      },
+    }
+  ),
   tipo: z.enum(["carro", "moto", "caminhao"], {
     errorMap: (issue) => {
       if (issue.code === "invalid_type") {
@@ -54,7 +63,7 @@ const veiculoSchema = z.object({
       "cvt",
       "semi-automatico",
       "carburador",
-      "injetado",
+      "injeção",
     ],
     {
       errorMap: () => {
@@ -99,6 +108,9 @@ export default function CadastroVeiculo() {
   } = useForm<VeiculoFormData>({
     mode: "onSubmit",
     resolver: zodResolver(veiculoSchema),
+    defaultValues: {
+      localizacao: "Fortaleza - CE",
+    },
   });
 
   const { mutate: cadastrarVeiculo, isPending } = useCreateVeiculo();
@@ -242,6 +254,52 @@ export default function CadastroVeiculo() {
             {errors.quilometragem && (
               <p className="text-sm text-error ml-2">
                 {errors.quilometragem.message}
+              </p>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="w-full">
+            <Input
+              className={errors.localizacao ? "border-error border-dashed" : ""}
+              placeholder="Localização do veículo"
+              {...register("localizacao")}
+            />
+            {errors.localizacao && (
+              <p className="text-sm text-error ml-2">
+                {errors.localizacao.message}
+              </p>
+            )}
+          </div>
+          <div className="w-full">
+            <Controller
+              control={control}
+              name="combustivel"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger
+                    className={
+                      errors.combustivel
+                        ? "border-error border-dashed w-full"
+                        : "w-full"
+                    }
+                  >
+                    <SelectValue placeholder="Escolha o combustível do veículo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="gasolina">Gasolina</SelectItem>
+                    <SelectItem value="diesel">Diesel</SelectItem>
+                    <SelectItem value="etanol">Etanol</SelectItem>
+                    <SelectItem value="flex">Flex</SelectItem>
+                    <SelectItem value="eletrico">Elétrico</SelectItem>
+                    <SelectItem value="hibrido">Híbrido</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.combustivel && (
+              <p className="text-sm text-error ml-2">
+                {errors.combustivel.message}
               </p>
             )}
           </div>
