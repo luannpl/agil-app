@@ -16,7 +16,7 @@ export default function CardVeiculos(props: Veiculo) {
   return (
     <>
       <Link href={`/veiculos/${props.id}`}>
-        <Card className="h-full overflow-hidden hover:shadow-xl hover:shadow-yellow-500/20 transition-shadow duration-300">
+        <Card className="h-full overflow-hidden hover:shadow-xl hover:shadow-yellow-500/20 transition-shadow duration-300 bg-gradient-to-br from-zinc-900 to-zinc-800 ">
           <div className="relative aspect-[4/3] overflow-hidden">
             <Image
               src={props.imagem}

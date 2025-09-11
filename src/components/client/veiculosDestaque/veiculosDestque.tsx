@@ -1,6 +1,10 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Veiculo } from "@/types/veiculo";
 import CardVeiculos from "../cardVeiculos/cardVeiculos";
+import {
+  EmptyStateCard,
+  EmptyCardVariant,
+} from "../emptyStateCard/emptyStateCard";
 
 type Props = {
   isLoading: boolean;
@@ -8,7 +12,38 @@ type Props = {
 };
 
 export default function VeiculosDestaque({ isLoading, veiculos }: Props) {
-  // Skeleton para os cards de veículos
+  const renderSkeletons = () =>
+    Array.from({ length: 4 }).map((_, index) => (
+      <CardVeiculoSkeleton key={index} />
+    ));
+
+  const renderVeiculos = () => {
+    const veiculosExibidos = veiculos?.slice(0, 4) || [];
+    const cardsRestantes = 4 - veiculosExibidos.length;
+
+    const emptyStateVariants: EmptyCardVariant[] = [
+      "coming-soon",
+      "cta",
+      "testimonial",
+      "benefits",
+    ];
+
+    return (
+      <>
+        {veiculosExibidos.map((veiculo) => (
+          <CardVeiculos key={veiculo.id} {...veiculo} />
+        ))}
+        {cardsRestantes > 0 &&
+          Array.from({ length: cardsRestantes }).map((_, index) => (
+            <EmptyStateCard
+              key={`empty-${index}`}
+              variant={emptyStateVariants[index % emptyStateVariants.length]}
+            />
+          ))}
+      </>
+    );
+  };
+
   const CardVeiculoSkeleton = () => (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <Skeleton className="h-48 w-full" />
@@ -23,6 +58,7 @@ export default function VeiculosDestaque({ isLoading, veiculos }: Props) {
       </div>
     </div>
   );
+
   return (
     <div className="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8 py-14">
       <div className="w-full">
@@ -30,13 +66,7 @@ export default function VeiculosDestaque({ isLoading, veiculos }: Props) {
           Veículos em Destaque
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-          {isLoading
-            ? Array.from({ length: 4 }).map((_, index) => (
-                <CardVeiculoSkeleton key={index} />
-              ))
-            : veiculos?.map((veiculo) => (
-                <CardVeiculos key={veiculo.id} {...veiculo} />
-              ))}
+          {isLoading ? renderSkeletons() : renderVeiculos()}
         </div>
       </div>
     </div>

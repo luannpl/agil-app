@@ -19,7 +19,7 @@ export const HoverEffect = ({
   return (
     <div
       className={cn(
-        "grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4  py-0",
+        "grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4  py-0 ",
         className
       )}
     >
@@ -48,7 +48,7 @@ export const HoverEffect = ({
               />
             )}
           </AnimatePresence>
-          <Card>
+          <Card className="bg-gradient-to-br from-zinc-900 to-zinc-800">
             <CardTitle className="text-gray-400">{item.title}</CardTitle>
             <CardDescription className="text-gray-500">
               {item.description}
