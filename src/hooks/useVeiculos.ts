@@ -1,5 +1,10 @@
 // src/hooks/useVeiculos.ts
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import {
   getVeiculos,
   getVeiculoById,
@@ -24,11 +29,17 @@ export function useVeiculos() {
 }
 
 // GET um veículo por ID
-export function useVeiculo(id: string) {
-  return useQuery<Veiculo>({
+export function useVeiculo(
+  id: string | undefined
+): UseQueryResult<Veiculo, AxiosError> {
+  return useQuery<Veiculo, AxiosError>({
     queryKey: ["veiculo", id],
-    queryFn: () => getVeiculoById(id),
-    enabled: !!id, // só faz a requisição se o ID existir
+    queryFn: () => getVeiculoById(id!),
+    enabled: !!id,
+    retry: (failureCount, error) => {
+      if (error.response?.status === 404) return false;
+      return failureCount < 3;
+    },
   });
 }
 
