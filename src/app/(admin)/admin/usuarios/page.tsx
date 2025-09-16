@@ -17,16 +17,23 @@ import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
-const usuarioSchema = z.object({
-  nome: z.string().min(1, "Nome é obrigatório"),
-  email: z.string().email("Email inválido"),
-  senha: z.string().min(4, "Senha deve ter no mínimo 4 caracteres"),
-  tipo: z.enum(["admin", "vendedor", "despachante", "cliente"], {
-    errorMap: () => {
-      return { message: "Tipo é obrigatório" };
-    },
-  }),
-});
+const usuarioSchema = z
+  .object({
+    nome: z.string().min(1, "Nome é obrigatório"),
+    email: z.string().email("Email inválido"),
+    telefone: z.string().min(1, "Telefone é obrigatório"),
+    senha: z.string().min(4, "Senha deve ter no mínimo 4 caracteres"),
+    confirmarSenha: z.string().min(4, "Confirmação de senha é obrigatória"),
+    tipo: z.enum(["admin", "vendedor", "despachante", "cliente"], {
+      errorMap: () => {
+        return { message: "Tipo é obrigatório" };
+      },
+    }),
+  })
+  .refine((data) => data.senha === data.confirmarSenha, {
+    message: "As senhas não coincidem",
+    path: ["confirmarSenha"], // Define qual campo receberá a mensagem de erro e o foco
+  });
 
 type UsuarioFormData = z.infer<typeof usuarioSchema>;
 export default function CadastroUsuario() {
@@ -44,7 +51,6 @@ export default function CadastroUsuario() {
   const { mutate: cadastrarUsuario, isPending } = useCreateUsuario();
 
   const onSubmit = (data: UsuarioFormData) => {
-    console.log(data);
     cadastrarUsuario(data, {
       onSuccess: (res) => {
         toast.success(res.message || "Usuário cadastrado com sucesso!");
@@ -89,13 +95,15 @@ export default function CadastroUsuario() {
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="w-full">
             <Input
-              className={errors.senha ? "border-error border-dashed" : ""}
-              placeholder="Senha do usuário"
-              type="password"
-              {...register("senha")}
+              className={errors.telefone ? "border-error border-dashed" : ""}
+              placeholder="Telefone do usuário"
+              type="text"
+              {...register("telefone")}
             />
-            {errors.senha && (
-              <p className="text-sm text-error ml-2">{errors.senha.message}</p>
+            {errors.telefone && (
+              <p className="text-sm text-error ml-2">
+                {errors.telefone.message}
+              </p>
             )}
           </div>
           <div className="w-full">
@@ -124,6 +132,34 @@ export default function CadastroUsuario() {
             />
             {errors.tipo && (
               <p className="text-sm text-error ml-2">{errors.tipo.message}</p>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="w-full">
+            <Input
+              className={errors.senha ? "border-error border-dashed" : ""}
+              placeholder="Senha do usuário"
+              type="password"
+              {...register("senha")}
+            />
+            {errors.senha && (
+              <p className="text-sm text-error ml-2">{errors.senha.message}</p>
+            )}
+          </div>
+          <div className="w-full">
+            <Input
+              className={
+                errors.confirmarSenha ? "border-error border-dashed" : ""
+              }
+              placeholder="Confirme a senha do usuário"
+              type="password"
+              {...register("confirmarSenha")}
+            />
+            {errors.confirmarSenha && (
+              <p className="text-sm text-error ml-2">
+                {errors.confirmarSenha.message}
+              </p>
             )}
           </div>
         </div>
