@@ -13,6 +13,7 @@ export type Veiculo = {
   cor: string;
   marca: string;
   tipo: string;
+  placa: string;
   vendido: boolean;
   combustivel: string;
   usuario: Usuario;
