@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 // imports do shadcn para o modal
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import Link from "next/link";
 
 export default function DetalhesVeiculoPage() {
   const { id } = useParams();
@@ -46,7 +47,7 @@ export default function DetalhesVeiculoPage() {
   }
 
   return (
-    <div className="p-4">
+    <div className="p-4 bg-gray-600/5 rounded-lg backdrop-blur-md pb-8">
       <h1 className="text-2xl font-bold mb-4">Detalhes do Veículo </h1>
       {veiculo && (
         <div className="space-y-4">
@@ -133,13 +134,11 @@ export default function DetalhesVeiculoPage() {
 
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="w-full">
-              <Button
-                className="w-full"
-                variant="secondary"
-                onClick={() => router.back()}
-              >
-                Voltar
-              </Button>
+              <Link href="/admin/veiculos/view" className="w-full">
+                <Button className="w-full" variant="secondary">
+                  Voltar
+                </Button>
+              </Link>
             </div>
             <div className="w-full">
               <Button variant="auth" className="w-full">

@@ -220,10 +220,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const data = getNavigationData();
   return (
     <Sidebar {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="border-b border-b-foreground/10 bg-background/30">
         <VersionSwitcher user={user} />
       </SidebarHeader>
-      <SidebarContent className="gap-0">
+      <SidebarContent className="gap-0 bg-background/30">
         {/* We create a collapsible SidebarGroup for each parent. */}
         {data.navMain.map((item) => (
           <Collapsible
@@ -264,7 +264,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </Collapsible>
         ))}
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border-t border-t-foreground/10 bg-background/30 p-4">
         <Link prefetch href="/">
           <Button variant="outline" className="w-full">
             Ver Site
