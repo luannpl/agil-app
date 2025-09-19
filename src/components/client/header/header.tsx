@@ -5,15 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   const navigation = [
+    { title: "Home", path: "/" },
     { title: "Veiculos", path: "/veiculos" },
     { title: "Quem somos", path: "/sobre" },
     { title: "Contato", path: "/contato" },
-    { title: "Admin", path: "/admin" },
   ];
 
   return (
@@ -42,14 +44,22 @@ export default function Header() {
 
         <ul className="hidden md:flex flex-1 justify-between items-center">
           <div className="flex-1 flex justify-center items-center space-x-6">
-            {navigation.map((item, idx) => (
-              <li
-                className="text-gray-400 hover:text-yellow-500 transition-colors"
-                key={idx}
-              >
-                <Link href={item.path}>{item.title}</Link>
-              </li>
-            ))}
+            {navigation.map((item, idx) => {
+              const isActive = pathname === item.path;
+
+              return (
+                <li
+                  key={idx}
+                  className={`transition-colors ${
+                    isActive
+                      ? "text-yellow-500 font-semibold"
+                      : "text-gray-400 hover:text-yellow-500/75"
+                  } text-xl font-medium`}
+                >
+                  <Link href={item.path}>{item.title}</Link>
+                </li>
+              );
+            })}
           </div>
           <li>
             <Link href={"/login"}>
