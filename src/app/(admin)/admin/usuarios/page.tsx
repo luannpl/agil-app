@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useCreateUsuario } from "@/hooks/useUsuario";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -29,6 +30,15 @@ const usuarioSchema = z
         return { message: "Tipo é obrigatório" };
       },
     }),
+    dataNasc: z.string().optional(),
+    cpf: z.string().optional(),
+    rg: z.string().optional(),
+    cnh: z.string().optional(),
+    cep: z.string().optional(),
+    endereco: z.string().optional(),
+    numero: z.string().optional(),
+    complemento: z.string().optional(),
+    descricao: z.string().optional(),
   })
   .refine((data) => data.senha === data.confirmarSenha, {
     message: "As senhas não coincidem",
@@ -41,6 +51,7 @@ export default function CadastroUsuario() {
   const {
     register,
     handleSubmit,
+    watch,
     control,
     formState: { errors },
   } = useForm<UsuarioFormData>({
@@ -58,12 +69,22 @@ export default function CadastroUsuario() {
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onError: (error: AxiosError<any>) => {
-        toast.error(
-          error?.response?.data?.message || "Erro ao cadastrar usuário"
-        );
+        // Tenta extrair a mensagem de erro de várias formas
+        const responseData = error.response?.data;
+
+        const mensagem =
+          responseData?.error ||
+          responseData?.errors?.[0]?.message ||
+          responseData?.message ||
+          "Erro ao cadastrar usuário";
+
+        toast.error(mensagem);
       },
     });
   };
+
+  const tipoSelecionado = watch("tipo");
+
   return (
     <>
       <h1 className="text-2xl font-bold text-foreground">Cadastrar usuário</h1>
@@ -163,6 +184,110 @@ export default function CadastroUsuario() {
             )}
           </div>
         </div>
+        {tipoSelecionado === "cliente" && (
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="w-full">
+              <Input
+                className={errors.dataNasc ? "border-error border-dashed" : ""}
+                placeholder="Data de Nascimento"
+                type="date"
+                {...register("dataNasc")}
+              />
+              {errors.dataNasc && (
+                <p className="text-sm text-error ml-2">
+                  {errors.dataNasc.message}
+                </p>
+              )}
+            </div>
+            <div className="w-full">
+              <Input
+                className={errors.cpf ? "border-error border-dashed" : ""}
+                placeholder="CPF"
+                type="text"
+                {...register("cpf")}
+              />
+              {errors.cpf && (
+                <p className="text-sm text-error ml-2">{errors.cpf.message}</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {tipoSelecionado === "cliente" && (
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="w-full">
+              <Input
+                className={errors.rg ? "border-error border-dashed" : ""}
+                placeholder="RG"
+                type="text"
+                {...register("rg")}
+              />
+            </div>
+            <div className="w-full">
+              <Input
+                className={errors.cnh ? "border-error border-dashed" : ""}
+                placeholder="CNH"
+                type="text"
+                {...register("cnh")}
+              />
+            </div>
+          </div>
+        )}
+
+        {tipoSelecionado === "cliente" && (
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="w-full">
+                <Input
+                  className={errors.cep ? "border-error border-dashed" : ""}
+                  placeholder="CEP"
+                  type="text"
+                  {...register("cep")}
+                />
+              </div>
+              <div className="w-full">
+                <Input
+                  className={
+                    errors.endereco ? "border-error border-dashed" : ""
+                  }
+                  placeholder="Endereço"
+                  type="text"
+                  {...register("endereco")}
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="w-full">
+                <Input
+                  className={errors.numero ? "border-error border-dashed" : ""}
+                  placeholder="Número"
+                  type="text"
+                  {...register("numero")}
+                />
+              </div>
+              <div className="w-full">
+                <Input
+                  className={
+                    errors.complemento ? "border-error border-dashed" : ""
+                  }
+                  placeholder="Complemento"
+                  type="text"
+                  {...register("complemento")}
+                />
+              </div>
+            </div>
+
+            <div className="w-full">
+              <Textarea
+                className={errors.descricao ? "border-error border-dashed" : ""}
+                placeholder="Descrição"
+                {...register("descricao")}
+              />
+            </div>
+          </div>
+        )}
+
         <Button
           className="cursor-pointer text-white w-full"
           variant="auth"
