@@ -9,12 +9,12 @@ import Link from "next/link";
 
 export default function Marcas() {
   const marcas = [
-    { id: 1, name: "Fiat", logo: "/fiatLogo.svg" },
-    { id: 2, name: "Volkswagen", logo: "/volkswagenLogo.svg" },
-    { id: 3, name: "Chevrolet", logo: "/chevroletLogo.svg" },
-    { id: 4, name: "BMW", logo: "/bmwLogo.svg" },
-    { id: 5, name: "Audi", logo: "/audiLogo.svg" },
-    { id: 8, name: "Honda", logo: "/hondaLogo.svg" },
+    { id: 1, name: "Fiat", logo: "/agil-logo.png" },
+    // { id: 2, name: "Volkswagen", logo: "/volkswagenLogo.svg" },
+    // { id: 3, name: "Chevrolet", logo: "/chevroletLogo.svg" },
+    // { id: 4, name: "BMW", logo: "/bmwLogo.svg" },
+    // { id: 5, name: "Audi", logo: "/audiLogo.svg" },
+    // { id: 8, name: "Honda", logo: "/hondaLogo.svg" },
   ];
   return (
     <div className="mt-12 flex size-full items-center justify-center bg-background">

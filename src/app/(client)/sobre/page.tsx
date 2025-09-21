@@ -1,5 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Handshake, Heart, Medal } from "lucide-react";
+import {
+  Car,
+  CheckCircle,
+  Handshake,
+  Heart,
+  Medal,
+  MoveRight,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -133,8 +140,15 @@ export default function Sobre() {
           Explore nosso estoque e encontre o veículo perfeito para você.
         </p>
         <Link href="/veiculos">
-          <Button size="lg" variant="auth">
-            Ver Veículos
+          <Button
+            className="h-12 group relative overflow-hidden"
+            variant={"auth"}
+          >
+            <span className="flex items-center gap-2 transition-all duration-500 group-hover:opacity-0 group-hover:translate-x-4">
+              Ver veículos
+              <MoveRight />
+            </span>
+            <Car className="absolute left-1/2 top-1/2 -translate-y-1/2 opacity-0 -translate-x-[200%] transition-all duration-500 group-hover:opacity-100 group-hover:-translate-x-1/2 w-14 h-14" />
           </Button>
         </Link>
       </section>

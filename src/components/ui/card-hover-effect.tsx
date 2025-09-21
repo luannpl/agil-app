@@ -24,8 +24,7 @@ export const HoverEffect = ({
       )}
     >
       {items.map((item, idx) => (
-        <a
-          href={item?.link}
+        <div
           key={item?.link}
           className="relative group  block p-2 h-full w-full"
           onMouseEnter={() => setHoveredIndex(idx)}
@@ -34,7 +33,7 @@ export const HoverEffect = ({
           <AnimatePresence>
             {hoveredIndex === idx && (
               <motion.span
-                className="absolute inset-0 h-full w-full bg-yellow-600 dark:bg-slate-800/[0.8] block  rounded-3xl"
+                className="absolute inset-0 h-full w-full bg-background block  rounded-3xl"
                 layoutId="hoverBackground"
                 initial={{ opacity: 0 }}
                 animate={{
@@ -48,13 +47,15 @@ export const HoverEffect = ({
               />
             )}
           </AnimatePresence>
-          <Card className="bg-gradient-to-br from-zinc-900 to-zinc-800">
-            <CardTitle className="text-gray-400">{item.title}</CardTitle>
-            <CardDescription className="text-gray-500">
+          <Card className="bg-gradient-to-br from-zinc-900 to-zinc-800 hover:scale-[1.02] transition-transform duration-400 ease-in-out ">
+            <CardTitle className="text-yellow-500 text-2xl text-center">
+              {item.title}
+            </CardTitle>
+            <CardDescription className="text-gray-300 text-center">
               {item.description}
             </CardDescription>
           </Card>
-        </a>
+        </div>
       ))}
     </div>
   );

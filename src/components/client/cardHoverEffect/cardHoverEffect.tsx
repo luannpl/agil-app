@@ -10,9 +10,9 @@ export function CardHoverEffectDemo() {
 
 export const projects = [
   {
-    title: "Financiamnento",
+    title: "Financiamento",
     description: "Financiamento de veículos com as melhores taxas do mercado.",
-    link: "https://financiamento.com",
+    link: "",
   },
   {
     title: "Consórcio",

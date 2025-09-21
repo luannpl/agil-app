@@ -1,3 +1,5 @@
+"use client";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import { Veiculo } from "@/types/veiculo";
 import CardVeiculos from "../cardVeiculos/cardVeiculos";
@@ -5,21 +7,33 @@ import {
   EmptyStateCard,
   EmptyCardVariant,
 } from "../emptyStateCard/emptyStateCard";
+import useBreakpoint from "@/hooks/useBreakPoint";
 
 type Props = {
   isLoading: boolean;
   veiculos: Array<Veiculo> | undefined;
 };
 
+// Hook para detectar breakpoint atual
+
 export default function VeiculosDestaque({ isLoading, veiculos }: Props) {
+  const breakpoint = useBreakpoint();
+
+  const getQtdCards = () => {
+    if (breakpoint === "lg") return 6; // entre 1024 e 1535px
+    if (breakpoint === "2xl") return 4; // >=1536px
+    return 4; // <1024px
+  };
+
   const renderSkeletons = () =>
-    Array.from({ length: 4 }).map((_, index) => (
+    Array.from({ length: getQtdCards() }).map((_, index) => (
       <CardVeiculoSkeleton key={index} />
     ));
 
   const renderVeiculos = () => {
-    const veiculosExibidos = veiculos?.slice(0, 4) || [];
-    const cardsRestantes = 4 - veiculosExibidos.length;
+    const qtd = getQtdCards();
+    const veiculosExibidos = veiculos?.slice(0, qtd) || [];
+    const cardsRestantes = qtd - veiculosExibidos.length;
 
     const emptyStateVariants: EmptyCardVariant[] = [
       "coming-soon",
