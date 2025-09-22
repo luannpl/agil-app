@@ -22,6 +22,46 @@ export default function LayoutContent({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isLoginPage = pathname === "/login";
 
+  // Função para gerar breadcrumb dinâmico
+  const generateBreadcrumb = () => {
+    const pathSegments = pathname
+      .split("/")
+      .filter((segment) => segment !== "");
+    const breadcrumbItems: Array<{
+      href: string;
+      label: string;
+      isLast: boolean;
+    }> = [];
+
+    // Mapeamento de rotas para labels mais amigáveis
+    const routeLabels: { [key: string]: string } = {
+      admin: "Administração",
+      dashboard: "Dashboard",
+      usuarios: "Usuários",
+      veiculos: "Veículos",
+      view: "Lista",
+    };
+
+    let currentPath = "";
+
+    pathSegments.forEach((segment, index) => {
+      currentPath += `/${segment}`;
+      const label =
+        routeLabels[segment] ||
+        segment.charAt(0).toUpperCase() + segment.slice(1);
+
+      breadcrumbItems.push({
+        href: currentPath,
+        label: label,
+        isLast: index === pathSegments.length - 1,
+      });
+    });
+
+    return breadcrumbItems;
+  };
+
+  const breadcrumbItems = generateBreadcrumb();
+
   if (isLoginPage) {
     return <>{children}</>;
   }
@@ -36,15 +76,22 @@ export default function LayoutContent({ children }: { children: ReactNode }) {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
+                {breadcrumbItems.map((item, index) => (
+                  <div key={item.href} className="flex items-center">
+                    {index > 0 && (
+                      <BreadcrumbSeparator className="hidden md:block" />
+                    )}
+                    <BreadcrumbItem className="hidden md:block">
+                      {item.isLast ? (
+                        <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink href={item.href}>
+                          {item.label}
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                  </div>
+                ))}
               </BreadcrumbList>
             </Breadcrumb>
           </header>
