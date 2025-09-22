@@ -19,7 +19,7 @@ export default function CardVeiculos(props: Veiculo) {
         <Card className="h-full overflow-hidden hover:shadow-xl hover:shadow-yellow-500/20 transition-shadow duration-300 bg-gradient-to-br from-zinc-900 to-zinc-800 ">
           <div className="relative aspect-[4/3] overflow-hidden">
             <Image
-              src={props.imagem || "https://via.placeholder.com/400x300"}
+              src={props.imagem || "/agil-logo.png"}
               alt={props.nome}
               fill
               className="object-cover transition-transform duration-300 hover:scale-105"
