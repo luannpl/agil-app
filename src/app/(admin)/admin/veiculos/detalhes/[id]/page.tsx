@@ -47,7 +47,7 @@ export default function DetalhesVeiculoPage() {
   }
 
   return (
-    <div className="p-4 bg-gray-600/5 rounded-lg backdrop-blur-md pb-8">
+    <div className="p-4 rounded-2xl bg-white/5 backdrop-blur-md border border-white/20 shadow-lg pb-8">
       <h1 className="text-2xl font-bold mb-4">Detalhes do Veículo </h1>
       {veiculo && (
         <div className="space-y-4">
