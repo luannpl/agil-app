@@ -17,6 +17,7 @@ export type CreateUsuarioDTO = {
   nome: string;
   email: string;
   senha: string;
+  telefone: string;
   tipo: "admin" | "vendedor" | "despachante" | "cliente";
 };
 

@@ -1,8 +1,4 @@
-import {
-  CreateVeiculoResponse,
-  Veiculo,
-  VeiculoFormValues,
-} from "@/types/veiculo";
+import { CreateVeiculoResponse, Veiculo } from "@/types/veiculo";
 import { api } from "../api";
 
 export async function getVeiculos(): Promise<Veiculo[]> {
@@ -34,8 +30,8 @@ export async function createVeiculo(
 
 export async function updateVeiculo(
   id: string,
-  veiculo: Partial<VeiculoFormValues>
-): Promise<VeiculoFormValues> {
+  veiculo: Partial<Veiculo>
+): Promise<Veiculo> {
   const { data } = await api.put(`/veiculos/${id}`, veiculo);
   return data;
 }

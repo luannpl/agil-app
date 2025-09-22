@@ -13,13 +13,6 @@ import Link from "next/link";
 import backgroundImage from "../../../../public/about-us-hero.jpg";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 
-const teamMembers = [
-  { name: "Luan", role: "CEO & Founder", avatar: "/avatar-placeholder.svg" },
-  { name: "Brenna", role: "Marketing Director", avatar: "/avatar-placeholder.svg" },
-  { name: "John Doe", role: "Sales Manager", avatar: "/avatar-placeholder.svg" },
-  { name: "Jane Smith", role: "Customer Support", avatar: "/avatar-placeholder.svg" },
-];
-
 const features = [
   {
     icon: <Medal className="w-8 h-8 text-yellow-500" />,
@@ -88,7 +81,6 @@ export default function Sobre() {
 
   return (
     <div className="bg-background text-gray-400 scroll-smooth">
-
       <section className="relative h-[800px] md:h-[500px] flex items-center justify-center">
         <Image
           src={backgroundImage.src}
@@ -104,13 +96,14 @@ export default function Sobre() {
             Ágil Veículos: Sua Jornada Começa Aqui
           </h1>
           <p className="text-xl md:text-2xl text-gray-100 mt-4 max-w-2xl mx-auto font-light">
-            Conheça a história e os valores que nos movem a realizar o seu sonho do carro novo.
+            Conheça a história e os valores que nos movem a realizar o seu sonho
+            do carro novo.
           </p>
 
           {/* Alteração 1: Adicionado 'mx-auto' para centralizar o bloco e 'block' para que 'mx-auto' funcione */}
           <a href="#missao" className="mt-12 block w-fit mx-auto">
             {/* Alteração 2: Animação mais suave para o ChevronDown */}
-            <button className="flex items-center gap-3 px-8 py-3 bg-yellow-500 text-gray-900 font-bold rounded-xl shadow-2xl hover:bg-yellow-400 transition-transform duration-300 transform hover:scale-105"            >
+            <button className="flex items-center gap-3 px-8 py-3 bg-yellow-500 text-gray-900 font-bold rounded-xl shadow-2xl hover:bg-yellow-400 transition-transform duration-300 transform hover:scale-105">
               Veja Mais
               <ChevronDown className="w-5 h-5 animate-[bounce_2s_infinite]" />
             </button>
@@ -120,11 +113,15 @@ export default function Sobre() {
 
       <section id="missao" className="py-24 md:py-36 px-4 md:px-8 bg-black-900">
         <div className="max-w-4xl mx-auto text-center border-l-4 border-yellow-500 pl-6 md:pl-8">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-6">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-yellow-500 mb-6">
             Mais que Carros, Realizamos Sonhos
           </h2>
           <p className="text-lg md:text-xl leading-relaxed text-gray-400 font-light">
-            Na Ágil Veículos, acreditamos que a compra de um carro é um marco. É a realização de um sonho, a conquista de um objetivo. Por isso, nossa missão é transcender a simples transação, oferecendo uma **experiência de compra inigualável**: atendimento personalizado, veículos de procedência rigorosa e as melhores condições de mercado.
+            Na Ágil Veículos, acreditamos que a compra de um carro é um marco. É
+            a realização de um sonho, a conquista de um objetivo. Por isso,
+            nossa missão é transcender a simples transação, oferecendo uma
+            **experiência de compra inigualável**: atendimento personalizado,
+            veículos de procedência rigorosa e as melhores condições de mercado.
           </p>
         </div>
       </section>
@@ -157,26 +154,8 @@ export default function Sobre() {
             Conheça Nossa Equipe
           </h2>
 
-          <div className="md:hidden">
+          <div>
             <AnimatedTestimonials testimonials={testimonials} />
-          </div>
-
-          <div className="hidden md:grid sm:grid-cols-2 md:grid-cols-4 gap-8">
-            {teamMembers.map((member, index) => (
-              <div key={index} className="text-center">
-                <Image
-                  src={member.avatar}
-                  alt={member.name}
-                  width={120}
-                  height={120}
-                  className="rounded-full mx-auto mb-4 bg-yellow-500"
-                />
-                <h3 className="text-xl font-bold text-gray-300">
-                  {member.name}
-                </h3>
-                <p className="text-yellow-500">{member.role}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -191,7 +170,7 @@ export default function Sobre() {
         <Link href="/veiculos">
           <Button
             className="h-14 px-8 text-lg font-bold group relative overflow-hidden bg-black hover:bg-black text-white transition-all duration-500 rounded-lg shadow-xl"
-          // Certifique-se de que a prop 'variant' foi removida (como discutido antes)
+            // Certifique-se de que a prop 'variant' foi removida (como discutido antes)
           >
             <span className="flex items-center gap-2 transition-all duration-500 group-hover:opacity-0 group-hover:translate-x-4">
               Ver veículos

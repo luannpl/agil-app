@@ -71,7 +71,7 @@ export default function VehicleDetailsPage({
     );
   return (
     <div className="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8 py-14">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container flex flex-col justify-between items-center px-4 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Coluna principal - Imagens e detalhes */}
           <div className="lg:col-span-2 space-y-6">

@@ -4,48 +4,29 @@ export type Veiculo = {
   id: string;
   nome: string;
   descricao: string;
-  ano: number;
-  valor: number;
-  quilometragem: number;
-  sistema: string;
-  localizacao: string;
-  imagem: string;
-  cor: string;
   marca: string;
-  tipo: string;
+  ano: number;
   placa: string;
+  valor: number;
+  cor: string;
+  quilometragem: number;
   vendido: boolean;
+  tipo: string;
+  sistema: string;
   combustivel: string;
+  localizacao?: string;
+  imagem?: string;
+  codigoCRV?: string;
+  seguro?: boolean;
+  rastreador?: boolean;
+  transefido?: boolean;
+  regularizado?: boolean;
+  valorEntrada?: number;
+  valorVenda?: number;
+  infoAdicionais?: string;
   usuario: Usuario;
-};
-export type VeiculoFormValues = {
-  nome: string;
-  descricao?: string;
-  ano: number;
-  marca: string;
-  placa: string;
-  valor: number;
-  quilometragem: number;
-  cor: string;
-  tipo: "carro" | "moto" | "caminhao";
-  imagem?: File;
 };
 
 export type CreateVeiculoResponse = {
   message: string;
-};
-
-export type CardVeiculosProps = {
-  id: string;
-  nome: string;
-  descricao?: string;
-  ano: number;
-  valor: number;
-  quilometragem: number;
-  sistema: string;
-  localizacao: string;
-  imagem: string;
-  cor?: string;
-  marca?: string;
-  tipo?: string;
 };

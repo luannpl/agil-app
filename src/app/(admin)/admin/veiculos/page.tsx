@@ -19,6 +19,8 @@ import { useCreateVeiculo } from "@/hooks/useVeiculos";
 import { AxiosError } from "axios";
 import UploadImage from "@/components/admin/uploadImage/uploadImage";
 import { formatarPreco } from "@/utils/formatarPreco";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const veiculoSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -57,14 +59,7 @@ const veiculoSchema = z.object({
     },
   }),
   sistema: z.enum(
-    [
-      "manual",
-      "automatico",
-      "cvt",
-      "semi-automatico",
-      "carburador",
-      "injeção",
-    ],
+    ["manual", "automatico", "cvt", "semi-automatico", "carburador", "injeção"],
     {
       errorMap: () => {
         return { message: "Sistema é obrigatório" };
@@ -76,6 +71,10 @@ const veiculoSchema = z.object({
       message: "Imagem deve ser um arquivo válido",
     })
     .optional(),
+  // Para:
+  rastreador: z.boolean(),
+  seguro: z.boolean(),
+  regularizado: z.boolean(),
 });
 
 type VeiculoFormData = z.infer<typeof veiculoSchema>;
@@ -110,6 +109,9 @@ export default function CadastroVeiculo() {
     resolver: zodResolver(veiculoSchema),
     defaultValues: {
       localizacao: "Fortaleza - CE",
+      rastreador: false,
+      seguro: false,
+      regularizado: false,
     },
   });
 
@@ -366,6 +368,49 @@ export default function CadastroVeiculo() {
               </p>
             )}
           </div>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-8 mt-4">
+          <Controller
+            control={control}
+            name="rastreador"
+            render={({ field }) => (
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+                <Label>Possui rastreador?</Label>
+              </div>
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="seguro"
+            render={({ field }) => (
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+                <Label>Possui seguro?</Label>
+              </div>
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="regularizado"
+            render={({ field }) => (
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+                <Label>Está regularizado?</Label>
+              </div>
+            )}
+          />
         </div>
         <div className="w-full">
           <UploadImage files={files} onFilesChange={setFiles} />

@@ -13,11 +13,7 @@ import {
   deleteVeiculo,
   getVeiculosDestaques,
 } from "@/services/veiculos/veiculosService";
-import {
-  CreateVeiculoResponse,
-  Veiculo,
-  VeiculoFormValues,
-} from "@/types/veiculo";
+import { CreateVeiculoResponse, Veiculo } from "@/types/veiculo";
 import { AxiosError } from "axios";
 
 // GET todos os veículos
@@ -67,13 +63,8 @@ export function useUpdateVeiculo() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: Partial<VeiculoFormValues>;
-    }) => updateVeiculo(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<Veiculo> }) =>
+      updateVeiculo(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["veiculos"] });
     },
