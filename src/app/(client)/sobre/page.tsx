@@ -114,13 +114,13 @@ export default function Sobre() {
       <section id="missao" className="py-24 md:py-36 px-4 md:px-8 bg-black-900">
         <div className="max-w-4xl mx-auto text-center border-l-4 border-yellow-500 pl-6 md:pl-8">
           <h2 className="text-3xl md:text-4xl font-extrabold text-yellow-500 mb-6">
-            Mais que Carros, Realizamos Sonhos
+            Nossa Missão e Valores
           </h2>
           <p className="text-lg md:text-xl leading-relaxed text-gray-400 font-light">
             Na Ágil Veículos, acreditamos que a compra de um carro é um marco. É
             a realização de um sonho, a conquista de um objetivo. Por isso,
             nossa missão é transcender a simples transação, oferecendo uma
-            **experiência de compra inigualável**: atendimento personalizado,
+            experiência de compra inigualável: atendimento personalizado,
             veículos de procedência rigorosa e as melhores condições de mercado.
           </p>
         </div>
