@@ -9,6 +9,7 @@ export type UsuarioResponse = {
   id: string;
   nome: string;
   email: string;
+  telefone: string;
   tipo: "admin" | "vendedor" | "despachante" | "cliente";
   message?: string;
 };
