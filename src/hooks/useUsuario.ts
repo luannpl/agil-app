@@ -1,5 +1,6 @@
 import {
   createUsuario,
+  getFuncionarios,
   getUsuarios,
   login,
   logout,
@@ -48,5 +49,12 @@ export function useUsuarios() {
   return useQuery<UsuarioResponse[]>({
     queryKey: ["usuarios"],
     queryFn: getUsuarios,
+  });
+}
+
+export function useFuncionarios() {
+  return useQuery<UsuarioResponse[]>({
+    queryKey: ["funcionarios"],
+    queryFn: getFuncionarios,
   });
 }

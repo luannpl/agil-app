@@ -31,3 +31,8 @@ export async function getMe(): Promise<UsuarioResponse> {
   const { data } = await api.get("/usuarios/me");
   return data;
 }
+
+export async function getFuncionarios(): Promise<UsuarioResponse[]> {
+  const { data } = await api.get("/usuarios/funcionarios");
+  return data;
+}
