@@ -76,7 +76,7 @@ export default function VeiculosDestaque({ isLoading, veiculos }: Props) {
   return (
     <div className="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8 py-14">
       <div className="w-full">
-        <h3 className="text-yellow-500 font-semibold text-2xl mb-8 text-center">
+        <h3 className="text-yellow-500 font-semibold text-3xl mb-8 text-center">
           Veículos em Destaque
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">

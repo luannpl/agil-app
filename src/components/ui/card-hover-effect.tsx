@@ -47,7 +47,7 @@ export const HoverEffect = ({
               />
             )}
           </AnimatePresence>
-          <Card className="bg-gradient-to-br from-zinc-900 to-zinc-800 hover:scale-[1.02] transition-transform duration-400 ease-in-out ">
+          <Card className="bg-gradient-to-br from-zinc-900 to-zinc-800 hover:scale-[1.02] transition-transform duration-200 ease-in-out ">
             <CardTitle className="text-yellow-500 text-2xl text-center">
               {item.title}
             </CardTitle>
