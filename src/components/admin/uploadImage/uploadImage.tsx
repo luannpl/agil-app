@@ -17,7 +17,7 @@ interface UploadImageProps {
   onFilesChange: (files: File[] | undefined) => void;
 }
 
-const ASPECT_RATIO = 16 / 9;
+const ASPECT_RATIO = 16 / 12;
 
 const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {

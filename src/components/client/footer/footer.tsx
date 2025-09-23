@@ -21,7 +21,7 @@ const Footer = () => {
     {
       icon: Phone,
       label: "Telefone",
-      value: "(85) 92164-4075",
+      value: "(85) 98954-3885",
       href: "tel:+5585921644075",
     },
     {
@@ -41,7 +41,7 @@ const Footer = () => {
     {
       icon: MessageCircle,
       label: "WhatsApp",
-      href: "https://wa.me/5585921644075?text=Olá,%20vim%20pelo%20site%20e%20quero%20saber%20mais%20sobre%20os%20veículos",
+      href: "https://wa.me/5585989543885?text=Olá,%20vim%20pelo%20site%20e%20quero%20saber%20mais%20sobre%20os%20veículos",
       color: "hover:bg-green-500/10 hover:border-green-500",
     },
     {
@@ -59,11 +59,11 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative mt-24 bg-gradient-dark/60 border-t border-footer-border text-footer-foreground overflow-hidden">
+    <footer className="relative mt-24 bg-gradient-to-b from-black via-background to-yellow-500/40 border-t border-footer-border text-footer-foreground overflow-hidden">
       {/* Decorative top border */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-footer-accent to-transparent"></div>
 
-      <div className="container mx-auto px-6 py-12">
+      <div className="container mx-auto max-w-screen-xl px-6 py-12">
         {/* Main footer content */}
         <div className="grid gap-12 lg:grid-cols-4">
           {/* Company info */}
@@ -98,7 +98,7 @@ const Footer = () => {
 
           {/* Quick links */}
           <div className="lg:col-span-1">
-            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground">
+            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-yellow-500">
               Links Rápidos
             </h4>
             <nav className="space-y-3">
@@ -106,7 +106,7 @@ const Footer = () => {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="block text-sm text-footer-foreground transition-colors hover:text-footer-accent hover:translate-x-1 transform transition-transform"
+                  className="block text-sm text-footer-foreground  hover:text-footer-accent hover:translate-x-1 transform transition-transform"
                 >
                   {link.label}
                 </Link>
@@ -116,7 +116,7 @@ const Footer = () => {
 
           {/* Contact info */}
           <div className="lg:col-span-1">
-            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground">
+            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-yellow-500">
               Contato
             </h4>
             <div className="space-y-3">
@@ -157,7 +157,7 @@ const Footer = () => {
 
           {/* Newsletter/CTA */}
           <div className="lg:col-span-1">
-            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground">
+            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-yellow-500">
               Conecte-se
             </h4>
             <p className="mb-4 text-sm text-footer-foreground">
@@ -194,19 +194,26 @@ const Footer = () => {
               © {new Date().getFullYear()} Ágil Veículos. Todos os direitos
               reservados.
             </div>
-            <div className="flex gap-6 text-sm">
-              <Link
-                href="/privacidade"
-                className="text-footer-foreground/60 transition-colors hover:text-footer-accent"
-              >
-                Privacidade
-              </Link>
-              <Link
-                href="/termos"
-                className="text-footer-foreground/60 transition-colors hover:text-footer-accent"
-              >
-                Termos de Uso
-              </Link>
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 text-sm">
+              <span className="text-footer-foreground/60">
+                Desenvolvido por{" "}
+                <a
+                  href="https://seusite.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-footer-accent hover:underline"
+                >
+                  PRSystem
+                </a>
+              </span>
+              <div className="flex gap-6">
+                <Link
+                  href="/termos"
+                  className="text-footer-foreground/60 transition-colors hover:text-footer-accent"
+                >
+                  Termos de Uso
+                </Link>
+              </div>
             </div>
           </div>
         </div>
