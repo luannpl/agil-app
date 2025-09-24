@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { useCreateUsuario } from "@/hooks/useUsuario";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -17,6 +18,19 @@ import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
+import { cn } from "@/lib/utils";
+import {
+  User,
+  Mail,
+  Phone,
+  Lock,
+  Shield,
+  Calendar,
+  CreditCard,
+  MapPin,
+  FileText,
+  Info,
+} from "lucide-react";
 
 const usuarioSchema = z
   .object({
@@ -46,6 +60,7 @@ const usuarioSchema = z
   });
 
 type UsuarioFormData = z.infer<typeof usuarioSchema>;
+
 export default function CadastroUsuario() {
   const router = useRouter();
   const {
@@ -86,217 +101,424 @@ export default function CadastroUsuario() {
   const tipoSelecionado = watch("tipo");
 
   return (
-    <>
-      <h1 className="text-2xl font-bold text-foreground">Cadastrar usuário</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="w-full">
-            <Input
-              className={errors.nome ? "border-error border-dashed" : ""}
-              placeholder="Nome do usuário"
-              type="text"
-              {...register("nome")}
-            />
-            {errors.nome && (
-              <p className="text-sm text-error ml-2">{errors.nome.message}</p>
-            )}
+    <div className="min-h-screen" style={{ background: "var(--background)" }}>
+      <div className="w-full px-4 py-6 ">
+        {/* Header */}
+        <div className="mb-8 ">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-yellow-500/10 rounded-lg">
+              <User className="w-6 h-6 text-yellow-500" />
+            </div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
+              Cadastrar Usuário
+            </h1>
           </div>
-          <div className="w-full">
-            <Input
-              className={errors.email ? "border-error border-dashed" : ""}
-              placeholder="Email do usuário"
-              type="email"
-              {...register("email")}
-            />
-            {errors.email && (
-              <p className="text-sm text-error ml-2">{errors.email.message}</p>
-            )}
-          </div>
+          <p className="text-muted-foreground text-sm lg:text-base ml-11">
+            Preencha todos os campos para adicionar um novo usuário ao sistema
+          </p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="w-full">
-            <Input
-              className={errors.telefone ? "border-error border-dashed" : ""}
-              placeholder="Telefone do usuário"
-              type="text"
-              {...register("telefone")}
-            />
-            {errors.telefone && (
-              <p className="text-sm text-error ml-2">
-                {errors.telefone.message}
-              </p>
-            )}
-          </div>
-          <div className="w-full">
-            <Controller
-              control={control}
-              name="tipo"
-              render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger
-                    className={
-                      errors.tipo
-                        ? "border-error border-dashed w-full"
-                        : "w-full"
-                    }
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Card Principal */}
+          <div className="bg-card rounded-xl shadow-lg p-4 md:p-6 lg:p-8 space-y-6">
+            {/* Seção: Informações Básicas */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <Info className="w-5 h-5 text-yellow-500" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  Informações Básicas
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="nome" className="text-sm font-medium">
+                    Nome Completo
+                  </Label>
+                  <Input
+                    id="nome"
+                    type="text"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.nome && "border-error border-dashed"
+                    )}
+                    placeholder="Ex: João Silva Santos"
+                    {...register("nome")}
+                  />
+                  {errors.nome && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.nome.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="email" className="text-sm font-medium">
+                    <span className="flex items-center gap-1">
+                      <Mail className="w-4 h-4" />
+                      Email
+                    </span>
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.email && "border-error border-dashed"
+                    )}
+                    placeholder="Ex: joao@exemplo.com"
+                    {...register("email")}
+                  />
+                  {errors.email && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="telefone" className="text-sm font-medium">
+                    <span className="flex items-center gap-1">
+                      <Phone className="w-4 h-4" />
+                      Telefone
+                    </span>
+                  </Label>
+                  <Input
+                    id="telefone"
+                    type="text"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.telefone && "border-error border-dashed"
+                    )}
+                    placeholder="Ex: (85) 99999-9999"
+                    {...register("telefone")}
+                  />
+                  {errors.telefone && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.telefone.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="tipo" className="text-sm font-medium">
+                    <span className="flex items-center gap-1">
+                      <Shield className="w-4 h-4" />
+                      Tipo de Usuário
+                    </span>
+                  </Label>
+                  <Controller
+                    control={control}
+                    name="tipo"
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger
+                          id="tipo"
+                          className={cn(
+                            "transition-all duration-fast w-full",
+                            errors.tipo && "border-error border-dashed"
+                          )}
+                        >
+                          <SelectValue placeholder="Selecione o tipo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="vendedor">Vendedor</SelectItem>
+                          <SelectItem value="despachante">
+                            Despachante
+                          </SelectItem>
+                          <SelectItem value="cliente">Cliente</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.tipo && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.tipo.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Seção: Credenciais de Acesso */}
+            <div className="space-y-4 pt-6 border-t border-border">
+              <div className="flex items-center gap-2 mb-4">
+                <Lock className="w-5 h-5 text-yellow-500" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  Credenciais de Acesso
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="senha" className="text-sm font-medium">
+                    Senha
+                  </Label>
+                  <Input
+                    id="senha"
+                    type="password"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.senha && "border-error border-dashed"
+                    )}
+                    placeholder="Mínimo 4 caracteres"
+                    {...register("senha")}
+                  />
+                  {errors.senha && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.senha.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="confirmarSenha"
+                    className="text-sm font-medium"
                   >
-                    <SelectValue placeholder="Escolha o tipo do usuário" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="vendedor">Vendedor</SelectItem>
-                    <SelectItem value="despachante">Despachante</SelectItem>
-                    <SelectItem value="cliente">Cliente</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.tipo && (
-              <p className="text-sm text-error ml-2">{errors.tipo.message}</p>
+                    Confirmar Senha
+                  </Label>
+                  <Input
+                    id="confirmarSenha"
+                    type="password"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.confirmarSenha && "border-error border-dashed"
+                    )}
+                    placeholder="Repita a senha"
+                    {...register("confirmarSenha")}
+                  />
+                  {errors.confirmarSenha && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.confirmarSenha.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Seção: Informações do Cliente (Condicional) */}
+            {tipoSelecionado === "cliente" && (
+              <div className="space-y-4 pt-6 border-t border-border">
+                <div className="flex items-center gap-2 mb-4">
+                  <CreditCard className="w-5 h-5 text-yellow-500" />
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Documentos Pessoais
+                  </h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="dataNasc" className="text-sm font-medium">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        Data de Nascimento
+                      </span>
+                    </Label>
+                    <Input
+                      id="dataNasc"
+                      type="date"
+                      className={cn(
+                        "transition-all duration-fast",
+                        errors.dataNasc && "border-error border-dashed"
+                      )}
+                      {...register("dataNasc")}
+                    />
+                    {errors.dataNasc && (
+                      <p className="text-xs text-error mt-1">
+                        {errors.dataNasc.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="cpf" className="text-sm font-medium">
+                      CPF
+                    </Label>
+                    <Input
+                      id="cpf"
+                      type="text"
+                      className={cn(
+                        "transition-all duration-fast",
+                        errors.cpf && "border-error border-dashed"
+                      )}
+                      placeholder="000.000.000-00"
+                      {...register("cpf")}
+                    />
+                    {errors.cpf && (
+                      <p className="text-xs text-error mt-1">
+                        {errors.cpf.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="rg" className="text-sm font-medium">
+                      RG
+                    </Label>
+                    <Input
+                      id="rg"
+                      type="text"
+                      className={cn(
+                        "transition-all duration-fast",
+                        errors.rg && "border-error border-dashed"
+                      )}
+                      placeholder="00.000.000-0"
+                      {...register("rg")}
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="cnh" className="text-sm font-medium">
+                      CNH
+                    </Label>
+                    <Input
+                      id="cnh"
+                      type="text"
+                      className={cn(
+                        "transition-all duration-fast",
+                        errors.cnh && "border-error border-dashed"
+                      )}
+                      placeholder="00000000000"
+                      {...register("cnh")}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Seção: Endereço (Condicional) */}
+            {tipoSelecionado === "cliente" && (
+              <div className="space-y-4 pt-6 border-t border-border">
+                <div className="flex items-center gap-2 mb-4">
+                  <MapPin className="w-5 h-5 text-yellow-500" />
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Endereço
+                  </h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="cep" className="text-sm font-medium">
+                      CEP
+                    </Label>
+                    <Input
+                      id="cep"
+                      type="text"
+                      className={cn(
+                        "transition-all duration-fast",
+                        errors.cep && "border-error border-dashed"
+                      )}
+                      placeholder="00000-000"
+                      {...register("cep")}
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="endereco" className="text-sm font-medium">
+                      Endereço
+                    </Label>
+                    <Input
+                      id="endereco"
+                      type="text"
+                      className={cn(
+                        "transition-all duration-fast",
+                        errors.endereco && "border-error border-dashed"
+                      )}
+                      placeholder="Rua, Avenida, etc."
+                      {...register("endereco")}
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="numero" className="text-sm font-medium">
+                      Número
+                    </Label>
+                    <Input
+                      id="numero"
+                      type="text"
+                      className={cn(
+                        "transition-all duration-fast",
+                        errors.numero && "border-error border-dashed"
+                      )}
+                      placeholder="123"
+                      {...register("numero")}
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="complemento"
+                      className="text-sm font-medium"
+                    >
+                      Complemento
+                    </Label>
+                    <Input
+                      id="complemento"
+                      type="text"
+                      className={cn(
+                        "transition-all duration-fast",
+                        errors.complemento && "border-error border-dashed"
+                      )}
+                      placeholder="Apt, Casa, etc."
+                      {...register("complemento")}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="descricao" className="text-sm font-medium">
+                    <span className="flex items-center gap-1">
+                      <FileText className="w-4 h-4" />
+                      Observações
+                    </span>
+                  </Label>
+                  <Textarea
+                    id="descricao"
+                    className={cn(
+                      "min-h-[100px] resize-none transition-all duration-fast",
+                      errors.descricao && "border-error border-dashed"
+                    )}
+                    placeholder="Informações adicionais sobre o cliente..."
+                    {...register("descricao")}
+                  />
+                </div>
+              </div>
             )}
           </div>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="w-full">
-            <Input
-              className={errors.senha ? "border-error border-dashed" : ""}
-              placeholder="Senha do usuário"
-              type="password"
-              {...register("senha")}
-            />
-            {errors.senha && (
-              <p className="text-sm text-error ml-2">{errors.senha.message}</p>
-            )}
-          </div>
-          <div className="w-full">
-            <Input
-              className={
-                errors.confirmarSenha ? "border-error border-dashed" : ""
-              }
-              placeholder="Confirme a senha do usuário"
-              type="password"
-              {...register("confirmarSenha")}
-            />
-            {errors.confirmarSenha && (
-              <p className="text-sm text-error ml-2">
-                {errors.confirmarSenha.message}
-              </p>
-            )}
-          </div>
-        </div>
-        {tipoSelecionado === "cliente" && (
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="w-full">
-              <Input
-                className={errors.dataNasc ? "border-error border-dashed" : ""}
-                placeholder="Data de Nascimento"
-                type="date"
-                {...register("dataNasc")}
-              />
-              {errors.dataNasc && (
-                <p className="text-sm text-error ml-2">
-                  {errors.dataNasc.message}
-                </p>
+
+          {/* Botões de Ação */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/admin/usuarios")}
+              className="w-full sm:w-auto order-2 sm:order-1"
+              disabled={isPending}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              className="w-full sm:w-auto bg-yellow-500 hover:bg-yellow-600 text-black font-medium transition-all duration-200 order-1 sm:order-2"
+              disabled={isPending}
+            >
+              {isPending ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                  Cadastrando...
+                </span>
+              ) : (
+                "Cadastrar Usuário"
               )}
-            </div>
-            <div className="w-full">
-              <Input
-                className={errors.cpf ? "border-error border-dashed" : ""}
-                placeholder="CPF"
-                type="text"
-                {...register("cpf")}
-              />
-              {errors.cpf && (
-                <p className="text-sm text-error ml-2">{errors.cpf.message}</p>
-              )}
-            </div>
+            </Button>
           </div>
-        )}
-
-        {tipoSelecionado === "cliente" && (
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="w-full">
-              <Input
-                className={errors.rg ? "border-error border-dashed" : ""}
-                placeholder="RG"
-                type="text"
-                {...register("rg")}
-              />
-            </div>
-            <div className="w-full">
-              <Input
-                className={errors.cnh ? "border-error border-dashed" : ""}
-                placeholder="CNH"
-                type="text"
-                {...register("cnh")}
-              />
-            </div>
-          </div>
-        )}
-
-        {tipoSelecionado === "cliente" && (
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="w-full">
-                <Input
-                  className={errors.cep ? "border-error border-dashed" : ""}
-                  placeholder="CEP"
-                  type="text"
-                  {...register("cep")}
-                />
-              </div>
-              <div className="w-full">
-                <Input
-                  className={
-                    errors.endereco ? "border-error border-dashed" : ""
-                  }
-                  placeholder="Endereço"
-                  type="text"
-                  {...register("endereco")}
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="w-full">
-                <Input
-                  className={errors.numero ? "border-error border-dashed" : ""}
-                  placeholder="Número"
-                  type="text"
-                  {...register("numero")}
-                />
-              </div>
-              <div className="w-full">
-                <Input
-                  className={
-                    errors.complemento ? "border-error border-dashed" : ""
-                  }
-                  placeholder="Complemento"
-                  type="text"
-                  {...register("complemento")}
-                />
-              </div>
-            </div>
-
-            <div className="w-full">
-              <Textarea
-                className={errors.descricao ? "border-error border-dashed" : ""}
-                placeholder="Descrição"
-                {...register("descricao")}
-              />
-            </div>
-          </div>
-        )}
-
-        <Button
-          className="cursor-pointer text-white w-full"
-          variant="auth"
-          type="submit"
-          disabled={isPending}
-        >
-          {isPending ? "Cadastrando..." : "Cadastrar Usuário"}
-        </Button>
-      </form>
-    </>
+        </form>
+      </div>
+    </div>
   );
 }
