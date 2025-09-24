@@ -21,6 +21,18 @@ import UploadImage from "@/components/admin/uploadImage/uploadImage";
 import { formatarPreco } from "@/utils/formatarPreco";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+import {
+  Car,
+  DollarSign,
+  MapPin,
+  Fuel,
+  Settings2,
+  Info,
+  Shield,
+  FileCheck,
+} from "lucide-react";
 
 const veiculoSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -71,10 +83,12 @@ const veiculoSchema = z.object({
       message: "Imagem deve ser um arquivo válido",
     })
     .optional(),
-  // Para:
   rastreador: z.boolean(),
   seguro: z.boolean(),
   regularizado: z.boolean(),
+  transferido: z.boolean(),
+  codigoCRV: z.string().optional(),
+  infoAdicionais: z.string().optional(),
 });
 
 type VeiculoFormData = z.infer<typeof veiculoSchema>;
@@ -99,6 +113,7 @@ export default function CadastroVeiculo() {
     const valorNumerico = parseFloat(numeroLimpo) / 100; // Divide por 100 para considerar centavos
     return formatarPreco(valorNumerico);
   };
+
   const {
     register,
     handleSubmit,
@@ -112,10 +127,12 @@ export default function CadastroVeiculo() {
       rastreador: false,
       seguro: false,
       regularizado: false,
+      transferido: false,
     },
   });
 
   const { mutate: cadastrarVeiculo, isPending } = useCreateVeiculo();
+
   const onSubmit = (data: VeiculoFormData) => {
     console.log(data);
     const formData = new FormData();
@@ -150,281 +167,570 @@ export default function CadastroVeiculo() {
   };
 
   return (
-    <>
-      <h1 className="text-2xl font-bold">Cadastrar veículo</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="w-full">
-            <Input
-              className={errors.nome ? "border-error border-dashed" : ""}
-              placeholder="Nome do veículo"
-              {...register("nome")}
-            />
-            {errors.nome && (
-              <p className="text-sm text-error ml-2">{errors.nome.message}</p>
-            )}
+    <div className="min-h-screen" style={{ background: "var(--background)" }}>
+      <div className="w-full px-4 py-4">
+        {/* Header */}
+        <div className="mb-8 ">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-yellow-500/10 rounded-lg">
+              <Car className="w-6 h-6 text-yellow-500" />
+            </div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
+              Cadastrar Veículo
+            </h1>
           </div>
-          <div className="w-full">
-            <Input
-              className={errors.descricao ? "border-error border-dashed" : ""}
-              placeholder="Descrição do veículo"
-              {...register("descricao")}
-            />
-            {errors.descricao && (
-              <p className="text-sm text-error ml-2">
-                {errors.descricao.message}
-              </p>
-            )}
-          </div>
+          <p className="text-muted-foreground text-sm lg:text-base ml-11">
+            Preencha todos os campos para adicionar um novo veículo ao sistema
+          </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="w-full">
-            <Input
-              className={errors.marca ? "border-error border-dashed" : ""}
-              placeholder="Marca do veículo"
-              {...register("marca")}
-            />
-            {errors.marca && (
-              <p className="text-sm text-error ml-2 ">{errors.marca.message}</p>
-            )}
-          </div>
-          <div className="w-full">
-            <Input
-              className={errors.ano ? "border-error border-dashed" : ""}
-              placeholder="Ano do veículo"
-              {...register("ano")}
-            />
-            {errors.ano && (
-              <p className="text-sm text-error ml-2">{errors.ano.message}</p>
-            )}
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="w-full">
-            <Input
-              className={errors.placa ? "border-error border-dashed" : ""}
-              placeholder="Placa do veículo"
-              {...register("placa")}
-            />
-            {errors.placa && (
-              <p className="text-sm text-error ml-2">{errors.placa.message}</p>
-            )}
-          </div>
-          <div className="w-full">
-            <Controller
-              control={control}
-              name="valor"
-              render={({ field }) => (
-                <Input
-                  className={errors.valor ? "border-error border-dashed" : ""}
-                  placeholder="Valor do veículo"
-                  value={field.value || ""}
-                  onChange={(e) => {
-                    const valorFormatado = formatarValorInput(e.target.value);
-                    field.onChange(valorFormatado);
-                  }}
-                />
-              )}
-            />
-            {errors.valor && (
-              <p className="text-sm text-error ml-2">{errors.valor.message}</p>
-            )}
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="w-full">
-            <Input
-              className={errors.cor ? "border-error border-dashed" : ""}
-              placeholder="Cor do veículo"
-              {...register("cor")}
-            />
-            {errors.cor && (
-              <p className="text-sm text-error ml-2">{errors.cor.message}</p>
-            )}
-          </div>
-          <div className="w-full">
-            <Input
-              className={
-                errors.quilometragem ? "border-error border-dashed" : ""
-              }
-              placeholder="Quilometragem do veículo"
-              {...register("quilometragem")}
-            />
-            {errors.quilometragem && (
-              <p className="text-sm text-error ml-2">
-                {errors.quilometragem.message}
-              </p>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="w-full">
-            <Input
-              className={errors.localizacao ? "border-error border-dashed" : ""}
-              placeholder="Localização do veículo"
-              {...register("localizacao")}
-            />
-            {errors.localizacao && (
-              <p className="text-sm text-error ml-2">
-                {errors.localizacao.message}
-              </p>
-            )}
-          </div>
-          <div className="w-full">
-            <Controller
-              control={control}
-              name="combustivel"
-              render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger
-                    className={
-                      errors.combustivel
-                        ? "border-error border-dashed w-full"
-                        : "w-full"
-                    }
-                  >
-                    <SelectValue placeholder="Escolha o combustível do veículo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="gasolina">Gasolina</SelectItem>
-                    <SelectItem value="diesel">Diesel</SelectItem>
-                    <SelectItem value="etanol">Etanol</SelectItem>
-                    <SelectItem value="flex">Flex</SelectItem>
-                    <SelectItem value="eletrico">Elétrico</SelectItem>
-                    <SelectItem value="hibrido">Híbrido</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.combustivel && (
-              <p className="text-sm text-error ml-2">
-                {errors.combustivel.message}
-              </p>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="w-full">
-            <Controller
-              control={control}
-              name="tipo"
-              render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger
-                    className={
-                      errors.tipo
-                        ? "border-error border-dashed w-full"
-                        : "w-full"
-                    }
-                  >
-                    <SelectValue placeholder="Escolha o tipo do veículo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="carro">Carro</SelectItem>
-                    <SelectItem value="moto">Moto</SelectItem>
-                    <SelectItem value="caminhao">Caminhão</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.tipo && (
-              <p className="text-sm text-error ml-2">{errors.tipo.message}</p>
-            )}
-          </div>
-          <div className="w-full">
-            <Controller
-              control={control}
-              name="sistema"
-              render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger
-                    className={
-                      errors.sistema
-                        ? "border-error border-dashed w-full"
-                        : "w-full"
-                    }
-                  >
-                    <SelectValue placeholder="Escolha o sistema do veículo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="manual">Manual</SelectItem>
-                    <SelectItem value="automatico">Automático</SelectItem>
-                    <SelectItem value="cvt">CVT</SelectItem>
-                    <SelectItem value="semi-automatico">
-                      Semi-Automático
-                    </SelectItem>
-                    <SelectItem value="carburador">Carburador</SelectItem>
-                    <SelectItem value="injeção">Injeção</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.sistema && (
-              <p className="text-sm text-error ml-2">
-                {errors.sistema.message}
-              </p>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-8 mt-4">
-          <Controller
-            control={control}
-            name="rastreador"
-            render={({ field }) => (
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-                <Label>Possui rastreador?</Label>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Card Principal */}
+          <div className="bg-card rounded-xl shadow-lg p-4 md:p-6 lg:p-8 space-y-6">
+            {/* Seção: Informações Básicas */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <Info className="w-5 h-5 text-yellow-500" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  Informações Básicas
+                </h2>
               </div>
-            )}
-          />
 
-          <Controller
-            control={control}
-            name="seguro"
-            render={({ field }) => (
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-                <Label>Possui seguro?</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="nome" className="text-sm font-medium">
+                    Nome do Veículo
+                  </Label>
+                  <Input
+                    id="nome"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.nome && "border-error border-dashed"
+                    )}
+                    placeholder="Ex: Honda Civic 2020"
+                    {...register("nome")}
+                  />
+                  {errors.nome && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.nome.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="descricao" className="text-sm font-medium">
+                    Descrição
+                  </Label>
+                  <Input
+                    id="descricao"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.descricao && "border-error border-dashed"
+                    )}
+                    placeholder="Ex: Sedan executivo completo"
+                    {...register("descricao")}
+                  />
+                  {errors.descricao && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.descricao.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="marca" className="text-sm font-medium">
+                    Marca
+                  </Label>
+                  <Input
+                    id="marca"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.marca && "border-error border-dashed"
+                    )}
+                    placeholder="Ex: Honda"
+                    {...register("marca")}
+                  />
+                  {errors.marca && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.marca.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="ano" className="text-sm font-medium">
+                    Ano
+                  </Label>
+                  <Input
+                    id="ano"
+                    type="number"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.ano && "border-error border-dashed"
+                    )}
+                    placeholder="Ex: 2020"
+                    {...register("ano")}
+                  />
+                  {errors.ano && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.ano.message}
+                    </p>
+                  )}
+                </div>
               </div>
-            )}
-          />
+            </div>
 
-          <Controller
-            control={control}
-            name="regularizado"
-            render={({ field }) => (
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-                <Label>Está regularizado?</Label>
+            {/* Seção: Detalhes do Veículo */}
+            <div className="space-y-4 pt-6 border-t border-border">
+              <div className="flex items-center gap-2 mb-4">
+                <Settings2 className="w-5 h-5 text-yellow-500" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  Detalhes do Veículo
+                </h2>
               </div>
-            )}
-          />
-        </div>
-        <div className="w-full">
-          <UploadImage files={files} onFilesChange={setFiles} />
-        </div>
 
-        <Button
-          className="cursor-pointer text-foreground"
-          variant="auth"
-          type="submit"
-          disabled={isPending}
-        >
-          {isPending ? "Cadastrando..." : "Cadastrar Veículo"}
-        </Button>
-      </form>
-    </>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="placa" className="text-sm font-medium">
+                    Placa
+                  </Label>
+                  <Input
+                    id="placa"
+                    className={cn(
+                      "transition-all duration-fast uppercase",
+                      errors.placa && "border-error border-dashed"
+                    )}
+                    placeholder="Ex: ABC-1234"
+                    {...register("placa")}
+                  />
+                  {errors.placa && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.placa.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="valor" className="text-sm font-medium">
+                    <span className="flex items-center gap-1">
+                      <DollarSign className="w-4 h-4" />
+                      Valor
+                    </span>
+                  </Label>
+                  <Controller
+                    control={control}
+                    name="valor"
+                    render={({ field }) => (
+                      <Input
+                        id="valor"
+                        className={cn(
+                          "transition-all duration-fast",
+                          errors.valor && "border-error border-dashed"
+                        )}
+                        placeholder="R$ 0,00"
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const valorFormatado = formatarValorInput(
+                            e.target.value
+                          );
+                          field.onChange(valorFormatado);
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.valor && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.valor.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="cor" className="text-sm font-medium">
+                    Cor
+                  </Label>
+                  <Input
+                    id="cor"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.cor && "border-error border-dashed"
+                    )}
+                    placeholder="Ex: Prata"
+                    {...register("cor")}
+                  />
+                  {errors.cor && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.cor.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="quilometragem"
+                    className="text-sm font-medium"
+                  >
+                    Quilometragem
+                  </Label>
+                  <Input
+                    id="quilometragem"
+                    type="number"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.quilometragem && "border-error border-dashed"
+                    )}
+                    placeholder="Ex: 50000"
+                    {...register("quilometragem")}
+                  />
+                  {errors.quilometragem && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.quilometragem.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="localizacao" className="text-sm font-medium">
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-4 h-4" />
+                      Localização
+                    </span>
+                  </Label>
+                  <Input
+                    id="localizacao"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.localizacao && "border-error border-dashed"
+                    )}
+                    placeholder="Ex: São Paulo - SP"
+                    {...register("localizacao")}
+                  />
+                  {errors.localizacao && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.localizacao.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="codigoCRV" className="text-sm font-medium">
+                    Código CRV
+                  </Label>
+                  <Input
+                    id="codigoCRV"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.codigoCRV && "border-error border-dashed"
+                    )}
+                    placeholder="Ex: 123456789"
+                    {...register("codigoCRV")}
+                  />
+                  {errors.codigoCRV && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.codigoCRV.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Seção: Especificações Técnicas */}
+            <div className="space-y-4 pt-6 border-t border-border">
+              <div className="flex items-center gap-2 mb-4">
+                <Fuel className="w-5 h-5 text-yellow-500" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  Especificações Técnicas
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="combustivel" className="text-sm font-medium">
+                    Combustível
+                  </Label>
+                  <Controller
+                    control={control}
+                    name="combustivel"
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger
+                          id="combustivel"
+                          className={cn(
+                            "transition-all duration-fast w-full",
+                            errors.combustivel && "border-error border-dashed"
+                          )}
+                        >
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="gasolina">Gasolina</SelectItem>
+                          <SelectItem value="diesel">Diesel</SelectItem>
+                          <SelectItem value="etanol">Etanol</SelectItem>
+                          <SelectItem value="flex">Flex</SelectItem>
+                          <SelectItem value="eletrico">Elétrico</SelectItem>
+                          <SelectItem value="hibrido">Híbrido</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.combustivel && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.combustivel.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="tipo" className="text-sm font-medium">
+                    Tipo de Veículo
+                  </Label>
+                  <Controller
+                    control={control}
+                    name="tipo"
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger
+                          id="tipo"
+                          className={cn(
+                            "transition-all duration-fast w-full",
+                            errors.tipo && "border-error border-dashed"
+                          )}
+                        >
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="carro">Carro</SelectItem>
+                          <SelectItem value="moto">Moto</SelectItem>
+                          <SelectItem value="caminhao">Caminhão</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.tipo && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.tipo.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="sistema" className="text-sm font-medium">
+                    Sistema/Transmissão
+                  </Label>
+                  <Controller
+                    control={control}
+                    name="sistema"
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger
+                          id="sistema"
+                          className={cn(
+                            "transition-all duration-fast w-full",
+                            errors.sistema && "border-error border-dashed"
+                          )}
+                        >
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="manual">Manual</SelectItem>
+                          <SelectItem value="automatico">Automático</SelectItem>
+                          <SelectItem value="cvt">CVT</SelectItem>
+                          <SelectItem value="semi-automatico">
+                            Semi-Automático
+                          </SelectItem>
+                          <SelectItem value="carburador">Carburador</SelectItem>
+                          <SelectItem value="injeção">Injeção</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.sistema && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.sistema.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Seção: Segurança e Documentação */}
+            <div className="space-y-4 pt-6 border-t border-border">
+              <div className="flex items-center gap-2 mb-4">
+                <Shield className="w-5 h-5 text-yellow-500" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  Segurança e Documentação
+                </h2>
+              </div>
+
+              <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-4 md:p-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <Controller
+                    control={control}
+                    name="rastreador"
+                    render={({ field }) => (
+                      <div className="flex items-center  space-x-3">
+                        <Label
+                          htmlFor="rastreador"
+                          className="text-sm font-medium cursor-pointer"
+                        >
+                          Rastreador
+                        </Label>
+                        <Switch
+                          id="rastreador"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="data-[state=checked]:bg-yellow-500"
+                        />
+                      </div>
+                    )}
+                  />
+
+                  <Controller
+                    control={control}
+                    name="seguro"
+                    render={({ field }) => (
+                      <div className="flex items-center  space-x-3">
+                        <Label
+                          htmlFor="seguro"
+                          className="text-sm font-medium cursor-pointer"
+                        >
+                          Seguro
+                        </Label>
+                        <Switch
+                          id="seguro"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="data-[state=checked]:bg-yellow-500"
+                        />
+                      </div>
+                    )}
+                  />
+
+                  <Controller
+                    control={control}
+                    name="regularizado"
+                    render={({ field }) => (
+                      <div className="flex items-center  space-x-3">
+                        <Label
+                          htmlFor="regularizado"
+                          className="text-sm font-medium cursor-pointer"
+                        >
+                          Regularizado
+                        </Label>
+                        <Switch
+                          id="regularizado"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="data-[state=checked]:bg-yellow-500"
+                        />
+                      </div>
+                    )}
+                  />
+
+                  <Controller
+                    control={control}
+                    name="transferido"
+                    render={({ field }) => (
+                      <div className="flex items-center  space-x-3">
+                        <Label
+                          htmlFor="transferido"
+                          className="text-sm font-medium cursor-pointer"
+                        >
+                          Transferido
+                        </Label>
+                        <Switch
+                          id="transferido"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="data-[state=checked]:bg-yellow-500"
+                        />
+                      </div>
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Seção: Informações Adicionais e Imagem */}
+            <div className="space-y-4 pt-6 border-t border-border">
+              <div className="flex items-center gap-2 mb-4">
+                <FileCheck className="w-5 h-5 text-yellow-500" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  Informações Adicionais
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="infoAdicionais"
+                    className="text-sm font-medium"
+                  >
+                    Observações
+                  </Label>
+                  <Textarea
+                    id="infoAdicionais"
+                    className={cn(
+                      "min-h-[165px] resize-none transition-all duration-fast",
+                      errors.infoAdicionais && "border-error border-dashed"
+                    )}
+                    placeholder="Adicione informações complementares sobre o veículo..."
+                    {...register("infoAdicionais")}
+                  />
+                  {errors.infoAdicionais && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.infoAdicionais.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-sm font-medium">
+                    Imagem do Veículo
+                  </Label>
+                  <UploadImage files={files} onFilesChange={setFiles} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Botões de Ação */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/admin/veiculos/view")}
+              className="w-full sm:w-auto order-2 sm:order-1"
+              disabled={isPending}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              className="w-full sm:w-auto bg-yellow-500 hover:bg-yellow-600 text-black font-medium transition-all duration-200 order-1 sm:order-2"
+              disabled={isPending}
+            >
+              {isPending ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                  Cadastrando...
+                </span>
+              ) : (
+                "Cadastrar Veículo"
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }

@@ -19,7 +19,7 @@ export type Veiculo = {
   codigoCRV?: string;
   seguro?: boolean;
   rastreador?: boolean;
-  transefido?: boolean;
+  transferido?: boolean;
   regularizado?: boolean;
   valorEntrada?: number;
   valorVenda?: number;

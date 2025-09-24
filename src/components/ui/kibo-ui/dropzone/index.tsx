@@ -189,7 +189,7 @@ export const DropzoneEmptyState = ({
         <UploadIcon size={16} />
       </div>
       <p className="my-2 w-full truncate text-wrap font-medium text-sm">
-        Upload {maxFiles === 1 ? "do arquivo" : "dos arquivos"}
+        Upload {maxFiles === 1 ? "da imagem do veículo" : "dos arquivos"}
       </p>
       <p className="w-full truncate text-wrap text-muted-foreground text-xs">
         Arraste e solte ou clique para fazer upload
