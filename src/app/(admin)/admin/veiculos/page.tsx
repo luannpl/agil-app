@@ -33,16 +33,23 @@ import {
   Shield,
   FileCheck,
 } from "lucide-react";
+import { formatarQuilometragem } from "@/utils/formatarQuilometragem";
 
 const veiculoSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
   descricao: z.string().min(1, "Descrição é obrigatória"),
   marca: z.string().min(1, "Marca é obrigatória"),
-  ano: z.coerce
-    .number()
-    .min(1900, "Ano inválido")
-    .max(new Date().getFullYear(), "Ano inválido"),
-  placa: z.string().min(1, "Placa é obrigatória"),
+  ano: z
+    .string()
+    .regex(/^\d{4}$/, "O ano deve conter exatamente 4 dígitos.")
+    .refine((val) => {
+      const year = parseInt(val, 10);
+      return year >= 1900 && year <= new Date().getFullYear();
+    }, `O ano deve ser entre 1900 e ${new Date().getFullYear()}.`),
+  placa: z
+    .string()
+    .regex(/^[A-Z]{3}-\d{4}$/, "A placa deve estar no formato AAA-1234.")
+    .transform((val) => val.toUpperCase()),
   valor: z
     .string()
     .min(1, "Valor é obrigatório")
@@ -52,7 +59,13 @@ const veiculoSchema = z.object({
       return !isNaN(numero) && numero > 0;
     }, "Valor deve ser maior que zero"),
   cor: z.string().min(1, "Cor é obrigatória"),
-  quilometragem: z.coerce.number().min(1, "Quilometragem é obrigatória"),
+  quilometragem: z
+    .string()
+    .min(1, "Quilometragem é obrigatória")
+    .refine((val) => {
+      const valorNumerico = parseInt(val.replace(/\./g, ""), 10);
+      return !isNaN(valorNumerico) && valorNumerico > 0;
+    }, "Quilometragem deve ser maior que zero"),
   localizacao: z.string().min(1, "Localização é obrigatória"),
   combustivel: z.enum(
     ["gasolina", "diesel", "etanol", "flex", "eletrico", "hibrido"],
@@ -114,6 +127,22 @@ export default function CadastroVeiculo() {
     return formatarPreco(valorNumerico);
   };
 
+  // Função para formatar a placa enquanto digita
+  const formatarPlacaInput = (valor: string): string => {
+    const placaLimpa = valor.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+    if (placaLimpa.length <= 3) {
+      return placaLimpa;
+    }
+    return `${placaLimpa.slice(0, 3)}-${placaLimpa.slice(3, 7)}`;
+  };
+
+  // Função para formatar a quilometragem enquanto digita
+  const formatarQuilometragemInput = (valor: string): string => {
+    const numeroLimpo = valor.replace(/[^\d]/g, "");
+    if (!numeroLimpo) return "";
+    return formatarQuilometragem(parseInt(numeroLimpo, 10));
+  };
+
   const {
     register,
     handleSubmit,
@@ -138,9 +167,11 @@ export default function CadastroVeiculo() {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key !== "imagem") {
-        // Se for o campo valor, converter de volta para número
         if (key === "valor" && typeof value === "string") {
           const valorNumerico = removerFormatacao(value);
+          formData.append(key, String(valorNumerico));
+        } else if (key === "quilometragem" && typeof value === "string") {
+          const valorNumerico = parseInt(value.replace(/\./g, ""), 10);
           formData.append(key, String(valorNumerico));
         } else {
           formData.append(key, String(value));
@@ -263,7 +294,7 @@ export default function CadastroVeiculo() {
                   </Label>
                   <Input
                     id="ano"
-                    type="number"
+                    maxLength={4}
                     className={cn(
                       "transition-all duration-fast",
                       errors.ano && "border-error border-dashed"
@@ -294,14 +325,26 @@ export default function CadastroVeiculo() {
                   <Label htmlFor="placa" className="text-sm font-medium">
                     Placa
                   </Label>
-                  <Input
-                    id="placa"
-                    className={cn(
-                      "transition-all duration-fast uppercase",
-                      errors.placa && "border-error border-dashed"
+                  <Controller
+                    control={control}
+                    name="placa"
+                    render={({ field }) => (
+                      <Input
+                        id="placa"
+                        className={cn(
+                          "transition-all duration-fast uppercase",
+                          errors.placa && "border-error border-dashed"
+                        )}
+                        placeholder="Ex: ABC-1234"
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const valorFormatado = formatarPlacaInput(
+                            e.target.value
+                          );
+                          field.onChange(valorFormatado);
+                        }}
+                      />
                     )}
-                    placeholder="Ex: ABC-1234"
-                    {...register("placa")}
                   />
                   {errors.placa && (
                     <p className="text-xs text-error mt-1">
@@ -372,15 +415,26 @@ export default function CadastroVeiculo() {
                   >
                     Quilometragem
                   </Label>
-                  <Input
-                    id="quilometragem"
-                    type="number"
-                    className={cn(
-                      "transition-all duration-fast",
-                      errors.quilometragem && "border-error border-dashed"
+                  <Controller
+                    control={control}
+                    name="quilometragem"
+                    render={({ field }) => (
+                      <Input
+                        id="quilometragem"
+                        className={cn(
+                          "transition-all duration-fast",
+                          errors.quilometragem && "border-error border-dashed"
+                        )}
+                        placeholder="Ex: 50.000"
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const valorFormatado = formatarQuilometragemInput(
+                            e.target.value
+                          );
+                          field.onChange(valorFormatado);
+                        }}
+                      />
                     )}
-                    placeholder="Ex: 50000"
-                    {...register("quilometragem")}
                   />
                   {errors.quilometragem && (
                     <p className="text-xs text-error mt-1">

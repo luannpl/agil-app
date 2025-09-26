@@ -30,6 +30,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { sidebarConfig } from "@/config/sideBarConfig";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
@@ -92,132 +93,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   if (!user) {
     return null;
   }
-  const getNavigationData = () => {
-    switch (user?.tipo) {
-      case "admin":
-        return {
-          navMain: [
-            {
-              title: "Veículos",
-              url: "/admin/veiculos",
-              items: [
-                {
-                  title: "Cadastrar Veículo",
-                  url: "/admin/veiculos",
-                },
-                {
-                  title: "Ver Veículos",
-                  url: "/admin/veiculos/view",
-                },
-              ],
-            },
-            {
-              title: "Painel de Controle",
-              url: "/admin/painel-controle",
-              items: [
-                {
-                  title: "Cadastrar Usuário",
-                  url: "/admin/usuarios",
-                },
-                {
-                  title: "Ver Usuários",
-                  url: "/admin/usuarios/view",
-                },
-                {
-                  title: "Perfil",
-                  url: "/admin/usuarios/perfil",
-                },
-                {
-                  title: "Dashboard",
-                  url: "/admin/dashboard",
-                },
-              ],
-            },
-          ],
-        };
-      case "vendedor":
-        return {
-          navMain: [
-            {
-              title: "Veículos",
-              url: "/admin/veiculos",
-              items: [
-                {
-                  title: "Cadastrar Veículo",
-                  url: "/admin/veiculos",
-                },
-                {
-                  title: "Ver Veículos",
-                  url: "/admin/veiculos/view",
-                },
-              ],
-            },
-            {
-              title: "Painel de Controle",
-              url: "/admin/painel-controle",
-              items: [
-                {
-                  title: "Dashboard",
-                  url: "/admin/dashboard",
-                },
-              ],
-            },
-          ],
-        };
-      case "despachante":
-        return {
-          navMain: [
-            {
-              title: "Veículos",
-              url: "/admin/veiculos",
-              items: [
-                {
-                  title: "Ver Veículos",
-                  url: "/admin/veiculos/view",
-                },
-              ],
-            },
-            {
-              title: "Painel de Controle",
-              url: "/admin/painel-controle",
-              items: [
-                {
-                  title: "Dashboard",
-                  url: "/admin/dashboard",
-                },
-              ],
-            },
-          ],
-        };
-      default:
-        return {
-          navMain: [
-            {
-              title: "Veículos",
-              url: "/admin/veiculos",
-              items: [
-                {
-                  title: "Ver Veículos",
-                  url: "/admin/veiculos/view",
-                },
-              ],
-            },
-            {
-              title: "Painel de Controle",
-              url: "/admin/painel-controle",
-              items: [
-                {
-                  title: "Dashboard",
-                  url: "/admin/dashboard",
-                },
-              ],
-            },
-          ],
-        };
-    }
-  };
 
-  const data = getNavigationData();
+  const data =
+    sidebarConfig[user?.tipo as keyof typeof sidebarConfig] ??
+    sidebarConfig.default;
   return (
     <Sidebar {...props}>
       <SidebarHeader className="border-b border-b-foreground/10 bg-background/30">
