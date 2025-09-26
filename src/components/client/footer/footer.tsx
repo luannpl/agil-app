@@ -59,7 +59,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative mt-24 bg-gradient-to-b from-black via-background to-yellow-500/40 border-t border-footer-border text-footer-foreground overflow-hidden">
+    <footer className="relative mt-24 bg-background border-t border-footer-border text-footer-foreground overflow-hidden">
       {/* Decorative top border */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-footer-accent to-transparent"></div>
 
