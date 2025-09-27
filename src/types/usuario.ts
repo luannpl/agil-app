@@ -34,3 +34,9 @@ export type LoginForm = {
   email: string;
   senha: string;
 };
+
+export type AlterarSenhaForm = {
+  senhaAtual: string;
+  novaSenha: string;
+  confirmarNovaSenha: string;
+};

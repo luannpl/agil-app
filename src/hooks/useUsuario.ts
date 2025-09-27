@@ -1,4 +1,5 @@
 import {
+  alterarSenha,
   createUsuario,
   getFuncionarios,
   getUsuarios,
@@ -10,6 +11,7 @@ import {
   LoginForm,
   CreateUsuarioDTO,
   UsuarioResponse,
+  AlterarSenhaForm,
 } from "@/types/usuario";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -31,6 +33,12 @@ export function useLogoutUsuario() {
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: ["usuario"] });
     },
+  });
+}
+
+export function useAlterarSenha() {
+  return useMutation<void, AxiosError, AlterarSenhaForm>({
+    mutationFn: alterarSenha,
   });
 }
 

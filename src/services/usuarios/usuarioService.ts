@@ -3,6 +3,7 @@ import {
   CreateUsuarioDTO,
   UsuarioResponse,
   LoginResponse,
+  AlterarSenhaForm,
 } from "@/types/usuario";
 import { api } from "../api";
 
@@ -34,5 +35,19 @@ export async function getMe(): Promise<UsuarioResponse> {
 
 export async function getFuncionarios(): Promise<UsuarioResponse[]> {
   const { data } = await api.get("/usuarios/funcionarios");
+  return data;
+}
+
+// Recebendo 1 argumento (um objeto)
+export async function alterarSenha({
+  senhaAtual,
+  novaSenha,
+  confirmarNovaSenha,
+}: AlterarSenhaForm): Promise<void> {
+  const { data } = await api.patch("/usuarios/alterar-senha", {
+    senhaAtual,
+    novaSenha,
+    confirmarNovaSenha,
+  });
   return data;
 }

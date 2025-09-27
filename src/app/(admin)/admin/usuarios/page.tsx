@@ -31,6 +31,7 @@ import {
   FileText,
   Info,
 } from "lucide-react";
+import { maskCEP, maskCPF, maskPhone } from "@/utils/masks";
 
 const usuarioSchema = z
   .object({
@@ -72,6 +73,23 @@ export default function CadastroUsuario() {
   } = useForm<UsuarioFormData>({
     mode: "onSubmit",
     resolver: zodResolver(usuarioSchema),
+    defaultValues: {
+      nome: "",
+      email: "",
+      telefone: "",
+      senha: "",
+      confirmarSenha: "",
+      tipo: undefined,
+      dataNasc: "",
+      cpf: "",
+      rg: "",
+      cnh: "",
+      cep: "",
+      endereco: "",
+      numero: "",
+      complemento: "",
+      descricao: "",
+    },
   });
 
   const { mutate: cadastrarUsuario, isPending } = useCreateUsuario();
@@ -80,7 +98,7 @@ export default function CadastroUsuario() {
     cadastrarUsuario(data, {
       onSuccess: (res) => {
         toast.success(res.message || "Usuário cadastrado com sucesso!");
-        router.push("/admin/usuarios");
+        router.push("/admin/usuarios/view");
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onError: (error: AxiosError<any>) => {
@@ -183,15 +201,24 @@ export default function CadastroUsuario() {
                       Telefone
                     </span>
                   </Label>
-                  <Input
-                    id="telefone"
-                    type="text"
-                    className={cn(
-                      "transition-all duration-fast",
-                      errors.telefone && "border-error border-dashed"
+                  <Controller
+                    name="telefone"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id="telefone"
+                        type="text"
+                        className={cn(
+                          "transition-all duration-fast",
+                          errors.telefone && "border-error border-dashed"
+                        )}
+                        placeholder="Ex: (85) 99999-9999"
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(maskPhone(e.target.value));
+                        }}
+                      />
                     )}
-                    placeholder="Ex: (85) 99999-9999"
-                    {...register("telefone")}
                   />
                   {errors.telefone && (
                     <p className="text-xs text-error mt-1">
@@ -339,15 +366,24 @@ export default function CadastroUsuario() {
                     <Label htmlFor="cpf" className="text-sm font-medium">
                       CPF
                     </Label>
-                    <Input
-                      id="cpf"
-                      type="text"
-                      className={cn(
-                        "transition-all duration-fast",
-                        errors.cpf && "border-error border-dashed"
+                    <Controller
+                      name="cpf"
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          id="cpf"
+                          type="text"
+                          className={cn(
+                            "transition-all duration-fast",
+                            errors.cpf && "border-error border-dashed"
+                          )}
+                          placeholder="000.000.000-00"
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(maskCPF(e.target.value));
+                          }}
+                        />
                       )}
-                      placeholder="000.000.000-00"
-                      {...register("cpf")}
                     />
                     {errors.cpf && (
                       <p className="text-xs text-error mt-1">
@@ -406,15 +442,24 @@ export default function CadastroUsuario() {
                     <Label htmlFor="cep" className="text-sm font-medium">
                       CEP
                     </Label>
-                    <Input
-                      id="cep"
-                      type="text"
-                      className={cn(
-                        "transition-all duration-fast",
-                        errors.cep && "border-error border-dashed"
+                    <Controller
+                      name="cep"
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          id="cep"
+                          type="text"
+                          className={cn(
+                            "transition-all duration-fast",
+                            errors.cep && "border-error border-dashed"
+                          )}
+                          placeholder="00000-000"
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(maskCEP(e.target.value));
+                          }}
+                        />
                       )}
-                      placeholder="00000-000"
-                      {...register("cep")}
                     />
                   </div>
 
