@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/AuthContext";
+import { maskPhone } from "@/utils/masks";
 import Link from "next/link";
 
 export default function PerfilPage() {
@@ -29,6 +30,12 @@ export default function PerfilPage() {
             <Label className="mb-2 px-1 text-md">Email</Label>
             <Input value={user.email} readOnly />
           </div>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="w-full">
+            <Label className="mb-2 px-1 text-md">Telefone</Label>
+            <Input value={maskPhone(user.telefone)} readOnly />
+          </div>
           <div className="w-full">
             <Label className="mb-2 px-1 text-md">Tipo de Usuário</Label>
             <Input value={user.tipo} readOnly />
@@ -39,13 +46,6 @@ export default function PerfilPage() {
             <Link href="/admin/veiculos/view" className="w-full">
               <Button className="w-full" variant="secondary">
                 Voltar
-              </Button>
-            </Link>
-          </div>
-          <div className="w-full">
-            <Link href="/admin/veiculos/view" className="w-full">
-              <Button className="w-full" variant="secondary">
-                Alterar Senha
               </Button>
             </Link>
           </div>

@@ -73,6 +73,23 @@ export default function CadastroUsuario() {
   } = useForm<UsuarioFormData>({
     mode: "onSubmit",
     resolver: zodResolver(usuarioSchema),
+    defaultValues: {
+      nome: "",
+      email: "",
+      telefone: "",
+      senha: "",
+      confirmarSenha: "",
+      tipo: undefined,
+      dataNasc: "",
+      cpf: "",
+      rg: "",
+      cnh: "",
+      cep: "",
+      endereco: "",
+      numero: "",
+      complemento: "",
+      descricao: "",
+    },
   });
 
   const { mutate: cadastrarUsuario, isPending } = useCreateUsuario();
@@ -81,7 +98,7 @@ export default function CadastroUsuario() {
     cadastrarUsuario(data, {
       onSuccess: (res) => {
         toast.success(res.message || "Usuário cadastrado com sucesso!");
-        router.push("/admin/usuarios");
+        router.push("/admin/usuarios/view");
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onError: (error: AxiosError<any>) => {
