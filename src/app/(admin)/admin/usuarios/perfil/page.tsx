@@ -43,16 +43,21 @@ export default function PerfilPage() {
         </div>
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="w-full">
-            <Link href="/admin/veiculos/view" className="w-full">
+            <Link
+              href="/admin/usuarios/perfil/alterar-senha"
+              className="w-full"
+            >
               <Button className="w-full" variant="secondary">
-                Voltar
+                Alterar Senha
               </Button>
             </Link>
           </div>
           <div className="w-full">
-            <Button variant="auth" className="w-full">
-              Editar
-            </Button>
+            <Link href="/admin/usuarios/perfil/editar" className="w-full">
+              <Button variant="auth" className="w-full">
+                Editar Perfil
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
