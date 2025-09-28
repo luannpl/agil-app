@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { maskCPF, maskPlaca } from "@/utils/masks";
 import { useBuscarClientePorCPF } from "@/hooks/useUsuario";
+import { useBuscarVeiculoPorPlaca } from "@/hooks/useVeiculos";
 
 const contratoSchema = z.object({
   cpf: z
@@ -144,26 +145,33 @@ export default function CadastroContrato() {
             setClienteEncontrado(false);
           }
         },
-        onError: (error) => {
+        onError: (error: any) => {
           console.error("Erro ao buscar cliente:", error);
-          toast.error("Erro ao buscar cliente. Tente novamente.");
-          setValue("cliente", "");
-          setClienteEncontrado(false);
+
+          if (error.response?.status === 404) {
+            toast.error("Cliente não encontrado");
+            setValue("cliente", "");
+            setClienteEncontrado(false);
+          } else {
+            toast.error("Erro ao buscar cliente. Tente novamente.");
+            setValue("cliente", "");
+            setClienteEncontrado(false);
+          }
         },
         onSettled: () => {
           setIsBuscandoCliente(false);
         },
       });
     } catch (error) {
-      console.error("Erro ao buscar cliente:", error);
-      toast.error("Erro ao buscar cliente. Tente novamente.");
+      console.error("Erro inesperado:", error);
+      toast.error("Erro inesperado. Tente novamente.");
       setValue("cliente", "");
       setClienteEncontrado(false);
       setIsBuscandoCliente(false);
     }
   };
 
-  // Função para buscar veículo por placa
+  const { mutate: buscarVeiculo } = useBuscarVeiculoPorPlaca();
   const buscarVeiculoPorPlaca = async (placa: string) => {
     if (!placa || placa.length < 7) return;
 
@@ -171,32 +179,40 @@ export default function CadastroContrato() {
     setVeiculoEncontrado(false);
 
     try {
-      // Aqui você faria a chamada real para sua API
-      // const response = await fetch(`/api/veiculos/buscar-por-placa/${placa}`);
-      // const veiculo = await response.json();
+      buscarVeiculo(placa, {
+        onSuccess: (veiculo) => {
+          if (veiculo) {
+            setValue("carro", veiculo.nome);
+            setVeiculoEncontrado(true);
+            toast.success("Veículo encontrado com sucesso!");
+          } else {
+            toast.error("Veículo não encontrado");
+            setValue("carro", "");
+            setVeiculoEncontrado(false);
+          }
+        },
+        onError: (error: any) => {
+          console.error("Erro ao buscar veículo:", error);
 
-      // Simulando uma busca na API
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-
-      // Dados simulados - substitua pela resposta real da sua API
-      const veiculoSimulado = {
-        modelo: "Honda Civic EXL 2.0 2019",
-        placa: placa,
-        marca: "Honda",
-        ano: "2019",
-        // outros dados do veículo...
-      };
-
-      // Define o modelo do veículo no formulário
-      setValue("carro", veiculoSimulado.modelo);
-      setVeiculoEncontrado(true);
-      toast.success("Veículo encontrado com sucesso!");
+          if (error.response?.status === 404) {
+            toast.error("Veículo não encontrado");
+            setValue("carro", "");
+            setVeiculoEncontrado(false);
+          } else {
+            toast.error("Erro ao buscar veículo. Tente novamente.");
+            setValue("carro", "");
+            setVeiculoEncontrado(false);
+          }
+        },
+        onSettled: () => {
+          setIsBuscandoVeiculo(false);
+        },
+      });
     } catch (error) {
-      console.error("Erro ao buscar veículo:", error);
-      toast.error("Veículo não encontrado ou erro na busca");
+      console.error("Erro inesperado:", error);
+      toast.error("Erro inesperado. Tente novamente.");
       setValue("carro", "");
       setVeiculoEncontrado(false);
-    } finally {
       setIsBuscandoVeiculo(false);
     }
   };
@@ -365,17 +381,15 @@ export default function CadastroContrato() {
                           placeholder="ABC-1234 ou ABC1D23"
                           value={maskPlaca(field.value || "")}
                           onChange={(e) => {
-                            const placaLimpa = e.target.value.replace(
-                              /[^A-Za-z0-9]/g,
-                              ""
-                            );
+                            // envia o valor exatamente como está
+                            field.onChange(e.target.value);
 
-                            // atualiza no react-hook-form (sem máscara, se preferir)
-                            field.onChange(placaLimpa);
-
-                            // busca automaticamente se tiver 7 ou mais caracteres
-                            if (placaLimpa.length >= 7) {
-                              buscarVeiculoPorPlaca(placaLimpa);
+                            // busca automaticamente se tiver 7 ou mais caracteres (mantendo máscara se houver)
+                            if (
+                              e.target.value.replace(/[^A-Za-z0-9]/g, "")
+                                .length >= 7
+                            ) {
+                              buscarVeiculoPorPlaca(e.target.value);
                             }
                           }}
                           maxLength={8}

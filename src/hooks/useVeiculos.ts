@@ -12,6 +12,7 @@ import {
   updateVeiculo,
   deleteVeiculo,
   getVeiculosDestaques,
+  buscarVeiculoPorPlaca,
 } from "@/services/veiculos/veiculosService";
 import { CreateVeiculoResponse, Veiculo } from "@/types/veiculo";
 import { AxiosError } from "axios";
@@ -54,6 +55,23 @@ export function useCreateVeiculo() {
     mutationFn: createVeiculo,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["veiculos"] });
+    },
+  });
+}
+
+export function useBuscarVeiculoPorPlaca() {
+  const queryClient = useQueryClient();
+  return useMutation<Veiculo | null, AxiosError, string>({
+    mutationFn: buscarVeiculoPorPlaca,
+    onSuccess: (data) => {
+      if (data) {
+        queryClient.setQueryData(["veiculo", data.id], data);
+      } else {
+        queryClient.removeQueries({ queryKey: ["veiculo"] });
+      }
+    },
+    onError: (error) => {
+      console.error("Erro ao buscar veículo por placa:", error);
     },
   });
 }

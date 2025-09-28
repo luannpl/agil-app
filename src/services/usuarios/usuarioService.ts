@@ -7,6 +7,7 @@ import {
   ClienteResponse,
 } from "@/types/usuario";
 import { api } from "../api";
+import { AxiosError } from "axios";
 
 export async function login(usuario: LoginForm): Promise<LoginResponse> {
   const { data } = await api.post("/auth/login", usuario);
@@ -26,9 +27,19 @@ export async function createUsuario(
 
 export async function buscarClientePorCPF(
   cpf: string
-): Promise<ClienteResponse> {
-  const { data } = await api.post("/usuarios/cliente/", { cpf });
-  return data;
+): Promise<ClienteResponse | null> {
+  try {
+    const { data } = await api.post<ClienteResponse>("/usuarios/cliente/", {
+      cpf,
+    });
+    return data;
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response?.status === 404) {
+      return null;
+    }
+    throw error;
+  }
 }
 
 export async function getUsuarios(): Promise<UsuarioResponse[]> {

@@ -57,10 +57,20 @@ export function useCreateUsuario() {
 
 export function useBuscarClientePorCPF() {
   const queryClient = useQueryClient();
-  return useMutation<ClienteResponse, AxiosError, string>({
+  return useMutation<ClienteResponse | null, AxiosError, string>({
     mutationFn: buscarClientePorCPF,
+
     onSuccess: (data) => {
-      queryClient.setQueryData(["cliente", data.cpf], data);
+      if (data) {
+        console.log("Cliente encontrado:", data);
+        queryClient.setQueryData(["cliente", data.cpf], data);
+      } else {
+        console.log("Nenhum cliente encontrado com o CPF informado.");
+      }
+    },
+
+    onError: (error) => {
+      console.error("Ocorreu um erro inesperado ao buscar o cliente:", error);
     },
   });
 }

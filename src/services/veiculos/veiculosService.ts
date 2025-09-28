@@ -1,5 +1,6 @@
 import { CreateVeiculoResponse, Veiculo } from "@/types/veiculo";
 import { api } from "../api";
+import { AxiosError } from "axios";
 
 export async function getVeiculos(): Promise<Veiculo[]> {
   const { data } = await api.get("/veiculos");
@@ -26,6 +27,21 @@ export async function createVeiculo(
     },
   });
   return data;
+}
+
+export async function buscarVeiculoPorPlaca(
+  placa: string
+): Promise<Veiculo | null> {
+  try {
+    const { data } = await api.post("/veiculos/placa/", { placa });
+    return data;
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response?.status === 404) {
+      return null;
+    }
+    throw error;
+  }
 }
 
 export async function updateVeiculo(
