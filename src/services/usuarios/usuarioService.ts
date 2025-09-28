@@ -4,6 +4,7 @@ import {
   UsuarioResponse,
   LoginResponse,
   AlterarSenhaForm,
+  ClienteResponse,
 } from "@/types/usuario";
 import { api } from "../api";
 
@@ -20,6 +21,13 @@ export async function createUsuario(
   usuario: CreateUsuarioDTO
 ): Promise<UsuarioResponse> {
   const { data } = await api.post("/usuarios", usuario);
+  return data;
+}
+
+export async function buscarClientePorCPF(
+  cpf: string
+): Promise<ClienteResponse> {
+  const { data } = await api.post("/usuarios/cliente/", { cpf });
   return data;
 }
 

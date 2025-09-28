@@ -31,6 +31,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import { maskCPF, maskPlaca } from "@/utils/masks";
+import { useBuscarClientePorCPF } from "@/hooks/useUsuario";
 
 const contratoSchema = z.object({
   cpf: z
@@ -123,6 +124,7 @@ export default function CadastroContrato() {
   //   const placaAtual = watch("placa");
 
   // Função para buscar cliente por CPF
+  const { mutate: buscarCliente } = useBuscarClientePorCPF();
   const buscarClientePorCPF = async (cpf: string) => {
     if (!cpf || cpf.replace(/\D/g, "").length !== 11) return;
 
@@ -130,30 +132,33 @@ export default function CadastroContrato() {
     setClienteEncontrado(false);
 
     try {
-      // Aqui você faria a chamada real para sua API
-      // const response = await fetch(`/api/clientes/buscar-por-cpf/${cpf}`);
-      // const cliente = await response.json();
-
-      // Simulando uma busca na API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Dados simulados - substitua pela resposta real da sua API
-      const clienteSimulado = {
-        nome: "João Silva Santos",
-        cpf: cpf,
-        // outros dados do cliente...
-      };
-
-      // Define o nome do cliente no formulário
-      setValue("cliente", clienteSimulado.nome);
-      setClienteEncontrado(true);
-      toast.success("Cliente encontrado com sucesso!");
+      buscarCliente(cpf, {
+        onSuccess: (cliente) => {
+          if (cliente) {
+            setValue("cliente", cliente.nome);
+            setClienteEncontrado(true);
+            toast.success("Cliente encontrado com sucesso!");
+          } else {
+            toast.error("Cliente não encontrado");
+            setValue("cliente", "");
+            setClienteEncontrado(false);
+          }
+        },
+        onError: (error) => {
+          console.error("Erro ao buscar cliente:", error);
+          toast.error("Erro ao buscar cliente. Tente novamente.");
+          setValue("cliente", "");
+          setClienteEncontrado(false);
+        },
+        onSettled: () => {
+          setIsBuscandoCliente(false);
+        },
+      });
     } catch (error) {
       console.error("Erro ao buscar cliente:", error);
-      toast.error("Cliente não encontrado ou erro na busca");
+      toast.error("Erro ao buscar cliente. Tente novamente.");
       setValue("cliente", "");
       setClienteEncontrado(false);
-    } finally {
       setIsBuscandoCliente(false);
     }
   };

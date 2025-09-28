@@ -1,5 +1,6 @@
 import {
   alterarSenha,
+  buscarClientePorCPF,
   createUsuario,
   getFuncionarios,
   getUsuarios,
@@ -12,6 +13,7 @@ import {
   CreateUsuarioDTO,
   UsuarioResponse,
   AlterarSenhaForm,
+  ClienteResponse,
 } from "@/types/usuario";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -49,6 +51,16 @@ export function useCreateUsuario() {
     mutationFn: createUsuario,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["usuarios"] });
+    },
+  });
+}
+
+export function useBuscarClientePorCPF() {
+  const queryClient = useQueryClient();
+  return useMutation<ClienteResponse, AxiosError, string>({
+    mutationFn: buscarClientePorCPF,
+    onSuccess: (data) => {
+      queryClient.setQueryData(["cliente", data.cpf], data);
     },
   });
 }

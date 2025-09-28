@@ -14,6 +14,22 @@ export type UsuarioResponse = {
   message?: string;
 };
 
+export type ClienteResponse = {
+  nome: string;
+  email: string;
+  telefone: string;
+  tipo: "cliente";
+  dataNasc?: string;
+  cpf?: string;
+  rg?: string;
+  cnh?: string;
+  cep?: string;
+  endereco?: string;
+  numero?: string;
+  complemento?: string;
+  descricao?: string;
+};
+
 export type CreateUsuarioDTO = {
   nome: string;
   email: string;
