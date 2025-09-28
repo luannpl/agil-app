@@ -145,6 +145,7 @@ export default function CadastroContrato() {
             setClienteEncontrado(false);
           }
         },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: (error: any) => {
           console.error("Erro ao buscar cliente:", error);
 
@@ -191,6 +192,7 @@ export default function CadastroContrato() {
             setVeiculoEncontrado(false);
           }
         },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: (error: any) => {
           console.error("Erro ao buscar veículo:", error);
 
