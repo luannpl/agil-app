@@ -34,6 +34,7 @@ import {
   FileCheck,
 } from "lucide-react";
 import { formatarQuilometragem } from "@/utils/formatarQuilometragem";
+import { maskPlaca } from "@/utils/masks";
 
 const veiculoSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -128,13 +129,6 @@ export default function CadastroVeiculo() {
   };
 
   // Função para formatar a placa enquanto digita
-  const formatarPlacaInput = (valor: string): string => {
-    const placaLimpa = valor.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
-    if (placaLimpa.length <= 3) {
-      return placaLimpa;
-    }
-    return `${placaLimpa.slice(0, 3)}-${placaLimpa.slice(3, 7)}`;
-  };
 
   // Função para formatar a quilometragem enquanto digita
   const formatarQuilometragemInput = (valor: string): string => {
@@ -338,9 +332,7 @@ export default function CadastroVeiculo() {
                         placeholder="Ex: ABC-1234"
                         value={field.value || ""}
                         onChange={(e) => {
-                          const valorFormatado = formatarPlacaInput(
-                            e.target.value
-                          );
+                          const valorFormatado = maskPlaca(e.target.value);
                           field.onChange(valorFormatado);
                         }}
                       />

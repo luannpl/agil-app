@@ -27,10 +27,20 @@ import {
   Building,
   Hash,
   CheckCircle,
-  Info,
+  Loader2,
+  UserCheck,
 } from "lucide-react";
+import { maskCPF, maskPlaca } from "@/utils/masks";
 
 const contratoSchema = z.object({
+  cpf: z
+    .string()
+    .min(1, "CPF é obrigatório")
+    .refine((cpf) => {
+      // Remove caracteres não numéricos
+      const cpfLimpo = cpf.replace(/\D/g, "");
+      return cpfLimpo.length === 11;
+    }, "CPF deve conter 11 dígitos"),
   cliente: z.string().min(1, "Cliente é obrigatório"),
   carro: z.string().min(1, "Carro é obrigatório"),
   placa: z.string().min(1, "Placa é obrigatória"),
@@ -77,8 +87,11 @@ type ContratoFormData = z.infer<typeof contratoSchema>;
 export default function CadastroContrato() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isBuscandoCliente, setIsBuscandoCliente] = useState(false);
+  const [clienteEncontrado, setClienteEncontrado] = useState(false);
+  const [isBuscandoVeiculo, setIsBuscandoVeiculo] = useState(false);
+  const [veiculoEncontrado, setVeiculoEncontrado] = useState(false);
 
-  // Função para formatar valor enquanto digita
   const formatarValorInput = (valor: string): string => {
     const numeroLimpo = valor.replace(/[^\d]/g, "");
     if (!numeroLimpo) return "";
@@ -90,18 +103,12 @@ export default function CadastroContrato() {
     }).format(valorNumerico);
   };
 
-  // Função para remover formatação
-  //   const removerFormatacao = (valorFormatado: string): number => {
-  //     const valorNumerico = valorFormatado
-  //       .replace(/[^\d,]/g, "")
-  //       .replace(",", ".");
-  //     return parseFloat(valorNumerico) || 0;
-  //   };
-
   const {
     register,
     handleSubmit,
     control,
+    setValue,
+    // watch,
     formState: { errors },
   } = useForm<ContratoFormData>({
     mode: "onSubmit",
@@ -112,13 +119,89 @@ export default function CadastroContrato() {
     },
   });
 
+  //   const cpfAtual = watch("cpf");
+  //   const placaAtual = watch("placa");
+
+  // Função para buscar cliente por CPF
+  const buscarClientePorCPF = async (cpf: string) => {
+    if (!cpf || cpf.replace(/\D/g, "").length !== 11) return;
+
+    setIsBuscandoCliente(true);
+    setClienteEncontrado(false);
+
+    try {
+      // Aqui você faria a chamada real para sua API
+      // const response = await fetch(`/api/clientes/buscar-por-cpf/${cpf}`);
+      // const cliente = await response.json();
+
+      // Simulando uma busca na API
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Dados simulados - substitua pela resposta real da sua API
+      const clienteSimulado = {
+        nome: "João Silva Santos",
+        cpf: cpf,
+        // outros dados do cliente...
+      };
+
+      // Define o nome do cliente no formulário
+      setValue("cliente", clienteSimulado.nome);
+      setClienteEncontrado(true);
+      toast.success("Cliente encontrado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao buscar cliente:", error);
+      toast.error("Cliente não encontrado ou erro na busca");
+      setValue("cliente", "");
+      setClienteEncontrado(false);
+    } finally {
+      setIsBuscandoCliente(false);
+    }
+  };
+
+  // Função para buscar veículo por placa
+  const buscarVeiculoPorPlaca = async (placa: string) => {
+    if (!placa || placa.length < 7) return;
+
+    setIsBuscandoVeiculo(true);
+    setVeiculoEncontrado(false);
+
+    try {
+      // Aqui você faria a chamada real para sua API
+      // const response = await fetch(`/api/veiculos/buscar-por-placa/${placa}`);
+      // const veiculo = await response.json();
+
+      // Simulando uma busca na API
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+
+      // Dados simulados - substitua pela resposta real da sua API
+      const veiculoSimulado = {
+        modelo: "Honda Civic EXL 2.0 2019",
+        placa: placa,
+        marca: "Honda",
+        ano: "2019",
+        // outros dados do veículo...
+      };
+
+      // Define o modelo do veículo no formulário
+      setValue("carro", veiculoSimulado.modelo);
+      setVeiculoEncontrado(true);
+      toast.success("Veículo encontrado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao buscar veículo:", error);
+      toast.error("Veículo não encontrado ou erro na busca");
+      setValue("carro", "");
+      setVeiculoEncontrado(false);
+    } finally {
+      setIsBuscandoVeiculo(false);
+    }
+  };
+
   const onSubmit = async (data: ContratoFormData) => {
     setIsSubmitting(true);
     console.log("Dados do formulário:", data);
 
     try {
       // Aqui você colocaria sua lógica de API para criar o contrato
-      // Exemplo:
       // const response = await criarContratoAPI(data);
 
       // Simulando requisição
@@ -155,35 +238,158 @@ export default function CadastroContrato() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Card Principal */}
           <div className="bg-card rounded-xl shadow-lg p-4 md:p-6 space-y-6">
-            {/* Seção: Informações Básicas */}
+            {/* Seção: Informações do Cliente */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
-                <Info className="w-5 h-5 text-yellow-500" />
+                <Users className="w-5 h-5 text-yellow-500" />
                 <h2 className="text-lg font-semibold text-foreground">
-                  Informações Básicas
+                  Informações do Cliente
                 </h2>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
+                  <Label htmlFor="cpf" className="text-sm font-medium">
+                    <span className="flex items-center gap-1">
+                      <Hash className="w-4 h-4" />
+                      CPF do Cliente
+                    </span>
+                  </Label>
+                  <div className="relative">
+                    <Controller
+                      control={control}
+                      name="cpf"
+                      render={({ field }) => (
+                        <Input
+                          id="cpf"
+                          className={cn(
+                            "transition-all duration-fast pr-10",
+                            errors.cpf && "border-error border-dashed"
+                          )}
+                          placeholder="000.000.000-00"
+                          value={maskCPF(field.value || "")}
+                          onChange={(e) => {
+                            const cpfLimpo = e.target.value.replace(/\D/g, "");
+
+                            field.onChange(cpfLimpo);
+
+                            if (cpfLimpo.length === 11) {
+                              buscarClientePorCPF(cpfLimpo);
+                            }
+                          }}
+                          maxLength={14}
+                        />
+                      )}
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                      {isBuscandoCliente && (
+                        <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                      )}
+                      {clienteEncontrado && !isBuscandoCliente && (
+                        <UserCheck className="w-4 h-4 text-green-500" />
+                      )}
+                    </div>
+                  </div>
+                  {errors.cpf && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.cpf.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
                   <Label htmlFor="cliente" className="text-sm font-medium">
                     <span className="flex items-center gap-1">
                       <Users className="w-4 h-4" />
-                      Cliente
+                      Nome do Cliente
                     </span>
                   </Label>
                   <Input
                     id="cliente"
                     className={cn(
-                      "transition-all duration-fast",
+                      "transition-all duration-fast bg-muted",
                       errors.cliente && "border-error border-dashed"
                     )}
-                    placeholder="Nome do cliente"
+                    placeholder="Busque pelo CPF"
+                    readOnly
                     {...register("cliente")}
                   />
                   {errors.cliente && (
                     <p className="text-xs text-error mt-1">
                       {errors.cliente.message}
+                    </p>
+                  )}
+                  {clienteEncontrado && (
+                    <p className="text-xs text-green-600 flex items-center gap-1">
+                      <UserCheck className="w-3 h-3" />
+                      Cliente encontrado
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Seção: Informações do Veículo */}
+            <div className="space-y-4 pt-6 border-t border-border">
+              <div className="flex items-center gap-2 mb-4">
+                <Car className="w-5 h-5 text-yellow-500" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  Informações do Veículo
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="placa" className="text-sm font-medium">
+                    <span className="flex items-center gap-1">
+                      <Hash className="w-4 h-4" />
+                      Placa do Veículo
+                    </span>
+                  </Label>
+                  <div className="relative">
+                    <Controller
+                      control={control}
+                      name="placa"
+                      render={({ field }) => (
+                        <Input
+                          id="placa"
+                          className={cn(
+                            "transition-all duration-fast uppercase pr-10",
+                            errors.placa && "border-error border-dashed"
+                          )}
+                          placeholder="ABC-1234 ou ABC1D23"
+                          value={maskPlaca(field.value || "")}
+                          onChange={(e) => {
+                            const placaLimpa = e.target.value.replace(
+                              /[^A-Za-z0-9]/g,
+                              ""
+                            );
+
+                            // atualiza no react-hook-form (sem máscara, se preferir)
+                            field.onChange(placaLimpa);
+
+                            // busca automaticamente se tiver 7 ou mais caracteres
+                            if (placaLimpa.length >= 7) {
+                              buscarVeiculoPorPlaca(placaLimpa);
+                            }
+                          }}
+                          maxLength={8}
+                        />
+                      )}
+                    />
+
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                      {isBuscandoVeiculo && (
+                        <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                      )}
+                      {veiculoEncontrado && !isBuscandoVeiculo && (
+                        <Car className="w-4 h-4 text-green-500" />
+                      )}
+                    </div>
+                  </div>
+                  {errors.placa && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.placa.message}
                     </p>
                   )}
                 </div>
@@ -192,16 +398,17 @@ export default function CadastroContrato() {
                   <Label htmlFor="carro" className="text-sm font-medium">
                     <span className="flex items-center gap-1">
                       <Car className="w-4 h-4" />
-                      Veículo
+                      Modelo do Veículo
                     </span>
                   </Label>
                   <Input
                     id="carro"
                     className={cn(
-                      "transition-all duration-fast",
+                      "transition-all duration-fast bg-muted",
                       errors.carro && "border-error border-dashed"
                     )}
-                    placeholder="Modelo do veículo"
+                    placeholder="Busque pela placa"
+                    readOnly
                     {...register("carro")}
                   />
                   {errors.carro && (
@@ -209,28 +416,26 @@ export default function CadastroContrato() {
                       {errors.carro.message}
                     </p>
                   )}
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="placa" className="text-sm font-medium">
-                    Placa
-                  </Label>
-                  <Input
-                    id="placa"
-                    className={cn(
-                      "transition-all duration-fast uppercase",
-                      errors.placa && "border-error border-dashed"
-                    )}
-                    placeholder="ABC-1234"
-                    {...register("placa")}
-                  />
-                  {errors.placa && (
-                    <p className="text-xs text-error mt-1">
-                      {errors.placa.message}
+                  {veiculoEncontrado && (
+                    <p className="text-xs text-green-600 flex items-center gap-1">
+                      <Car className="w-3 h-3" />
+                      Veículo encontrado
                     </p>
                   )}
                 </div>
+              </div>
+            </div>
 
+            {/* Seção: Dados do Financiamento */}
+            <div className="space-y-4 pt-6 border-t border-border">
+              <div className="flex items-center gap-2 mb-4">
+                <CreditCard className="w-5 h-5 text-yellow-500" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  Dados do Financiamento
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="banco" className="text-sm font-medium">
                     <span className="flex items-center gap-1">
@@ -253,19 +458,42 @@ export default function CadastroContrato() {
                     </p>
                   )}
                 </div>
-              </div>
-            </div>
+                <div className="space-y-1.5 ">
+                  <Label
+                    htmlFor="valorTotalFinanciamento"
+                    className="text-sm font-medium"
+                  >
+                    Valor Total do Financiamento
+                  </Label>
+                  <Controller
+                    control={control}
+                    name="valorTotalFinanciamento"
+                    render={({ field }) => (
+                      <Input
+                        id="valorTotalFinanciamento"
+                        className={cn(
+                          "transition-all duration-fast",
+                          errors.valorTotalFinanciamento &&
+                            "border-error border-dashed"
+                        )}
+                        placeholder="R$ 0,00"
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const valorFormatado = formatarValorInput(
+                            e.target.value
+                          );
+                          field.onChange(valorFormatado);
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.valorTotalFinanciamento && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.valorTotalFinanciamento.message}
+                    </p>
+                  )}
+                </div>
 
-            {/* Seção: Dados do Financiamento */}
-            <div className="space-y-4 pt-6 border-t border-border">
-              <div className="flex items-center gap-2 mb-4">
-                <CreditCard className="w-5 h-5 text-yellow-500" />
-                <h2 className="text-lg font-semibold text-foreground">
-                  Dados do Financiamento
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
                   <Label
                     htmlFor="dataPagamento"
@@ -353,6 +581,30 @@ export default function CadastroContrato() {
                 </div>
 
                 <div className="space-y-1.5">
+                  <Label
+                    htmlFor="numeroParcela"
+                    className="text-sm font-medium"
+                  >
+                    Total de Parcelas
+                  </Label>
+                  <Input
+                    id="numeroParcela"
+                    type="number"
+                    min="1"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.numeroParcela && "border-error border-dashed"
+                    )}
+                    placeholder="Ex: 48"
+                    {...register("numeroParcela")}
+                  />
+                  {errors.numeroParcela && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.numeroParcela.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1.5">
                   <Label htmlFor="status" className="text-sm font-medium">
                     <span className="flex items-center gap-1">
                       <CheckCircle className="w-4 h-4" />
@@ -388,67 +640,6 @@ export default function CadastroContrato() {
                   {errors.status && (
                     <p className="text-xs text-error mt-1">
                       {errors.status.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label
-                    htmlFor="numeroParcela"
-                    className="text-sm font-medium"
-                  >
-                    Total de Parcelas
-                  </Label>
-                  <Input
-                    id="numeroParcela"
-                    type="number"
-                    min="1"
-                    className={cn(
-                      "transition-all duration-fast",
-                      errors.numeroParcela && "border-error border-dashed"
-                    )}
-                    placeholder="Ex: 48"
-                    {...register("numeroParcela")}
-                  />
-                  {errors.numeroParcela && (
-                    <p className="text-xs text-error mt-1">
-                      {errors.numeroParcela.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label
-                    htmlFor="valorTotalFinanciamento"
-                    className="text-sm font-medium"
-                  >
-                    Valor Total do Financiamento
-                  </Label>
-                  <Controller
-                    control={control}
-                    name="valorTotalFinanciamento"
-                    render={({ field }) => (
-                      <Input
-                        id="valorTotalFinanciamento"
-                        className={cn(
-                          "transition-all duration-fast",
-                          errors.valorTotalFinanciamento &&
-                            "border-error border-dashed"
-                        )}
-                        placeholder="R$ 0,00"
-                        value={field.value || ""}
-                        onChange={(e) => {
-                          const valorFormatado = formatarValorInput(
-                            e.target.value
-                          );
-                          field.onChange(valorFormatado);
-                        }}
-                      />
-                    )}
-                  />
-                  {errors.valorTotalFinanciamento && (
-                    <p className="text-xs text-error mt-1">
-                      {errors.valorTotalFinanciamento.message}
                     </p>
                   )}
                 </div>

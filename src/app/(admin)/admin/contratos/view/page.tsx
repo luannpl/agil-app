@@ -113,10 +113,11 @@ const contratosMock = [
 
 export default function VisualizarContratos() {
   const router = useRouter();
-  const [contratos, setContratos] = useState(contratosMock);
+  //   const [contratos, setContratos] = useState(contratosMock);
   const [filtroStatus, setFiltroStatus] = useState("todos");
   const [busca, setBusca] = useState("");
-  setContratos(contratosMock);
+  //   setContratos(contratosMock);
+  const contratos = contratosMock;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [contratoSelecionado, setContratoSelecionado] = useState<any>(null);
 
