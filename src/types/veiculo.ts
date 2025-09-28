@@ -1,7 +1,7 @@
 import { Usuario } from "./usuario";
 
 export type Veiculo = {
-  id: string;
+  id: number;
   nome: string;
   descricao: string;
   marca: string;

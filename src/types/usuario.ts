@@ -15,6 +15,7 @@ export type UsuarioResponse = {
 };
 
 export type ClienteResponse = {
+  id: string;
   nome: string;
   email: string;
   telefone: string;

@@ -33,13 +33,14 @@ import {
 import { maskCPF, maskPlaca } from "@/utils/masks";
 import { useBuscarClientePorCPF } from "@/hooks/useUsuario";
 import { useBuscarVeiculoPorPlaca } from "@/hooks/useVeiculos";
+import { useCreateContrato } from "@/hooks/useContratos";
+import { Contrato } from "@/types/contrato";
 
 const contratoSchema = z.object({
   cpf: z
     .string()
     .min(1, "CPF é obrigatório")
     .refine((cpf) => {
-      // Remove caracteres não numéricos
       const cpfLimpo = cpf.replace(/\D/g, "");
       return cpfLimpo.length === 11;
     }, "CPF deve conter 11 dígitos"),
@@ -62,7 +63,7 @@ const contratoSchema = z.object({
       return { message: "Status é obrigatório" };
     },
   }),
-  numeroParcela: z.coerce
+  totalParcelas: z.coerce
     .number()
     .min(1, "Número de parcelas deve ser no mínimo 1"),
   valorTotalFinanciamento: z
@@ -94,6 +95,9 @@ export default function CadastroContrato() {
   const [isBuscandoVeiculo, setIsBuscandoVeiculo] = useState(false);
   const [veiculoEncontrado, setVeiculoEncontrado] = useState(false);
 
+  const [usuarioId, setUsuarioId] = useState<string | null>(null);
+  const [veiculoId, setVeiculoId] = useState<number | null>(null);
+
   const formatarValorInput = (valor: string): string => {
     const numeroLimpo = valor.replace(/[^\d]/g, "");
     if (!numeroLimpo) return "";
@@ -105,12 +109,16 @@ export default function CadastroContrato() {
     }).format(valorNumerico);
   };
 
+  const desformatarValor = (valor: string): number => {
+    const valorLimpo = valor.replace(/[^\d,]/g, "").replace(",", ".");
+    return parseFloat(valorLimpo);
+  };
+
   const {
     register,
     handleSubmit,
     control,
     setValue,
-    // watch,
     formState: { errors },
   } = useForm<ContratoFormData>({
     mode: "onSubmit",
@@ -121,122 +129,123 @@ export default function CadastroContrato() {
     },
   });
 
-  //   const cpfAtual = watch("cpf");
-  //   const placaAtual = watch("placa");
-
-  // Função para buscar cliente por CPF
   const { mutate: buscarCliente } = useBuscarClientePorCPF();
   const buscarClientePorCPF = async (cpf: string) => {
     if (!cpf || cpf.replace(/\D/g, "").length !== 11) return;
 
     setIsBuscandoCliente(true);
     setClienteEncontrado(false);
+    setUsuarioId(null);
 
-    try {
-      buscarCliente(cpf, {
-        onSuccess: (cliente) => {
-          if (cliente) {
-            setValue("cliente", cliente.nome);
-            setClienteEncontrado(true);
-            toast.success("Cliente encontrado com sucesso!");
-          } else {
-            toast.error("Cliente não encontrado");
-            setValue("cliente", "");
-            setClienteEncontrado(false);
-          }
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: (error: any) => {
-          console.error("Erro ao buscar cliente:", error);
-
-          if (error.response?.status === 404) {
-            toast.error("Cliente não encontrado");
-            setValue("cliente", "");
-            setClienteEncontrado(false);
-          } else {
-            toast.error("Erro ao buscar cliente. Tente novamente.");
-            setValue("cliente", "");
-            setClienteEncontrado(false);
-          }
-        },
-        onSettled: () => {
-          setIsBuscandoCliente(false);
-        },
-      });
-    } catch (error) {
-      console.error("Erro inesperado:", error);
-      toast.error("Erro inesperado. Tente novamente.");
-      setValue("cliente", "");
-      setClienteEncontrado(false);
-      setIsBuscandoCliente(false);
-    }
+    buscarCliente(cpf, {
+      onSuccess: (cliente) => {
+        if (cliente) {
+          setValue("cliente", cliente.nome);
+          setUsuarioId(cliente.id);
+          setClienteEncontrado(true);
+          toast.success("Cliente encontrado com sucesso!");
+        } else {
+          toast.error("Cliente não encontrado");
+          setValue("cliente", "");
+          setClienteEncontrado(false);
+        }
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onError: (error: any) => {
+        console.error("Erro ao buscar cliente:", error);
+        const message =
+          error.response?.status === 404
+            ? "Cliente não encontrado"
+            : "Erro ao buscar cliente. Tente novamente.";
+        toast.error(message);
+        setValue("cliente", "");
+        setClienteEncontrado(false);
+      },
+      onSettled: () => {
+        setIsBuscandoCliente(false);
+      },
+    });
   };
 
   const { mutate: buscarVeiculo } = useBuscarVeiculoPorPlaca();
   const buscarVeiculoPorPlaca = async (placa: string) => {
-    if (!placa || placa.length < 7) return;
+    if (!placa || placa.replace(/[^A-Za-z0-9]/g, "").length < 7) return;
 
     setIsBuscandoVeiculo(true);
     setVeiculoEncontrado(false);
+    setVeiculoId(null);
 
-    try {
-      buscarVeiculo(placa, {
-        onSuccess: (veiculo) => {
-          if (veiculo) {
-            setValue("carro", veiculo.nome);
-            setVeiculoEncontrado(true);
-            toast.success("Veículo encontrado com sucesso!");
-          } else {
-            toast.error("Veículo não encontrado");
-            setValue("carro", "");
-            setVeiculoEncontrado(false);
-          }
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: (error: any) => {
-          console.error("Erro ao buscar veículo:", error);
-
-          if (error.response?.status === 404) {
-            toast.error("Veículo não encontrado");
-            setValue("carro", "");
-            setVeiculoEncontrado(false);
-          } else {
-            toast.error("Erro ao buscar veículo. Tente novamente.");
-            setValue("carro", "");
-            setVeiculoEncontrado(false);
-          }
-        },
-        onSettled: () => {
-          setIsBuscandoVeiculo(false);
-        },
-      });
-    } catch (error) {
-      console.error("Erro inesperado:", error);
-      toast.error("Erro inesperado. Tente novamente.");
-      setValue("carro", "");
-      setVeiculoEncontrado(false);
-      setIsBuscandoVeiculo(false);
-    }
+    buscarVeiculo(placa, {
+      onSuccess: (veiculo) => {
+        if (veiculo) {
+          setValue("carro", veiculo.nome);
+          setVeiculoId(veiculo.id);
+          setVeiculoEncontrado(true);
+          toast.success("Veículo encontrado com sucesso!");
+        } else {
+          toast.error("Veículo não encontrado");
+          setValue("carro", "");
+          setVeiculoEncontrado(false);
+        }
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onError: (error: any) => {
+        console.error("Erro ao buscar veículo:", error);
+        const message =
+          error.response?.status === 404
+            ? "Veículo não encontrado"
+            : "Erro ao buscar veículo. Tente novamente.";
+        toast.error(message);
+        setValue("carro", "");
+        setVeiculoEncontrado(false);
+      },
+      onSettled: () => {
+        setIsBuscandoVeiculo(false);
+      },
+    });
   };
 
+  const { mutate: criarContratoMutation } = useCreateContrato();
+
   const onSubmit = async (data: ContratoFormData) => {
-    setIsSubmitting(true);
-    console.log("Dados do formulário:", data);
-
-    try {
-      // Aqui você colocaria sua lógica de API para criar o contrato
-      // const response = await criarContratoAPI(data);
-
-      // Simulando requisição
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      toast.success("Contrato cadastrado com sucesso!");
-      router.push("/admin/contratos");
-    } catch (error) {
-      toast.error("Erro ao cadastrar contrato. Tente novamente." + error);
-    } finally {
-      setIsSubmitting(false);
+    if (!usuarioId) {
+      toast.error("Busque e selecione um cliente válido antes de continuar.");
+      return;
     }
+    if (!veiculoId) {
+      toast.error("Busque e selecione um veículo válido antes de continuar.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const dadosContrato: Contrato = {
+      banco: data.banco,
+      dataPagamento: data.dataPagamento,
+      status: data.status,
+      descricaoEntrada: data.descricaoEntrada,
+      parcelaAtual: data.parcelaAtual,
+      totalParcelas: data.totalParcelas,
+      valorParcela: desformatarValor(data.valorParcela),
+      valorTotalFinanciamento: desformatarValor(data.valorTotalFinanciamento),
+      valorFinalEntrada: desformatarValor(data.valorFinalEntrada),
+      usuarioId: usuarioId,
+      veiculoId: veiculoId,
+    };
+
+    criarContratoMutation(dadosContrato, {
+      onSuccess: () => {
+        toast.success("Contrato realizado com sucesso!");
+        router.push("/admin/contratos/view");
+      },
+      onError: (error) => {
+        console.error("Erro ao criar contrato:", error);
+        toast.error("Erro ao cadastrar contrato. Tente novamente.");
+      },
+      onSettled: () => {
+        setIsSubmitting(false);
+      },
+    });
   };
 
   return (
@@ -293,9 +302,7 @@ export default function CadastroContrato() {
                           value={maskCPF(field.value || "")}
                           onChange={(e) => {
                             const cpfLimpo = e.target.value.replace(/\D/g, "");
-
                             field.onChange(cpfLimpo);
-
                             if (cpfLimpo.length === 11) {
                               buscarClientePorCPF(cpfLimpo);
                             }
@@ -383,15 +390,16 @@ export default function CadastroContrato() {
                           placeholder="ABC-1234 ou ABC1D23"
                           value={maskPlaca(field.value || "")}
                           onChange={(e) => {
-                            // envia o valor exatamente como está
-                            field.onChange(e.target.value);
+                            const valorDigitado = e.target.value;
+                            field.onChange(valorDigitado); // mantém exatamente como digitado
 
-                            // busca automaticamente se tiver 7 ou mais caracteres (mantendo máscara se houver)
-                            if (
-                              e.target.value.replace(/[^A-Za-z0-9]/g, "")
-                                .length >= 7
-                            ) {
-                              buscarVeiculoPorPlaca(e.target.value);
+                            // remove tudo exceto letras, números e hífen
+                            const placaLimpa = valorDigitado.replace(
+                              /[^A-Za-z0-9-]/g,
+                              ""
+                            );
+                            if (placaLimpa.replace("-", "").length >= 7) {
+                              buscarVeiculoPorPlaca(placaLimpa);
                             }
                           }}
                           maxLength={8}
@@ -603,25 +611,25 @@ export default function CadastroContrato() {
 
                 <div className="space-y-1.5">
                   <Label
-                    htmlFor="numeroParcela"
+                    htmlFor="totalParcelas"
                     className="text-sm font-medium"
                   >
                     Total de Parcelas
                   </Label>
                   <Input
-                    id="numeroParcela"
+                    id="totalParcelas"
                     type="number"
                     min="1"
                     className={cn(
                       "transition-all duration-fast",
-                      errors.numeroParcela && "border-error border-dashed"
+                      errors.totalParcelas && "border-error border-dashed"
                     )}
                     placeholder="Ex: 48"
-                    {...register("numeroParcela")}
+                    {...register("totalParcelas")}
                   />
-                  {errors.numeroParcela && (
+                  {errors.totalParcelas && (
                     <p className="text-xs text-error mt-1">
-                      {errors.numeroParcela.message}
+                      {errors.totalParcelas.message}
                     </p>
                   )}
                 </div>
@@ -753,11 +761,13 @@ export default function CadastroContrato() {
             <Button
               type="submit"
               className="w-full sm:w-auto bg-yellow-500 hover:bg-yellow-600 text-black font-medium transition-all duration-200 order-1 sm:order-2"
-              disabled={isSubmitting}
+              disabled={
+                isSubmitting || !clienteEncontrado || !veiculoEncontrado
+              }
             >
               {isSubmitting ? (
                 <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                   Cadastrando...
                 </span>
               ) : (
