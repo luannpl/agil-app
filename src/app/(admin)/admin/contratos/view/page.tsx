@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   FileText,
   Search,
@@ -44,116 +44,51 @@ import {
   XCircle,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-// Dados mockados para exemplo
-const contratosMock = [
-  {
-    id: 1,
-    cliente: "João Silva Santos",
-    carro: "Honda Civic 2020",
-    placa: "ABC-1234",
-    banco: "Banco do Brasil",
-    dataPagamento: "2024-01-15",
-    valorParcela: "R$ 850,00",
-    parcelaAtual: 12,
-    numeroParcela: 48,
-    status: "ativo",
-    valorTotalFinanciamento: "R$ 40.800,00",
-    valorFinalEntrada: "R$ 15.000,00",
-    descricaoEntrada:
-      "R$ 10.000 em dinheiro + Fiat Uno 2015 avaliado em R$ 5.000",
-  },
-  {
-    id: 2,
-    cliente: "Maria Oliveira",
-    carro: "Toyota Corolla 2019",
-    placa: "XYZ-5678",
-    banco: "Caixa Econômica",
-    dataPagamento: "2024-01-20",
-    valorParcela: "R$ 720,00",
-    parcelaAtual: 8,
-    numeroParcela: 36,
-    status: "atrasado",
-    valorTotalFinanciamento: "R$ 25.920,00",
-    valorFinalEntrada: "R$ 8.000,00",
-    descricaoEntrada: "R$ 8.000 em dinheiro",
-  },
-  {
-    id: 3,
-    cliente: "Carlos Mendes",
-    carro: "Nissan Sentra 2021",
-    placa: "DEF-9012",
-    banco: "Bradesco",
-    dataPagamento: "2024-01-10",
-    valorParcela: "R$ 950,00",
-    parcelaAtual: 24,
-    numeroParcela: 24,
-    status: "pago",
-    valorTotalFinanciamento: "R$ 22.800,00",
-    valorFinalEntrada: "R$ 12.000,00",
-    descricaoEntrada:
-      "R$ 7.000 em dinheiro + Moto Honda CG 160 avaliada em R$ 5.000",
-  },
-  {
-    id: 4,
-    cliente: "Ana Costa",
-    carro: "Hyundai HB20 2022",
-    placa: "GHI-3456",
-    banco: "Itaú",
-    dataPagamento: "2024-01-25",
-    valorParcela: "R$ 680,00",
-    parcelaAtual: 6,
-    numeroParcela: 60,
-    status: "cancelado",
-    valorTotalFinanciamento: "R$ 40.800,00",
-    valorFinalEntrada: "R$ 5.000,00",
-    descricaoEntrada: "R$ 5.000 em dinheiro",
-  },
-];
+import { useContratos } from "@/hooks/useContratos";
+import { Contrato } from "@/types/contrato";
+import { formatarPreco } from "@/utils/formatarPreco";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function VisualizarContratos() {
   const router = useRouter();
-  //   const [contratos, setContratos] = useState(contratosMock);
+  const { data: contratos = [], isLoading, isError } = useContratos();
+
   const [filtroStatus, setFiltroStatus] = useState("todos");
   const [busca, setBusca] = useState("");
-  //   setContratos(contratosMock);
-  const contratos = contratosMock;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [contratoSelecionado, setContratoSelecionado] = useState<any>(null);
+  const [contratoSelecionado, setContratoSelecionado] =
+    useState<Contrato | null>(null);
 
-  // Função para filtrar contratos
-  const contratosFiltrados = contratos.filter((contrato) => {
-    const matchStatus =
-      filtroStatus === "todos" || contrato.status === filtroStatus;
-    const matchBusca =
-      busca === "" ||
-      contrato.cliente.toLowerCase().includes(busca.toLowerCase()) ||
-      contrato.carro.toLowerCase().includes(busca.toLowerCase()) ||
-      contrato.placa.toLowerCase().includes(busca.toLowerCase());
+  const contratosFiltrados = useMemo(() => {
+    if (!contratos) return [];
+    return contratos.filter((contrato) => {
+      const matchStatus =
+        filtroStatus === "todos" || contrato.status === filtroStatus;
+      const matchBusca =
+        busca === "" ||
+        contrato.usuario?.nome.toLowerCase().includes(busca.toLowerCase()) ||
+        contrato.veiculo?.nome.toLowerCase().includes(busca.toLowerCase()) ||
+        contrato.veiculo?.placa.toLowerCase().includes(busca.toLowerCase());
+      return matchStatus && matchBusca;
+    });
+  }, [contratos, filtroStatus, busca]);
 
-    return matchStatus && matchBusca;
-  });
-
-  // Função para obter cor do badge baseado no status
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      ativo: { variant: "auth", color: "bg-yellow-500", icon: CheckCircle },
-      pago: { variant: "pago", color: "bg-green-500", icon: CheckCircle },
-      atrasado: {
-        variant: "destructive",
-        color: "bg-red-500",
-        icon: AlertCircle,
-      },
-      cancelado: { variant: "secondary", color: "bg-gray-500", icon: XCircle },
+      ativo: { variant: "auth", icon: CheckCircle },
+      pago: { variant: "pago", icon: CheckCircle },
+      atrasado: { variant: "destructive", icon: AlertCircle },
+      cancelado: { variant: "secondary", icon: XCircle },
     };
-
-    const config = statusConfig[status as keyof typeof statusConfig];
+    const config =
+      statusConfig[status as keyof typeof statusConfig] ||
+      statusConfig.cancelado;
     const Icon = config.icon;
 
     return (
       <Badge
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        variant={config.variant as any}
+        variant={
+          config.variant as "auth" | "pago" | "destructive" | "secondary"
+        }
         className="flex items-center gap-1"
       >
         <Icon className="w-3 h-3" />
@@ -162,10 +97,43 @@ export default function VisualizarContratos() {
     );
   };
 
-  // Função para calcular progresso das parcelas
   const calcularProgresso = (atual: number, total: number) => {
+    if (total === 0) return 0;
     return Math.round((atual / total) * 100);
   };
+
+  const renderSkeleton = () => (
+    <>
+      {[...Array(5)].map((_, i) => (
+        <TableRow key={i}>
+          <TableCell>
+            <Skeleton className="h-5 w-32" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-5 w-28" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-5 w-24" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-5 w-24" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-5 w-20" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-5 w-20" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-5 w-20" />
+          </TableCell>
+          <TableCell className="text-right">
+            <Skeleton className="h-8 w-20 ml-auto" />
+          </TableCell>
+        </TableRow>
+      ))}
+    </>
+  );
 
   return (
     <div className="min-h-screen" style={{ background: "var(--background)" }}>
@@ -181,11 +149,9 @@ export default function VisualizarContratos() {
           </div>
         </div>
 
-        {/* Filtros e Ações */}
         <div className="bg-card rounded-xl shadow-lg p-4 md:p-6 mb-6">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-              {/* Busca */}
               <div className="relative min-w-[300px]">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
@@ -195,8 +161,6 @@ export default function VisualizarContratos() {
                   className="pl-10"
                 />
               </div>
-
-              {/* Filtro por Status */}
               <Select value={filtroStatus} onValueChange={setFiltroStatus}>
                 <SelectTrigger className="w-full sm:w-[180px]">
                   <Filter className="w-4 h-4 mr-2" />
@@ -211,8 +175,6 @@ export default function VisualizarContratos() {
                 </SelectContent>
               </Select>
             </div>
-
-            {/* Botão Novo Contrato */}
             <Button
               onClick={() => router.push("/admin/contratos/")}
               className="bg-yellow-500 hover:bg-yellow-600 text-black font-medium w-full md:w-auto"
@@ -223,7 +185,6 @@ export default function VisualizarContratos() {
           </div>
         </div>
 
-        {/* Estatísticas Rápidas */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -231,7 +192,11 @@ export default function VisualizarContratos() {
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{contratos.length}</div>
+              {isLoading ? (
+                <Skeleton className="h-8 w-1/2" />
+              ) : (
+                <div className="text-2xl font-bold">{contratos.length}</div>
+              )}
             </CardContent>
           </Card>
           <Card>
@@ -240,9 +205,13 @@ export default function VisualizarContratos() {
               <CheckCircle className="h-4 w-4 text-yellow-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">
-                {contratos.filter((c) => c.status === "ativo").length}
-              </div>
+              {isLoading ? (
+                <Skeleton className="h-8 w-1/2" />
+              ) : (
+                <div className="text-2xl font-bold text-yellow-600">
+                  {contratos.filter((c) => c.status === "ativo").length}
+                </div>
+              )}
             </CardContent>
           </Card>
           <Card>
@@ -251,9 +220,13 @@ export default function VisualizarContratos() {
               <AlertCircle className="h-4 w-4 text-red-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">
-                {contratos.filter((c) => c.status === "atrasado").length}
-              </div>
+              {isLoading ? (
+                <Skeleton className="h-8 w-1/2" />
+              ) : (
+                <div className="text-2xl font-bold text-red-600">
+                  {contratos.filter((c) => c.status === "atrasado").length}
+                </div>
+              )}
             </CardContent>
           </Card>
           <Card>
@@ -262,14 +235,17 @@ export default function VisualizarContratos() {
               <CheckCircle className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">
-                {contratos.filter((c) => c.status === "pago").length}
-              </div>
+              {isLoading ? (
+                <Skeleton className="h-8 w-1/2" />
+              ) : (
+                <div className="text-2xl font-bold text-green-600">
+                  {contratos.filter((c) => c.status === "pago").length}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
 
-        {/* Tabela de Contratos */}
         <div className="bg-card rounded-xl shadow-lg overflow-hidden">
           <Table>
             <TableHeader>
@@ -285,188 +261,194 @@ export default function VisualizarContratos() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {contratosFiltrados.map((contrato) => (
-                <TableRow key={contrato.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-muted-foreground" />
-                      {contrato.cliente}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Car className="w-4 h-4 text-muted-foreground" />
-                      {contrato.carro}
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-mono">{contrato.placa}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Building className="w-4 h-4 text-muted-foreground" />
-                      {contrato.banco}
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-semibold">
-                    {contrato.valorParcela}
-                  </TableCell>
-                  <TableCell>
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-sm">
-                        <span>
-                          {contrato.parcelaAtual}/{contrato.numeroParcela}
-                        </span>
-                      </div>
-                      <Progress
-                        value={calcularProgresso(
-                          contrato.parcelaAtual,
-                          contrato.numeroParcela
-                        )}
-                        className="w-20"
-                      />
-                    </div>
-                  </TableCell>
-                  <TableCell>{getStatusBadge(contrato.status)}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex gap-2 justify-end">
-                      <Dialog>
-                        <DialogTrigger asChild>
+              {isLoading
+                ? renderSkeleton()
+                : contratosFiltrados.map((contrato) => (
+                    <TableRow key={contrato.id}>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4 text-muted-foreground" />
+                          {contrato.usuario?.nome}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Car className="w-4 h-4 text-muted-foreground" />
+                          {contrato.veiculo?.nome}
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-mono">
+                        {contrato.veiculo?.placa}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Building className="w-4 h-4 text-muted-foreground" />
+                          {contrato.banco}
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-semibold">
+                        {formatarPreco(contrato.valorParcela)}
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-sm">
+                            <span>
+                              {contrato.parcelaAtual}/{contrato.totalParcelas}
+                            </span>
+                          </div>
+                          <Progress
+                            value={calcularProgresso(
+                              contrato.parcelaAtual,
+                              contrato.totalParcelas
+                            )}
+                            className="w-20"
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(contrato.status)}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex gap-2 justify-end">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setContratoSelecionado(contrato)}
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl">
+                              <DialogHeader>
+                                <DialogTitle>Detalhes do Contrato</DialogTitle>
+                                <DialogDescription>
+                                  Informações completas do contrato
+                                </DialogDescription>
+                              </DialogHeader>
+                              {contratoSelecionado && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+                                  <div className="space-y-3">
+                                    <div>
+                                      <label className="text-sm font-medium text-muted-foreground">
+                                        Cliente
+                                      </label>
+                                      <p className="text-sm">
+                                        {contratoSelecionado.usuario?.nome}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <label className="text-sm font-medium text-muted-foreground">
+                                        Veículo
+                                      </label>
+                                      <p className="text-sm">
+                                        {contratoSelecionado.veiculo?.nome}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <label className="text-sm font-medium text-muted-foreground">
+                                        Placa
+                                      </label>
+                                      <p className="text-sm font-mono">
+                                        {contratoSelecionado.veiculo?.placa}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <label className="text-sm font-medium text-muted-foreground">
+                                        Banco
+                                      </label>
+                                      <p className="text-sm">
+                                        {contratoSelecionado.banco}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <label className="text-sm font-medium text-muted-foreground">
+                                        Data de Pagamento
+                                      </label>
+                                      <p className="text-sm">
+                                        {new Date(
+                                          contratoSelecionado.dataPagamento
+                                        ).toLocaleDateString("pt-BR")}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="space-y-3">
+                                    <div>
+                                      <label className="text-sm font-medium text-muted-foreground">
+                                        Valor da Parcela
+                                      </label>
+                                      <p className="text-sm font-semibold">
+                                        {formatarPreco(
+                                          contratoSelecionado.valorParcela
+                                        )}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <label className="text-sm font-medium text-muted-foreground">
+                                        Parcelas
+                                      </label>
+                                      <p className="text-sm">
+                                        {contratoSelecionado.parcelaAtual} de{" "}
+                                        {contratoSelecionado.totalParcelas}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <label className="text-sm font-medium text-muted-foreground">
+                                        Valor Total
+                                      </label>
+                                      <p className="text-sm font-semibold">
+                                        {formatarPreco(
+                                          contratoSelecionado.valorTotalFinanciamento
+                                        )}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <label className="text-sm font-medium text-muted-foreground">
+                                        Valor da Entrada
+                                      </label>
+                                      <p className="text-sm font-semibold">
+                                        {formatarPreco(
+                                          contratoSelecionado.valorFinalEntrada
+                                        )}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <label className="text-sm font-medium text-muted-foreground">
+                                        Status
+                                      </label>
+                                      <div className="mt-1">
+                                        {getStatusBadge(
+                                          contratoSelecionado.status
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="col-span-full">
+                                    <label className="text-sm font-medium text-muted-foreground">
+                                      Descrição da Entrada
+                                    </label>
+                                    <p className="text-sm bg-muted p-3 rounded-md mt-1">
+                                      {contratoSelecionado.descricaoEntrada}
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
+                            </DialogContent>
+                          </Dialog>
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setContratoSelecionado(contrato)}
+                            className="text-red-600 hover:text-red-700"
                           >
-                            <Eye className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4" />
                           </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                          <DialogHeader>
-                            <DialogTitle>Detalhes do Contrato</DialogTitle>
-                            <DialogDescription>
-                              Informações completas do contrato #
-                              {contratoSelecionado?.id}
-                            </DialogDescription>
-                          </DialogHeader>
-                          {contratoSelecionado && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-                              <div className="space-y-3">
-                                <div>
-                                  <label className="text-sm font-medium text-muted-foreground">
-                                    Cliente
-                                  </label>
-                                  <p className="text-sm">
-                                    {contratoSelecionado.cliente}
-                                  </p>
-                                </div>
-                                <div>
-                                  <label className="text-sm font-medium text-muted-foreground">
-                                    Veículo
-                                  </label>
-                                  <p className="text-sm">
-                                    {contratoSelecionado.carro}
-                                  </p>
-                                </div>
-                                <div>
-                                  <label className="text-sm font-medium text-muted-foreground">
-                                    Placa
-                                  </label>
-                                  <p className="text-sm font-mono">
-                                    {contratoSelecionado.placa}
-                                  </p>
-                                </div>
-                                <div>
-                                  <label className="text-sm font-medium text-muted-foreground">
-                                    Banco
-                                  </label>
-                                  <p className="text-sm">
-                                    {contratoSelecionado.banco}
-                                  </p>
-                                </div>
-                                <div>
-                                  <label className="text-sm font-medium text-muted-foreground">
-                                    Data de Pagamento
-                                  </label>
-                                  <p className="text-sm">
-                                    {new Date(
-                                      contratoSelecionado.dataPagamento
-                                    ).toLocaleDateString("pt-BR")}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="space-y-3">
-                                <div>
-                                  <label className="text-sm font-medium text-muted-foreground">
-                                    Valor da Parcela
-                                  </label>
-                                  <p className="text-sm font-semibold">
-                                    {contratoSelecionado.valorParcela}
-                                  </p>
-                                </div>
-                                <div>
-                                  <label className="text-sm font-medium text-muted-foreground">
-                                    Parcelas
-                                  </label>
-                                  <p className="text-sm">
-                                    {contratoSelecionado.parcelaAtual} de{" "}
-                                    {contratoSelecionado.numeroParcela}
-                                  </p>
-                                </div>
-                                <div>
-                                  <label className="text-sm font-medium text-muted-foreground">
-                                    Valor Total
-                                  </label>
-                                  <p className="text-sm font-semibold">
-                                    {
-                                      contratoSelecionado.valorTotalFinanciamento
-                                    }
-                                  </p>
-                                </div>
-                                <div>
-                                  <label className="text-sm font-medium text-muted-foreground">
-                                    Valor da Entrada
-                                  </label>
-                                  <p className="text-sm font-semibold">
-                                    {contratoSelecionado.valorFinalEntrada}
-                                  </p>
-                                </div>
-                                <div>
-                                  <label className="text-sm font-medium text-muted-foreground">
-                                    Status
-                                  </label>
-                                  <div className="mt-1">
-                                    {getStatusBadge(contratoSelecionado.status)}
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-span-full">
-                                <label className="text-sm font-medium text-muted-foreground">
-                                  Descrição da Entrada
-                                </label>
-                                <p className="text-sm bg-muted p-3 rounded-md mt-1">
-                                  {contratoSelecionado.descricaoEntrada}
-                                </p>
-                              </div>
-                            </div>
-                          )}
-                        </DialogContent>
-                      </Dialog>
-                      {/* <Button variant="outline" size="sm">
-                        <Edit className="w-4 h-4" />
-                      </Button> */}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
 
-          {contratosFiltrados.length === 0 && (
+          {!isLoading && !isError && contratosFiltrados.length === 0 && (
             <div className="p-8 text-center">
               <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium text-foreground mb-2">
@@ -477,6 +459,16 @@ export default function VisualizarContratos() {
                   ? "Ajuste os filtros para ver mais resultados"
                   : "Comece cadastrando um novo contrato"}
               </p>
+            </div>
+          )}
+
+          {isError && (
+            <div className="p-8 text-center text-red-500">
+              <AlertCircle className="w-12 h-12 mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">
+                Erro ao carregar contratos
+              </h3>
+              <p>Tente novamente mais tarde.</p>
             </div>
           )}
         </div>

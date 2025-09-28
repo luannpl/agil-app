@@ -1,4 +1,8 @@
+import { ClienteResponse } from "./usuario";
+import { Veiculo } from "./veiculo";
+
 export type Contrato = {
+  id?: string;
   banco: string;
   valorTotalFinanciamento: number;
   dataPagamento: string;
@@ -10,4 +14,6 @@ export type Contrato = {
   descricaoEntrada: string;
   usuarioId: string;
   veiculoId: number;
+  usuario?: ClienteResponse;
+  veiculo?: Veiculo;
 };
