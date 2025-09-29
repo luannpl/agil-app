@@ -49,8 +49,12 @@ const veiculoSchema = z.object({
     }, `O ano deve ser entre 1900 e ${new Date().getFullYear()}.`),
   placa: z
     .string()
-    .regex(/^[A-Z]{3}-\d{4}$/, "A placa deve estar no formato AAA-1234.")
+    .regex(
+      /^([A-Z]{3}-?\d{4}|[A-Z]{3}-?\d[A-Z]\d{2})$/,
+      "A placa deve estar no formato ABC-1234 ou ABC-1D23"
+    )
     .transform((val) => val.toUpperCase()),
+
   valor: z
     .string()
     .min(1, "Valor é obrigatório")
@@ -97,6 +101,7 @@ const veiculoSchema = z.object({
       message: "Imagem deve ser um arquivo válido",
     })
     .optional(),
+  quitado: z.boolean(),
   rastreador: z.boolean(),
   seguro: z.boolean(),
   regularizado: z.boolean(),
@@ -151,6 +156,7 @@ export default function CadastroVeiculo() {
       seguro: false,
       regularizado: false,
       transferido: false,
+      quitado: false,
     },
   });
 
@@ -618,7 +624,7 @@ export default function CadastroVeiculo() {
               </div>
 
               <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-4 md:p-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
                   <Controller
                     control={control}
                     name="rastreador"
@@ -695,6 +701,26 @@ export default function CadastroVeiculo() {
                         </Label>
                         <Switch
                           id="transferido"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="data-[state=checked]:bg-yellow-500"
+                        />
+                      </div>
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="quitado"
+                    render={({ field }) => (
+                      <div className="flex items-center  space-x-3">
+                        <Label
+                          htmlFor="quitado"
+                          className="text-sm font-medium cursor-pointer"
+                        >
+                          Quitado
+                        </Label>
+                        <Switch
+                          id="quitado"
                           checked={field.value}
                           onCheckedChange={field.onChange}
                           className="data-[state=checked]:bg-yellow-500"
