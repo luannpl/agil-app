@@ -186,8 +186,8 @@ export default function VisualizarContratos() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="py-4">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
               <CardTitle className="text-sm font-medium">Total</CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -199,8 +199,8 @@ export default function VisualizarContratos() {
               )}
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="py-4">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
               <CardTitle className="text-sm font-medium">Ativos</CardTitle>
               <CheckCircle className="h-4 w-4 text-yellow-500" />
             </CardHeader>
@@ -214,8 +214,8 @@ export default function VisualizarContratos() {
               )}
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="py-4">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
               <CardTitle className="text-sm font-medium">Atrasados</CardTitle>
               <AlertCircle className="h-4 w-4 text-red-500" />
             </CardHeader>
@@ -229,8 +229,8 @@ export default function VisualizarContratos() {
               )}
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="py-4">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
               <CardTitle className="text-sm font-medium">Pagos</CardTitle>
               <CheckCircle className="h-4 w-4 text-green-500" />
             </CardHeader>
