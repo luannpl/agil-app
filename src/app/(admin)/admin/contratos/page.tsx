@@ -35,6 +35,10 @@ import { useBuscarClientePorCPF } from "@/hooks/useUsuario";
 import { useBuscarVeiculoPorPlaca } from "@/hooks/useVeiculos";
 import { useCreateContrato } from "@/hooks/useContratos";
 import { Contrato } from "@/types/contrato";
+import PizZip from "pizzip";
+import Docxtemplater from "docxtemplater";
+import { saveAs } from "file-saver";
+
 
 const contratoSchema = z.object({
   cpf: z
@@ -98,6 +102,62 @@ export default function CadastroContrato() {
   const [usuarioId, setUsuarioId] = useState<string | null>(null);
   const [veiculoId, setVeiculoId] = useState<number | null>(null);
 
+  const gerar = async() => {
+    try{
+      const response = await fetch("/contrato/modeloContrato.docx");
+      const blob = await response.arrayBuffer();
+
+      const zip = new PizZip(blob);
+      const doc = new Docxtemplater(zip, {
+        paragraphLoop: true,
+        linebreaks: true,
+        delimiters: { start: '{{', end: '}}' }
+      });
+
+      const avista = true;
+
+      const dados = {
+        compradorNome : "Paulo Luan",
+        compradorCPF : "000.000.000-00",
+        compradorRG : "00.000.000-0",
+        compradorEndereco : "Rua Exemplo, 123 - Cidade - Estado",
+        compradorEnderecoNumero : "123",
+        compradorCEP : "00000-000",
+        veiculoMarca : "Fiat",
+        veiculoModelo : "Uno Vivace 1.0",
+        veiculoAno : "2015",
+        veiculoPlaca : "ABC-1234",
+        veiculoRenavam : "00.000.000-0",
+        veiculoCor : "Prata",
+        avista: avista,
+        parcelado: !avista,
+        entradaDescricao : "R$ 5.000,00 em dinheiro + Fiat Uno 2015",
+        totalParcelas : 48,
+        valorParcela : "R$ 1.200,00",
+        valorEntrada : "R$ 10.000,00",
+        valorTotal: "R$ 67.000,00",
+        dataContrato : new Date().toLocaleDateString('pt-BR'),
+
+      }
+
+      doc.render(dados);
+
+      const out = doc.getZip().generate({
+        type: "blob",
+        mimeType:
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      });
+
+      // 6. Baixar
+      saveAs(out, "contrato.docx");
+
+
+    }catch (error) {
+      console.error("Erro ao gerar contrato:", error);
+      alert("Erro ao gerar contrato");
+    }
+  }
+
   const formatarValorInput = (valor: string): string => {
     const numeroLimpo = valor.replace(/[^\d]/g, "");
     if (!numeroLimpo) return "";
@@ -144,6 +204,7 @@ export default function CadastroContrato() {
           setUsuarioId(cliente.id);
           setClienteEncontrado(true);
           toast.success("Cliente encontrado com sucesso!");
+          gerar();
         } else {
           toast.error("Cliente não encontrado");
           setValue("cliente", "");

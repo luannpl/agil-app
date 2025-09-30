@@ -61,8 +61,7 @@ export function useBuscarClientePorCPF() {
     mutationFn: buscarClientePorCPF,
 
     onSuccess: (data) => {
-      if (data) {
-        console.log("Cliente encontrado:", data);
+      if (data) { 
         queryClient.setQueryData(["cliente", data.cpf], data);
       } else {
         console.log("Nenhum cliente encontrado com o CPF informado.");
