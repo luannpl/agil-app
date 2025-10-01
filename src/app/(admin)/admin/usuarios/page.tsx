@@ -52,8 +52,14 @@ const usuarioSchema = z
     cep: z.string().optional(),
     endereco: z.string().optional(),
     numero: z.string().optional(),
+    bairro: z.string().optional(),
+    cidade: z.string().optional(),
+    estado: z.string().optional(),
     complemento: z.string().optional(),
     descricao: z.string().optional(),
+    profissao: z.string().optional(),
+    estadoCivil: z.string().optional(),
+    nacionalidade: z.string().optional(),
   })
   .refine((data) => data.senha === data.confirmarSenha, {
     message: "As senhas não coincidem",
@@ -87,8 +93,14 @@ export default function CadastroUsuario() {
       cep: "",
       endereco: "",
       numero: "",
+      bairro: "",
+      cidade: "",
+      estado: "",
       complemento: "",
       descricao: "",
+      profissao: "",
+      estadoCivil: "",
+      nacionalidade: "",
     },
   });
 
@@ -316,7 +328,7 @@ export default function CadastroUsuario() {
                       "transition-all duration-fast",
                       errors.confirmarSenha && "border-error border-dashed"
                     )}
-                    placeholder="Repita a senha"
+                    placeholder="Confirme a senha"
                     {...register("confirmarSenha")}
                   />
                   {errors.confirmarSenha && (
@@ -403,8 +415,9 @@ export default function CadastroUsuario() {
                         "transition-all duration-fast",
                         errors.rg && "border-error border-dashed"
                       )}
-                      placeholder="00.000.000-0"
+                      placeholder="0000.0000.000"
                       {...register("rg")}
+                      maxLength={11}
                     />
                   </div>
 
@@ -421,8 +434,63 @@ export default function CadastroUsuario() {
                       )}
                       placeholder="00000000000"
                       {...register("cnh")}
+                      maxLength={9}
                     />
                   </div>
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="nacionalidade"
+                      className="text-sm font-medium"
+                    >
+                      Nacionalidade
+                    </Label>
+                    <Input
+                      id="nacionalidade"
+                      type="text"
+                      className={cn(
+                        "transition-all duration-fast",
+                        errors.nacionalidade && "border-error border-dashed"
+                      )}
+                      placeholder="Brasileiro"
+                      {...register("nacionalidade")}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="nacionalidade"
+                      className="text-sm font-medium"
+                    >
+                      Profissão
+                    </Label>
+                    <Input
+                      id="profissao"
+                      type="text"
+                      className={cn(
+                        "transition-all duration-fast",
+                        errors.profissao && "border-error border-dashed"
+                      )}
+                      placeholder="Autonomo, etc."
+                      {...register("profissao")}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="nacionalidade"
+                    className="text-sm font-medium"
+                  >
+                    Estado Civil
+                  </Label>
+                  <Input
+                    id="estadoCivil"
+                    type="text"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.estadoCivil && "border-error border-dashed"
+                    )}
+                    placeholder="Casado, Solteiro, etc."
+                    {...register("estadoCivil")}
+                  />
                 </div>
               </div>
             )}
@@ -513,6 +581,51 @@ export default function CadastroUsuario() {
                       {...register("complemento")}
                     />
                   </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="bairro" className="text-sm font-medium">
+                      Bairro
+                    </Label>
+                    <Input
+                      id="bairro"
+                      type="text"
+                      className={cn(
+                        "transition-all duration-fast",
+                        errors.bairro && "border-error border-dashed"
+                      )}
+                      placeholder="Centro, etc."
+                      {...register("bairro")}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="cidade" className="text-sm font-medium">
+                      Cidade
+                    </Label>
+                    <Input
+                      id="cidade"
+                      type="text"
+                      className={cn(
+                        "transition-all duration-fast",
+                        errors.cidade && "border-error border-dashed"
+                      )}
+                      placeholder="Fortaleza, Maracanaú, etc."
+                      {...register("cidade")}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="estado" className="text-sm font-medium">
+                    Estado
+                  </Label>
+                  <Input
+                    id="estado"
+                    type="text"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.estado && "border-error border-dashed"
+                    )}
+                    placeholder="Ceará, Maranhão, etc."
+                    {...register("estado")}
+                  />
                 </div>
 
                 <div className="space-y-1.5">

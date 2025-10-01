@@ -17,3 +17,34 @@ export type Contrato = {
   usuario?: ClienteResponse;
   veiculo?: Veiculo;
 };
+
+export type DadosContrato = {
+  compradorNome: string;
+  compradorCPF: string;
+  compradorRG: string;
+  compradorNacionalidade: string;
+  compradorEstadoCivil: string;
+  compradorProfissao: string;
+  compradorEndereco: string;
+  compradorEnderecoNumero: string;
+  compradorCEP: string;
+  compradorBairro: string;
+  compradorCidade: string;
+  compradorEstado: string;
+  veiculoMarca: string;
+  veiculoModelo: string;
+  veiculoAno: number;
+  veiculoPlaca: string;
+  veiculoRenavam: string;
+  veiculoCor: string;
+  veiculoQuilometragem: number;
+  avista: boolean;
+  parcelado: boolean;
+  entradaDescricao: string;
+  totalParcelas: number;
+  valorParcela: string;
+  valorEntrada: string;
+  valorTotal: string;
+  dataContrato: string;
+  sinal: string;
+};

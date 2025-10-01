@@ -26,9 +26,15 @@ export type ClienteResponse = {
   cnh?: string;
   cep?: string;
   endereco?: string;
+  bairro?: string;
+  cidade?: string;
+  estado?: string;
   numero?: string;
   complemento?: string;
   descricao?: string;
+  profissao?: string;
+  estadoCivil?: string;
+  nacionalidade?: string;
 };
 
 export type CreateUsuarioDTO = {

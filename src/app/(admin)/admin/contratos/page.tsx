@@ -35,10 +35,9 @@ import { useBuscarClientePorCPF } from "@/hooks/useUsuario";
 import { useBuscarVeiculoPorPlaca } from "@/hooks/useVeiculos";
 import { useCreateContrato } from "@/hooks/useContratos";
 import { Contrato } from "@/types/contrato";
-import PizZip from "pizzip";
-import Docxtemplater from "docxtemplater";
-import { saveAs } from "file-saver";
-
+import { gerarDocumentoContrato } from "@/utils/gerarContrato";
+import { ClienteResponse } from "@/types/usuario";
+import { Veiculo } from "@/types/veiculo";
 
 const contratoSchema = z.object({
   cpf: z
@@ -87,6 +86,7 @@ const contratoSchema = z.object({
       return !isNaN(numero) && numero >= 0;
     }, "Valor da entrada deve ser válido"),
   descricaoEntrada: z.string().min(1, "Descrição da entrada é obrigatória"),
+  sinal: z.string().optional(),
 });
 
 type ContratoFormData = z.infer<typeof contratoSchema>;
@@ -98,65 +98,11 @@ export default function CadastroContrato() {
   const [clienteEncontrado, setClienteEncontrado] = useState(false);
   const [isBuscandoVeiculo, setIsBuscandoVeiculo] = useState(false);
   const [veiculoEncontrado, setVeiculoEncontrado] = useState(false);
+  const [cliente, setCliente] = useState<ClienteResponse | null>(null);
+  const [veiculo, setVeiculo] = useState<Veiculo | null>(null);
 
   const [usuarioId, setUsuarioId] = useState<string | null>(null);
   const [veiculoId, setVeiculoId] = useState<number | null>(null);
-
-  const gerar = async() => {
-    try{
-      const response = await fetch("/contrato/modeloContrato.docx");
-      const blob = await response.arrayBuffer();
-
-      const zip = new PizZip(blob);
-      const doc = new Docxtemplater(zip, {
-        paragraphLoop: true,
-        linebreaks: true,
-        delimiters: { start: '{{', end: '}}' }
-      });
-
-      const avista = true;
-
-      const dados = {
-        compradorNome : "Paulo Luan",
-        compradorCPF : "000.000.000-00",
-        compradorRG : "00.000.000-0",
-        compradorEndereco : "Rua Exemplo, 123 - Cidade - Estado",
-        compradorEnderecoNumero : "123",
-        compradorCEP : "00000-000",
-        veiculoMarca : "Fiat",
-        veiculoModelo : "Uno Vivace 1.0",
-        veiculoAno : "2015",
-        veiculoPlaca : "ABC-1234",
-        veiculoRenavam : "00.000.000-0",
-        veiculoCor : "Prata",
-        avista: avista,
-        parcelado: !avista,
-        entradaDescricao : "R$ 5.000,00 em dinheiro + Fiat Uno 2015",
-        totalParcelas : 48,
-        valorParcela : "R$ 1.200,00",
-        valorEntrada : "R$ 10.000,00",
-        valorTotal: "R$ 67.000,00",
-        dataContrato : new Date().toLocaleDateString('pt-BR'),
-
-      }
-
-      doc.render(dados);
-
-      const out = doc.getZip().generate({
-        type: "blob",
-        mimeType:
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      });
-
-      // 6. Baixar
-      saveAs(out, "contrato.docx");
-
-
-    }catch (error) {
-      console.error("Erro ao gerar contrato:", error);
-      alert("Erro ao gerar contrato");
-    }
-  }
 
   const formatarValorInput = (valor: string): string => {
     const numeroLimpo = valor.replace(/[^\d]/g, "");
@@ -200,11 +146,11 @@ export default function CadastroContrato() {
     buscarCliente(cpf, {
       onSuccess: (cliente) => {
         if (cliente) {
+          setCliente(cliente);
           setValue("cliente", cliente.nome);
           setUsuarioId(cliente.id);
           setClienteEncontrado(true);
           toast.success("Cliente encontrado com sucesso!");
-          gerar();
         } else {
           toast.error("Cliente não encontrado");
           setValue("cliente", "");
@@ -239,6 +185,7 @@ export default function CadastroContrato() {
     buscarVeiculo(placa, {
       onSuccess: (veiculo) => {
         if (veiculo) {
+          setVeiculo(veiculo);
           setValue("carro", veiculo.nome);
           setVeiculoId(veiculo.id);
           setVeiculoEncontrado(true);
@@ -294,9 +241,44 @@ export default function CadastroContrato() {
       veiculoId: veiculoId,
     };
 
+    const avista = data.totalParcelas > 1 ? false : true;
+
+    const dados = {
+      compradorNome: cliente?.nome || "Erro ao buscar cliente",
+      compradorCPF: cliente?.cpf || "Erro ao buscar cliente",
+      compradorRG: cliente?.rg || "Erro ao buscar cliente",
+      compradorNacionalidade:
+        cliente?.nacionalidade || "Erro ao buscar cliente",
+      compradorEstadoCivil: cliente?.estadoCivil || "Erro ao buscar cliente",
+      compradorProfissao: cliente?.profissao || "Erro ao buscar cliente",
+      compradorEndereco: cliente?.endereco || "Erro ao buscar cliente",
+      compradorEnderecoNumero: cliente?.numero || "Erro ao buscar cliente",
+      compradorCEP: cliente?.cep || "Erro ao buscar cliente",
+      compradorBairro: cliente?.bairro || "Erro ao buscar cliente",
+      compradorCidade: cliente?.cidade || "Erro ao buscar cliente",
+      compradorEstado: cliente?.estado || "Erro ao buscar cliente",
+      veiculoMarca: veiculo?.marca || "Erro ao buscar veiculo",
+      veiculoModelo: veiculo?.nome || "Erro ao buscar veiculo",
+      veiculoAno: veiculo?.ano || 0,
+      veiculoPlaca: veiculo?.placa || "Erro ao buscar veiculo",
+      veiculoRenavam: veiculo?.codigoCRV || "Erro ao buscar veiculo",
+      veiculoCor: veiculo?.cor || "Erro ao buscar veiculo",
+      veiculoQuilometragem: veiculo?.quilometragem || 0,
+      avista: avista,
+      parcelado: !avista,
+      entradaDescricao: data.descricaoEntrada,
+      totalParcelas: data.totalParcelas,
+      valorParcela: data.valorParcela,
+      valorEntrada: data.valorFinalEntrada,
+      valorTotal: data.valorTotalFinanciamento,
+      dataContrato: new Date().toLocaleDateString("pt-BR"),
+      sinal: data.sinal || "Sem sinal",
+    };
+
     criarContratoMutation(dadosContrato, {
       onSuccess: () => {
         toast.success("Contrato realizado com sucesso!");
+        gerarDocumentoContrato(dados);
         router.push("/admin/contratos/view");
       },
       onError: (error) => {
@@ -362,9 +344,9 @@ export default function CadastroContrato() {
                           placeholder="000.000.000-00"
                           value={maskCPF(field.value || "")}
                           onChange={(e) => {
-                            const cpfLimpo = e.target.value.replace(/\D/g, "");
+                            const cpfLimpo = e.target.value;
                             field.onChange(cpfLimpo);
-                            if (cpfLimpo.length === 11) {
+                            if (cpfLimpo.length === 14) {
                               buscarClientePorCPF(cpfLimpo);
                             }
                           }}
@@ -691,6 +673,26 @@ export default function CadastroContrato() {
                   {errors.totalParcelas && (
                     <p className="text-xs text-error mt-1">
                       {errors.totalParcelas.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="sinal" className="text-sm font-medium">
+                    Sinal
+                  </Label>
+                  <Input
+                    id="sinal"
+                    type="text"
+                    className={cn(
+                      "transition-all duration-fast",
+                      errors.sinal && "border-error border-dashed"
+                    )}
+                    placeholder="R$ 5.000,00 + Veículo"
+                    {...register("sinal")}
+                  />
+                  {errors.sinal && (
+                    <p className="text-xs text-error mt-1">
+                      {errors.sinal.message}
                     </p>
                   )}
                 </div>
