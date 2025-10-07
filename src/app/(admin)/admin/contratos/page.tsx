@@ -304,7 +304,7 @@ export default function CadastroContrato() {
               Cadastrar Contrato
             </h1>
           </div>
-          <p className="text-muted-foreground text-sm lg:text-base ml-11">
+          <p className="text-muted-foreground">
             Preencha todos os campos para criar um novo contrato de
             financiamento
           </p>

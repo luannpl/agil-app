@@ -1,4 +1,4 @@
-import { Contrato } from "@/types/contrato";
+import { Contrato, Parcela } from "@/types/contrato";
 import { api } from "../api";
 
 export async function criarContrato(data: Contrato): Promise<Contrato> {
@@ -22,4 +22,21 @@ export async function updateContrato(
 ): Promise<Contrato> {
   const { data: contrato } = await api.patch(`/contratos/${id}`, data);
   return contrato;
+}
+
+export async function listarParcelas(contratoId: string): Promise<Parcela[]> {
+  const { data } = await api.get(`/contratos/${contratoId}/pagamentos`);
+  return data;
+}
+
+export async function updateStatusParcela(
+  contratoId: string,
+  parcelaId: string,
+  status: string
+): Promise<Parcela> {
+  const { data } = await api.patch(
+    `/contratos/${contratoId}/pagamentos/${parcelaId}/status`,
+    { status }
+  );
+  return data;
 }

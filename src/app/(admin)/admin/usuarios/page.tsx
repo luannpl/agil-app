@@ -143,7 +143,7 @@ export default function CadastroUsuario() {
               Cadastrar Usuário
             </h1>
           </div>
-          <p className="text-muted-foreground text-sm lg:text-base ml-11">
+          <p className="text-muted-foreground">
             Preencha todos os campos para adicionar um novo usuário ao sistema
           </p>
         </div>

@@ -48,3 +48,12 @@ export type DadosContrato = {
   dataContrato: string;
   sinal: string;
 };
+
+export type Parcela = {
+  id?: string;
+  valorParcela: number;
+  numeroParcela: number;
+  dataVencimento: string;
+  status: string;
+  contratoId: string;
+};

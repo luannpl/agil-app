@@ -42,12 +42,14 @@ import {
   CheckCircle,
   AlertCircle,
   XCircle,
+  BanknoteArrowUp,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContratos } from "@/hooks/useContratos";
 import { Contrato } from "@/types/contrato";
 import { formatarPreco } from "@/utils/formatarPreco";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 export default function VisualizarContratos() {
   const router = useRouter();
@@ -308,6 +310,15 @@ export default function VisualizarContratos() {
                       <TableCell>{getStatusBadge(contrato.status)}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex gap-2 justify-end">
+                          <Link href={`/admin/contratos/${contrato.id}`}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setContratoSelecionado(contrato)}
+                            >
+                              <BanknoteArrowUp className="w-4 h-4" />
+                            </Button>
+                          </Link>
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button

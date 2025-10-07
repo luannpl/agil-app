@@ -210,7 +210,7 @@ export default function CadastroVeiculo() {
               Cadastrar Veículo
             </h1>
           </div>
-          <p className="text-muted-foreground text-sm lg:text-base ml-11">
+          <p className="text-muted-foreground">
             Preencha todos os campos para adicionar um novo veículo ao sistema
           </p>
         </div>
