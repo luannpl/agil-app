@@ -85,7 +85,7 @@ export default function AlterarSenha() {
               Alterar Senha
             </h1>
           </div>
-          <p className="text-muted-foreground text-sm lg:text-base ml-11">
+          <p className="text-muted-foreground text-sm lg:text-base ">
             Mantenha sua conta segura alterando sua senha regularmente
           </p>
         </div>
