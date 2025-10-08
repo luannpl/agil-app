@@ -32,6 +32,7 @@ import {
   Info,
 } from "lucide-react";
 import { maskCEP, maskCPF, maskPhone } from "@/utils/masks";
+import { useEffect, useState } from "react";
 
 const usuarioSchema = z
   .object({
@@ -75,6 +76,7 @@ export default function CadastroUsuario() {
     handleSubmit,
     watch,
     control,
+    setValue,
     formState: { errors },
   } = useForm<UsuarioFormData>({
     mode: "onSubmit",
@@ -103,6 +105,50 @@ export default function CadastroUsuario() {
       nacionalidade: "",
     },
   });
+
+  const [buscandoCep, setBuscandoCep] = useState(false);
+
+  const buscarCep = async (cep: string) => {
+    const cepLimpo = cep.replace(/\D/g, "");
+    if (cepLimpo.length !== 8) return;
+
+    setBuscandoCep(true);
+    try {
+      const response = await fetch(
+        `https://viacep.com.br/ws/${cepLimpo}/json/`
+      );
+      const data = await response.json();
+
+      if (data.erro) {
+        toast.error("CEP não encontrado.");
+        return;
+      }
+
+      // Atualiza os campos no formulário
+      setValue("endereco", data.logradouro || "");
+      setValue("bairro", data.bairro || "");
+      setValue("cidade", data.localidade || "");
+      setValue("estado", data.uf || "");
+
+      toast.success("Endereço preenchido automaticamente!");
+    } catch (error) {
+      console.error("Erro ao buscar CEP:", error);
+      toast.error("Erro ao buscar CEP. Tente novamente.");
+    } finally {
+      setBuscandoCep(false);
+    }
+  };
+
+  // Monitora o valor do campo CEP
+  const cepValue = watch("cep");
+
+  // Dispara busca automática ao digitar CEP válido
+  useEffect(() => {
+    const cepLimpo = cepValue?.replace(/\D/g, "");
+    if (cepLimpo?.length === 8) {
+      buscarCep(cepValue!);
+    }
+  }, [cepValue]);
 
   const { mutate: cadastrarUsuario, isPending } = useCreateUsuario();
 
@@ -506,6 +552,7 @@ export default function CadastroUsuario() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Campo CEP */}
                   <div className="space-y-1.5">
                     <Label htmlFor="cep" className="text-sm font-medium">
                       CEP
@@ -514,23 +561,36 @@ export default function CadastroUsuario() {
                       name="cep"
                       control={control}
                       render={({ field }) => (
-                        <Input
-                          id="cep"
-                          type="text"
-                          className={cn(
-                            "transition-all duration-fast",
-                            errors.cep && "border-error border-dashed"
+                        <div className="relative">
+                          <Input
+                            id="cep"
+                            type="text"
+                            className={cn(
+                              "transition-all duration-fast pr-10",
+                              errors.cep && "border-error border-dashed"
+                            )}
+                            placeholder="00000-000"
+                            {...field}
+                            onChange={(e) => {
+                              const value = maskCEP(e.target.value);
+                              field.onChange(value);
+                              // Busca automática quando o CEP tiver 8 dígitos
+                              if (value.replace(/\D/g, "").length === 8) {
+                                buscarCep(value);
+                              }
+                            }}
+                          />
+                          {buscandoCep && (
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                              <span className="w-4 h-4 border-2 border-muted-foreground/40 border-t-yellow-500 rounded-full animate-spin" />
+                            </span>
                           )}
-                          placeholder="00000-000"
-                          {...field}
-                          onChange={(e) => {
-                            field.onChange(maskCEP(e.target.value));
-                          }}
-                        />
+                        </div>
                       )}
                     />
                   </div>
 
+                  {/* Endereço */}
                   <div className="space-y-1.5">
                     <Label htmlFor="endereco" className="text-sm font-medium">
                       Endereço
@@ -538,8 +598,9 @@ export default function CadastroUsuario() {
                     <Input
                       id="endereco"
                       type="text"
+                      readOnly
                       className={cn(
-                        "transition-all duration-fast",
+                        "transition-all duration-fast bg-muted/50 cursor-not-allowed",
                         errors.endereco && "border-error border-dashed"
                       )}
                       placeholder="Rua, Avenida, etc."
@@ -547,6 +608,7 @@ export default function CadastroUsuario() {
                     />
                   </div>
 
+                  {/* Número */}
                   <div className="space-y-1.5">
                     <Label htmlFor="numero" className="text-sm font-medium">
                       Número
@@ -563,6 +625,7 @@ export default function CadastroUsuario() {
                     />
                   </div>
 
+                  {/* Complemento */}
                   <div className="space-y-1.5">
                     <Label
                       htmlFor="complemento"
@@ -581,6 +644,8 @@ export default function CadastroUsuario() {
                       {...register("complemento")}
                     />
                   </div>
+
+                  {/* Bairro */}
                   <div className="space-y-1.5">
                     <Label htmlFor="bairro" className="text-sm font-medium">
                       Bairro
@@ -588,14 +653,17 @@ export default function CadastroUsuario() {
                     <Input
                       id="bairro"
                       type="text"
+                      readOnly
                       className={cn(
-                        "transition-all duration-fast",
+                        "transition-all duration-fast bg-muted/50 cursor-not-allowed",
                         errors.bairro && "border-error border-dashed"
                       )}
                       placeholder="Centro, etc."
                       {...register("bairro")}
                     />
                   </div>
+
+                  {/* Cidade */}
                   <div className="space-y-1.5">
                     <Label htmlFor="cidade" className="text-sm font-medium">
                       Cidade
@@ -603,8 +671,9 @@ export default function CadastroUsuario() {
                     <Input
                       id="cidade"
                       type="text"
+                      readOnly
                       className={cn(
-                        "transition-all duration-fast",
+                        "transition-all duration-fast bg-muted/50 cursor-not-allowed",
                         errors.cidade && "border-error border-dashed"
                       )}
                       placeholder="Fortaleza, Maracanaú, etc."
@@ -612,6 +681,8 @@ export default function CadastroUsuario() {
                     />
                   </div>
                 </div>
+
+                {/* Estado */}
                 <div className="space-y-1.5">
                   <Label htmlFor="estado" className="text-sm font-medium">
                     Estado
@@ -619,8 +690,9 @@ export default function CadastroUsuario() {
                   <Input
                     id="estado"
                     type="text"
+                    readOnly
                     className={cn(
-                      "transition-all duration-fast",
+                      "transition-all duration-fast bg-muted/50 cursor-not-allowed",
                       errors.estado && "border-error border-dashed"
                     )}
                     placeholder="Ceará, Maranhão, etc."
@@ -628,6 +700,7 @@ export default function CadastroUsuario() {
                   />
                 </div>
 
+                {/* Observações */}
                 <div className="space-y-1.5">
                   <Label htmlFor="descricao" className="text-sm font-medium">
                     <span className="flex items-center gap-1">
