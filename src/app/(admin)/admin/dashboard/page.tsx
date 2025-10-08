@@ -1,12 +1,23 @@
+"use client";
 import { Car, DollarSign, Package, Zap, ChartArea } from "lucide-react";
 import { MetricsCard } from "@/components/admin/dashboard/MetricsCard";
 import { UltimasVendas } from "@/components/admin/dashboard/UltimasVendas";
 import { TopMarcas } from "@/components/admin/dashboard/TopMarcas";
+import { useDashboardData } from "@/hooks/useDashboard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
+  const { data: dashboardData, isLoading } = useDashboardData();
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Skeleton className="h-32 w-32 rounded-full" />
+      </div>
+    );
+  }
   return (
     <div className="space-y-6 px-6">
-      {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-2">
           <div className="p-2 bg-yellow-500/10 rounded-lg">
@@ -17,47 +28,50 @@ export default function Dashboard() {
           </h1>
         </div>
         <p className="text-muted-foreground">
-          Bem-vindo ao painel de controle da sua loja de carros
+          Bem-vindo ao painel de controle da Ágil Veículos!
         </p>
       </div>
 
-      {/* Metrics Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <MetricsCard
           title="Estoque de Veiculos"
-          value="42"
+          value={dashboardData?.totalVeiculosEstoque.toString() || "0"}
           // description="8 novos esta semana"
           icon={Car}
-          trend={{ value: 12.5, isPositive: true }}
+          // trend={{ value: 12.5, isPositive: true }}
         />
         <MetricsCard
           title="Estoque em Valor"
-          value="R$ 5.2M"
+          value={`R$ ${
+            dashboardData?.totalEstoqueEmValor.toFixed(2) || "0.00"
+          }`}
           // description="Meta: R$ 6M"
           icon={DollarSign}
-          trend={{ value: 8.2, isPositive: true }}
+          // trend={{ value: 8.2, isPositive: true }}
+        />
+        <MetricsCard
+          title="Total de Clientes"
+          value={dashboardData?.totalClientes.toString() || "0"}
+          // description="54 novos leads"
+          icon={Zap}
+          // trend={{ value: 18.7, isPositive: true }}
         />
         <MetricsCard
           title="Total de Vendas no Mês"
-          value="10"
+          value={dashboardData?.totalContratosMes.toString() || "0"}
           // description="15 novos esta semana"
           icon={Package}
-          trend={{ value: 3.1, isPositive: false }}
-        />
-        <MetricsCard
-          title="Faturamento no Mês"
-          value="R$ 1.2M"
-          // description="54 novos leads"
-          icon={Zap}
-          trend={{ value: 18.7, isPositive: true }}
+          // trend={{ value: 3.1, isPositive: false }}
         />
       </div>
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="w-full">
-          <UltimasVendas />
+          <UltimasVendas ultimasVendas={dashboardData?.ultimasVendas || []} />
         </div>
         <div className="w-full">
-          <TopMarcas />
+          <TopMarcas
+            marcasMaisVendidas={dashboardData?.marcasMaisVendidas || []}
+          />
         </div>
       </div>
 
