@@ -1,7 +1,21 @@
+import {
+  Car,
+  Users,
+  FileText,
+  LayoutDashboard,
+  UserPlus,
+  List,
+  FilePlus,
+  UserCircle,
+  PlusCircle,
+  type LucideIcon,
+} from "lucide-react";
+
 type NavItem = {
   title: string;
   url: string;
-  items: { title: string; url: string }[];
+  icon: LucideIcon;
+  items: { title: string; url: string; icon: LucideIcon }[];
 };
 
 type SidebarConfig = Record<string, { navMain: NavItem[] }>;
@@ -12,33 +26,49 @@ export const sidebarConfig: SidebarConfig = {
       {
         title: "Veículos",
         url: "/admin/veiculos",
+        icon: Car,
         items: [
-          { title: "Cadastrar Veículo", url: "/admin/veiculos" },
-          { title: "Ver Veículos", url: "/admin/veiculos/view" },
+          {
+            title: "Cadastrar Veículo",
+            url: "/admin/veiculos",
+            icon: PlusCircle,
+          },
+          { title: "Ver Veículos", url: "/admin/veiculos/view", icon: List },
         ],
       },
       {
         title: "Usuários",
         url: "/admin/usuarios",
+        icon: Users,
         items: [
-          { title: "Cadastrar Usuário", url: "/admin/usuarios" },
-          { title: "Ver Usuários", url: "/admin/usuarios/view" },
+          {
+            title: "Cadastrar Usuário",
+            url: "/admin/usuarios",
+            icon: UserPlus,
+          },
+          { title: "Ver Usuários", url: "/admin/usuarios/view", icon: List },
         ],
       },
       {
         title: "Contratos",
         url: "/admin/contratos",
+        icon: FileText,
         items: [
-          { title: "Novo Contrato", url: "/admin/contratos" },
-          { title: "Ver Contratos", url: "/admin/contratos/view" },
+          { title: "Novo Contrato", url: "/admin/contratos", icon: FilePlus },
+          { title: "Ver Contratos", url: "/admin/contratos/view", icon: List },
         ],
       },
       {
         title: "Painel de Controle",
         url: "/admin/painel-controle",
+        icon: LayoutDashboard,
         items: [
-          { title: "Perfil", url: "/admin/usuarios/perfil" },
-          { title: "Dashboard", url: "/admin/dashboard" },
+          { title: "Perfil", url: "/admin/usuarios/perfil", icon: UserCircle },
+          {
+            title: "Dashboard",
+            url: "/admin/dashboard",
+            icon: LayoutDashboard,
+          },
         ],
       },
     ],
@@ -49,15 +79,27 @@ export const sidebarConfig: SidebarConfig = {
       {
         title: "Veículos",
         url: "/admin/veiculos",
+        icon: Car,
         items: [
-          { title: "Cadastrar Veículo", url: "/admin/veiculos" },
-          { title: "Ver Veículos", url: "/admin/veiculos/view" },
+          {
+            title: "Cadastrar Veículo",
+            url: "/admin/veiculos",
+            icon: PlusCircle,
+          },
+          { title: "Ver Veículos", url: "/admin/veiculos/view", icon: List },
         ],
       },
       {
         title: "Painel de Controle",
         url: "/admin/painel-controle",
-        items: [{ title: "Dashboard", url: "/admin/dashboard" }],
+        icon: LayoutDashboard,
+        items: [
+          {
+            title: "Dashboard",
+            url: "/admin/dashboard",
+            icon: LayoutDashboard,
+          },
+        ],
       },
     ],
   },
@@ -67,12 +109,22 @@ export const sidebarConfig: SidebarConfig = {
       {
         title: "Veículos",
         url: "/admin/veiculos",
-        items: [{ title: "Ver Veículos", url: "/admin/veiculos/view" }],
+        icon: Car,
+        items: [
+          { title: "Ver Veículos", url: "/admin/veiculos/view", icon: List },
+        ],
       },
       {
         title: "Painel de Controle",
         url: "/admin/painel-controle",
-        items: [{ title: "Dashboard", url: "/admin/dashboard" }],
+        icon: LayoutDashboard,
+        items: [
+          {
+            title: "Dashboard",
+            url: "/admin/dashboard",
+            icon: LayoutDashboard,
+          },
+        ],
       },
     ],
   },
@@ -82,14 +134,22 @@ export const sidebarConfig: SidebarConfig = {
       {
         title: "Veículos",
         url: "/admin/veiculos",
-        items: [{ title: "Ver Veículos", url: "/admin/veiculos/view" }],
+        icon: Car,
+        items: [
+          { title: "Ver Veículos", url: "/admin/veiculos/view", icon: List },
+        ],
       },
       {
         title: "Painel de Controle",
         url: "/admin/painel-controle",
+        icon: LayoutDashboard,
         items: [
-          { title: "Perfil", url: "/admin/usuarios/perfil" },
-          { title: "Dashboard", url: "/admin/dashboard" },
+          { title: "Perfil", url: "/admin/usuarios/perfil", icon: UserCircle },
+          {
+            title: "Dashboard",
+            url: "/admin/dashboard",
+            icon: LayoutDashboard,
+          },
         ],
       },
     ],
