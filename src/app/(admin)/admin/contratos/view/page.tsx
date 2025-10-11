@@ -45,11 +45,12 @@ import {
   BanknoteArrowUp,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useContratos } from "@/hooks/useContratos";
+import { useContratos, useDeleteContrato } from "@/hooks/useContratos";
 import { Contrato } from "@/types/contrato";
 import { formatarPreco } from "@/utils/formatarPreco";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function VisualizarContratos() {
   const router = useRouter();
@@ -73,6 +74,19 @@ export default function VisualizarContratos() {
       return matchStatus && matchBusca;
     });
   }, [contratos, filtroStatus, busca]);
+
+  const { mutate: deleteContrato, isPending } = useDeleteContrato();
+
+  const handleDelete = (idDoContrato: string) => {
+    deleteContrato(idDoContrato, {
+      onSuccess: () => {
+        toast.success("Contrato deletado com sucesso!");
+      },
+      onError: (error) => {
+        toast.error(`Erro ao deletar contrato: ${error.message}`);
+      },
+    });
+  };
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -449,6 +463,8 @@ export default function VisualizarContratos() {
                             variant="outline"
                             size="sm"
                             className="text-red-600 hover:text-red-700"
+                            onClick={() => handleDelete(contrato.id!)}
+                            disabled={isPending}
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>

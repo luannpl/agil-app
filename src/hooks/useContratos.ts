@@ -1,5 +1,6 @@
 import {
   criarContrato,
+  deleteContrato,
   getContratoById,
   listarContratos,
   listarParcelas,
@@ -44,6 +45,17 @@ export function useUpdateContrato(id: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contratos"] });
       queryClient.invalidateQueries({ queryKey: ["contrato", id] });
+    },
+  });
+}
+
+export function useDeleteContrato() {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, AxiosError, string>({
+    mutationFn: deleteContrato,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contratos"] });
     },
   });
 }

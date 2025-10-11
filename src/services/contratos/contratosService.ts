@@ -24,6 +24,10 @@ export async function updateContrato(
   return contrato;
 }
 
+export async function deleteContrato(id: string): Promise<void> {
+  await api.delete(`/contratos/${id}`);
+}
+
 export async function listarParcelas(contratoId: string): Promise<Parcela[]> {
   const { data } = await api.get(`/contratos/${contratoId}/pagamentos`);
   return data;
