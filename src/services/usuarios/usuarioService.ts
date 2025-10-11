@@ -57,7 +57,6 @@ export async function getFuncionarios(): Promise<UsuarioResponse[]> {
   return data;
 }
 
-// Recebendo 1 argumento (um objeto)
 export async function alterarSenha({
   senhaAtual,
   novaSenha,
@@ -68,5 +67,12 @@ export async function alterarSenha({
     novaSenha,
     confirmarNovaSenha,
   });
+  return data;
+}
+
+export async function updateUsuario(
+  usuario: Partial<CreateUsuarioDTO>
+): Promise<UsuarioResponse> {
+  const { data } = await api.put(`/usuarios/`, usuario);
   return data;
 }

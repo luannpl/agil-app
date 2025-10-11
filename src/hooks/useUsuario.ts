@@ -6,6 +6,7 @@ import {
   getUsuarios,
   login,
   logout,
+  updateUsuario,
 } from "@/services/usuarios/usuarioService";
 import {
   LoginResponse,
@@ -17,6 +18,7 @@ import {
 } from "@/types/usuario";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function useLoginUsuario() {
   const queryClient = useQueryClient();
@@ -50,7 +52,7 @@ export function useCreateUsuario() {
   return useMutation<UsuarioResponse, AxiosError, CreateUsuarioDTO>({
     mutationFn: createUsuario,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["usuarios"] });
+      queryClient.invalidateQueries({ queryKey: ["usuario"] });
     },
   });
 }
@@ -61,7 +63,7 @@ export function useBuscarClientePorCPF() {
     mutationFn: buscarClientePorCPF,
 
     onSuccess: (data) => {
-      if (data) { 
+      if (data) {
         queryClient.setQueryData(["cliente", data.cpf], data);
       } else {
         console.log("Nenhum cliente encontrado com o CPF informado.");
@@ -85,5 +87,19 @@ export function useFuncionarios() {
   return useQuery<UsuarioResponse[]>({
     queryKey: ["funcionarios"],
     queryFn: getFuncionarios,
+  });
+}
+
+export function useUpdateUsuario() {
+  const queryClient = useQueryClient();
+  const { refetchUser } = useAuth();
+
+  return useMutation<UsuarioResponse, AxiosError, Partial<CreateUsuarioDTO>>({
+    mutationFn: updateUsuario,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["usuarios"] });
+      queryClient.invalidateQueries({ queryKey: ["funcionarios"] });
+      refetchUser();
+    },
   });
 }

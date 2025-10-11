@@ -87,7 +87,10 @@ export const sidebarConfig: SidebarConfig = {
       {
         title: "Painel de Controle",
         url: "/admin/painel-controle",
-        items: [{ title: "Dashboard", url: "/admin/dashboard" }],
+        items: [
+          { title: "Perfil", url: "/admin/usuarios/perfil" },
+          { title: "Dashboard", url: "/admin/dashboard" },
+        ],
       },
     ],
   },
