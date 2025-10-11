@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "motion/react";
+import { LucideIcon } from "lucide-react";
 
 import { useState } from "react";
 
@@ -11,6 +12,7 @@ export const HoverEffect = ({
     title: string;
     description: string;
     link: string;
+    icon?: LucideIcon;
   }[];
   className?: string;
 }) => {
@@ -47,7 +49,14 @@ export const HoverEffect = ({
               />
             )}
           </AnimatePresence>
-          <Card className="bg-gradient-to-br from-zinc-900 to-zinc-800 hover:scale-[1.02] transition-transform duration-200 ease-in-out ">
+          <Card className="bg-gradient-to-br from-zinc-900 to-zinc-800 ">
+            {item.icon && (
+              <div className="flex justify-center mb-3">
+                <div className="p-3 bg-yellow-500/20 rounded-full">
+                  <item.icon className="w-8 h-8 text-yellow-500" />
+                </div>
+              </div>
+            )}
             <CardTitle className="text-yellow-500 text-2xl text-center">
               {item.title}
             </CardTitle>
