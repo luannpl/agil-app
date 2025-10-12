@@ -9,13 +9,15 @@ import {
   Mail,
   Cog,
   MessageCircleMore,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useVeiculo } from "@/hooks/useVeiculos";
 import { formatarPreco } from "@/utils/formatarPreco";
-import { use } from "react";
+import { use, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Label } from "@/components/ui/label";
@@ -42,6 +44,24 @@ export default function VehicleDetailsPage({
 }) {
   const { id } = use(params);
   const { data: veiculo, isLoading } = useVeiculo(id);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const images =
+    veiculo?.imagens && veiculo.imagens.length > 0
+      ? veiculo.imagens
+      : [{ url: "/agil-logo.png" }];
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const goToImage = (index: number) => {
+    setCurrentImageIndex(index);
+  };
 
   const {
     register,
@@ -78,28 +98,91 @@ export default function VehicleDetailsPage({
             {/* Galeria de imagens */}
             <Card>
               <CardContent className="p-0">
-                <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
-                  <img
-                    key={veiculo?.id}
-                    src={veiculo?.imagens![0].url || "/placeholder.svg"}
-                    alt={veiculo?.nome}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                </div>
-                {/* <div className="grid grid-cols-4 gap-2 p-4">
-                  {veiculo?.imagens.slice(1).map((image, index) => (
+                <div className="relative aspect-video bg-gray-200 rounded-lg overflow-hidden group">
+                  {/* Imagem atual */}
+                  {images.map((imagem, index) => (
                     <div
                       key={index}
-                      className="aspect-video bg-gray-200 rounded overflow-hidden cursor-pointer hover:opacity-80"
+                      className={`absolute inset-0 transition-opacity duration-500 ease-in-out ${
+                        index === currentImageIndex
+                          ? "opacity-100"
+                          : "opacity-0"
+                      }`}
                     >
                       <img
-                        src={image || "/placeholder.svg"}
-                        alt={`${vehicleData.name} - ${index + 2}`}
+                        src={imagem.url || "/agil-logo.png"}
+                        alt={`${veiculo?.nome} - Imagem ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
                     </div>
                   ))}
-                </div> */}
+
+                  {/* Botão Anterior */}
+                  {images.length > 1 && (
+                    <>
+                      <button
+                        onClick={prevImage}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white p-2 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 z-10"
+                        aria-label="Imagem anterior"
+                      >
+                        <ChevronLeft className="w-6 h-6" />
+                      </button>
+
+                      {/* Botão Próximo */}
+                      <button
+                        onClick={nextImage}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white p-2 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 z-10"
+                        aria-label="Próxima imagem"
+                      >
+                        <ChevronRight className="w-6 h-6" />
+                      </button>
+
+                      {/* Contador de imagens */}
+                      <div className="absolute top-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm z-10">
+                        {currentImageIndex + 1} / {images.length}
+                      </div>
+
+                      {/* Indicadores */}
+                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+                        {images.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => goToImage(index)}
+                            className={`h-2 rounded-full transition-all duration-300 ${
+                              index === currentImageIndex
+                                ? "bg-yellow-500 w-8"
+                                : "bg-white/50 hover:bg-white/75 w-2"
+                            }`}
+                            aria-label={`Ir para imagem ${index + 1}`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Miniaturas das imagens */}
+                {images.length > 1 && (
+                  <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 p-4">
+                    {images.map((imagem, index) => (
+                      <button
+                        key={index}
+                        onClick={() => goToImage(index)}
+                        className={`aspect-video bg-gray-200 rounded overflow-hidden cursor-pointer transition-all duration-300 ${
+                          index === currentImageIndex
+                            ? "ring-2 ring-yellow-500 opacity-100"
+                            : "opacity-60 hover:opacity-100"
+                        }`}
+                      >
+                        <img
+                          src={imagem.url || "/agil-logo.png"}
+                          alt={`Miniatura ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
