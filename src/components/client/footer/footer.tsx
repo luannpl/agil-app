@@ -42,19 +42,19 @@ const Footer = () => {
       icon: MessageCircle,
       label: "WhatsApp",
       href: "https://wa.me/5585989543885?text=Olá,%20vim%20pelo%20site%20e%20quero%20saber%20mais%20sobre%20os%20veículos",
-      color: "hover:bg-green-500/10 hover:border-green-500",
+      color: "hover:bg-green-500/10 hover:border-yellow-500",
     },
     {
       icon: Instagram,
       label: "Instagram",
       href: "https://www.instagram.com/automoveisagil/",
-      color: "hover:bg-pink-500/10 hover:border-pink-500",
+      color: "hover:bg-pink-500/10 hover:border-yellow-500",
     },
     {
       icon: MapPin,
       label: "Localização",
       href: "https://maps.app.goo.gl/WLc5pQ5KXrHJBJMQ7",
-      color: "hover:bg-blue-500/10 hover:border-blue-500",
+      color: "hover:bg-blue-500/10 hover:border-yellow-500",
     },
   ];
 
@@ -177,9 +177,9 @@ const Footer = () => {
                     aria-label={social.label}
                   >
                     <Icon className="h-5 w-5 text-footer-accent transition-transform group-hover:scale-110" />
-                    <span className="absolute -top-8 left-1/2 -translate-x-1/2 rounded bg-footer-card px-2 py-1 text-xs text-footer-foreground opacity-0 transition-opacity group-hover:opacity-100">
+                    {/* <span className="absolute -top-8 left-1/2 -translate-x-1/2 rounded bg-footer-card px-2 py-1 text-xs text-footer-foreground opacity-0 transition-opacity group-hover:opacity-100">
                       {social.label}
-                    </span>
+                    </span> */}
                   </a>
                 );
               })}
