@@ -20,7 +20,7 @@ export async function getVeiculoById(id: string): Promise<Veiculo> {
 export async function createVeiculo(
   veiculo: FormData
 ): Promise<CreateVeiculoResponse> {
-  console.log(veiculo.get("imagem"));
+  console.log(veiculo.getAll("imagens"));
   const { data } = await api.post("/veiculos", veiculo, {
     headers: {
       "Content-Type": "multipart/form-data",

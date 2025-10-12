@@ -10,8 +10,6 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-// imports do shadcn para o modal
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Link from "next/link";
 
 export default function DetalhesVeiculoPage() {
@@ -112,25 +110,25 @@ export default function DetalhesVeiculoPage() {
             </div>
           </div>
 
-          <Dialog>
-            <DialogTrigger asChild>
-              <div className="w-full">
-                <Label className="mb-2 px-1 text-md">Imagem</Label>
-                <Input
-                  readOnly
-                  value="Clique aqui para ver a imagem do veículo"
-                  className="cursor-pointer text-gray-500"
+          {/* <Dialog>
+              <DialogTrigger asChild>
+                <div className="w-full">
+                  <Label className="mb-2 px-1 text-md">Imagem</Label>
+                  <Input
+                    readOnly
+                    value="Clique aqui para ver a imagem do veículo"
+                    className="cursor-pointer text-gray-500"
+                  />
+                </div>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl">
+                <img
+                  src={veiculo?.imagem || "/placeholder.svg"}
+                  alt={veiculo?.nome}
+                  className="w-full h-auto object-contain rounded-lg"
                 />
-              </div>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl">
-              <img
-                src={veiculo?.imagem || "/placeholder.svg"}
-                alt={veiculo?.nome}
-                className="w-full h-auto object-contain rounded-lg"
-              />
-            </DialogContent>
-          </Dialog>
+              </DialogContent>
+            </Dialog> */}
 
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="w-full">

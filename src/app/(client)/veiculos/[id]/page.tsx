@@ -81,7 +81,7 @@ export default function VehicleDetailsPage({
                 <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
                   <img
                     key={veiculo?.id}
-                    src={veiculo?.imagem || "/placeholder.svg"}
+                    src={veiculo?.imagens![0].url || "/placeholder.svg"}
                     alt={veiculo?.nome}
                     className="w-full h-full object-cover rounded-lg"
                   />

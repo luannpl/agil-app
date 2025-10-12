@@ -96,11 +96,6 @@ const veiculoSchema = z.object({
       },
     }
   ),
-  imagem: z
-    .custom<File>((val) => val instanceof File, {
-      message: "Imagem deve ser um arquivo válido",
-    })
-    .optional(),
   quitado: z.boolean(),
   rastreador: z.boolean(),
   seguro: z.boolean(),
@@ -166,7 +161,7 @@ export default function CadastroVeiculo() {
     console.log(data);
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-      if (key !== "imagem") {
+      if (key !== "imagens") {
         if (key === "valor" && typeof value === "string") {
           const valorNumerico = removerFormatacao(value);
           formData.append(key, String(valorNumerico));
@@ -180,7 +175,9 @@ export default function CadastroVeiculo() {
     });
     console.log(files);
     if (files && files.length > 0) {
-      formData.append("imagem", files[0]);
+      files.forEach((file) => {
+        formData.append("imagens", file);
+      });
     }
 
     cadastrarVeiculo(formData, {

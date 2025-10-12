@@ -15,7 +15,7 @@ export type Veiculo = {
   sistema: string;
   combustivel: string;
   localizacao?: string;
-  imagem?: string;
+  imagens?: Imagens[];
   codigoCRV?: string;
   seguro?: boolean;
   rastreador?: boolean;
@@ -25,6 +25,11 @@ export type Veiculo = {
   valorVenda?: number;
   infoAdicionais?: string;
   usuario: Usuario;
+};
+
+export type Imagens = {
+  id: number;
+  url: string;
 };
 
 export type CreateVeiculoResponse = {
