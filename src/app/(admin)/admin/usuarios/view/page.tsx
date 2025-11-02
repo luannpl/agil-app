@@ -19,9 +19,9 @@ export default function ListaUsuarios() {
     (u) => u.tipo == "vendedor"
   );
 
-  const usuarioDespachante: UsuarioResponse[] | undefined = usuarios?.filter(
-    (u) => u.tipo == "despachante"
-  );
+  // const usuarioDespachante: UsuarioResponse[] | undefined = usuarios?.filter(
+  //   (u) => u.tipo == "despachante"
+  // );
 
   const columns = useColumns<UsuarioResponse>(usuarios ?? [], "usuarios", {
     only: ["id", "nome", "email"],
@@ -34,7 +34,7 @@ export default function ListaUsuarios() {
           <TabsTrigger value="admin">Admin</TabsTrigger>
           <TabsTrigger value="cliente">Cliente</TabsTrigger>
           <TabsTrigger value="vendedor">Vendedor</TabsTrigger>
-          <TabsTrigger value="despachante">Despachante</TabsTrigger>
+          {/* <TabsTrigger value="despachante">Despachante</TabsTrigger> */}
         </TabsList>
         <TabsContent value="admin">
           <DataTable columns={columns} data={usuarioAdmin ?? []} />
@@ -45,9 +45,9 @@ export default function ListaUsuarios() {
         <TabsContent value="vendedor">
           <DataTable columns={columns} data={usuarioVendedor ?? []} />
         </TabsContent>
-        <TabsContent value="despachante">
+        {/* <TabsContent value="despachante">
           <DataTable columns={columns} data={usuarioDespachante ?? []} />
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </div>
   );

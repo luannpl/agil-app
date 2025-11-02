@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { maskCEP, maskCPF, maskPhone } from "@/utils/masks";
 import { useEffect, useState } from "react";
+import { CreateUsuarioDTO } from "@/types/usuario";
 
 const usuarioSchema = z
   .object({
@@ -153,22 +154,30 @@ export default function CadastroUsuario() {
   const { mutate: cadastrarUsuario, isPending } = useCreateUsuario();
 
   const onSubmit = (data: UsuarioFormData) => {
-    cadastrarUsuario(data, {
+    const payload =
+      data.tipo === "cliente"
+        ? data
+        : {
+            nome: data.nome!,
+            email: data.email!,
+            telefone: data.telefone!,
+            senha: data.senha!,
+            tipo: data.tipo!,
+          };
+
+    cadastrarUsuario(payload as CreateUsuarioDTO, {
       onSuccess: (res) => {
         toast.success(res.message || "Usuário cadastrado com sucesso!");
         router.push("/admin/usuarios/view");
       },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      //eslint-disable-next-line @typescript-eslint/no-explicit-any
       onError: (error: AxiosError<any>) => {
-        // Tenta extrair a mensagem de erro de várias formas
         const responseData = error.response?.data;
-
         const mensagem =
           responseData?.error ||
           responseData?.errors?.[0]?.message ||
           responseData?.message ||
           "Erro ao cadastrar usuário";
-
         toast.error(mensagem);
       },
     });
@@ -312,9 +321,9 @@ export default function CadastroUsuario() {
                         <SelectContent>
                           <SelectItem value="admin">Admin</SelectItem>
                           <SelectItem value="vendedor">Vendedor</SelectItem>
-                          <SelectItem value="despachante">
+                          {/* <SelectItem value="despachante">
                             Despachante
-                          </SelectItem>
+                          </SelectItem> */}
                           <SelectItem value="cliente">Cliente</SelectItem>
                         </SelectContent>
                       </Select>
