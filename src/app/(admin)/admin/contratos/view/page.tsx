@@ -22,9 +22,11 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -43,6 +45,7 @@ import {
   AlertCircle,
   XCircle,
   BanknoteArrowUp,
+  Download,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useContratos, useDeleteContrato } from "@/hooks/useContratos";
@@ -51,6 +54,8 @@ import { formatarPreco } from "@/utils/formatarPreco";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { toast } from "sonner";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 export default function VisualizarContratos() {
   const router = useRouter();
@@ -116,6 +121,39 @@ export default function VisualizarContratos() {
   const calcularProgresso = (atual: number, total: number) => {
     if (total === 0) return 0;
     return Math.round((atual / total) * 100);
+  };
+
+  const exportToExcel = () => {
+    const fileType =
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+    const fileExtension = ".xlsx";
+    const fileName = "contratos";
+
+    const ws = XLSX.utils.json_to_sheet(
+      contratosFiltrados.map((contrato) => ({
+        Cliente: contrato.usuario?.nome,
+        Veículo: contrato.veiculo?.nome,
+        Placa: contrato.veiculo?.placa,
+        Banco: contrato.banco,
+        "Valor Total do Financiamento": formatarPreco(
+          contrato.valorTotalFinanciamento
+        ),
+        "Valor da Entrada": formatarPreco(contrato.valorFinalEntrada),
+        "Valor da Parcela": formatarPreco(contrato.valorParcela),
+        "Parcela Atual": contrato.parcelaAtual,
+        "Total de Parcelas": contrato.totalParcelas,
+        "Data de Pagamento": new Date(
+          contrato.dataPagamento
+        ).toLocaleDateString("pt-BR"),
+        "Descrição da Entrada": contrato.descricaoEntrada,
+        Status: contrato.status,
+      }))
+    );
+
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    saveAs(data, fileName + fileExtension);
   };
 
   const renderSkeleton = () => (
@@ -191,13 +229,22 @@ export default function VisualizarContratos() {
                 </SelectContent>
               </Select>
             </div>
-            <Button
-              onClick={() => router.push("/admin/contratos/")}
-              className="bg-yellow-500 hover:bg-yellow-600 text-black font-medium w-full md:w-auto"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Novo Contrato
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={exportToExcel}
+                className="bg-green-500 hover:bg-green-600 text-black font-medium w-full md:w-auto"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Exportar para Excel
+              </Button>
+              <Button
+                onClick={() => router.push("/admin/contratos/")}
+                className="bg-yellow-500 hover:bg-yellow-600 text-black font-medium w-full md:w-auto"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Novo Contrato
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -459,15 +506,38 @@ export default function VisualizarContratos() {
                               )}
                             </DialogContent>
                           </Dialog>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-red-600 hover:text-red-700"
-                            onClick={() => handleDelete(contrato.id!)}
-                            disabled={isPending}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Confirmar Exclusão</DialogTitle>
+                                <DialogDescription>
+                                  Tem certeza que deseja excluir este contrato?
+                                  Essa ação é irreversível.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <DialogFooter>
+                                <DialogClose asChild>
+                                  <Button variant="outline">Cancelar</Button>
+                                </DialogClose>
+                                <Button
+                                  variant="destructive"
+                                  onClick={() => handleDelete(contrato.id!)}
+                                  disabled={isPending}
+                                >
+                                  {isPending ? "Excluindo..." : "Excluir"}
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
                         </div>
                       </TableCell>
                     </TableRow>
