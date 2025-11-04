@@ -1,3 +1,4 @@
+import { Pagamento } from "./pagamento";
 import { ClienteResponse } from "./usuario";
 import { Veiculo } from "./veiculo";
 
@@ -50,10 +51,6 @@ export type DadosContrato = {
 };
 
 export type Parcela = {
-  id?: string;
-  valorParcela: number;
-  numeroParcela: number;
-  dataVencimento: string;
-  status: string;
-  contratoId: string;
+  contrato: Contrato;
+  pagamentos: Pagamento[];
 };

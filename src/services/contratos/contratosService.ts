@@ -1,5 +1,6 @@
 import { Contrato, Parcela } from "@/types/contrato";
 import { api } from "../api";
+import { Pagamento } from "@/types/pagamento";
 
 export async function criarContrato(data: Contrato): Promise<Contrato> {
   const { data: contrato } = await api.post("/contratos", data);
@@ -28,7 +29,7 @@ export async function deleteContrato(id: string): Promise<void> {
   await api.delete(`/contratos/${id}`);
 }
 
-export async function listarParcelas(contratoId: string): Promise<Parcela[]> {
+export async function listarParcelas(contratoId: string): Promise<Parcela> {
   const { data } = await api.get(`/contratos/${contratoId}/pagamentos`);
   return data;
 }
@@ -37,7 +38,7 @@ export async function updateStatusParcela(
   contratoId: string,
   parcelaId: string,
   status: string
-): Promise<Parcela> {
+): Promise<Pagamento> {
   const { data } = await api.patch(
     `/contratos/${contratoId}/pagamentos/${parcelaId}/status`,
     { status }

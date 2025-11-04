@@ -8,6 +8,7 @@ import {
   updateStatusParcela,
 } from "@/services/contratos/contratosService";
 import { Contrato, Parcela } from "@/types/contrato";
+import { Pagamento } from "@/types/pagamento";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
@@ -61,7 +62,7 @@ export function useDeleteContrato() {
 }
 
 export function useParcelas(contratoId: string | undefined) {
-  return useQuery<Parcela[], AxiosError>({
+  return useQuery<Parcela, AxiosError>({
     queryKey: ["parcelas", contratoId],
     queryFn: () => listarParcelas(contratoId!),
     enabled: !!contratoId,
@@ -72,19 +73,25 @@ export function useUpdateStatusParcela(contratoId: string) {
   const queryClient = useQueryClient();
 
   return useMutation<
-    Parcela,
+    Pagamento, // retorno da API (um único pagamento atualizado)
     AxiosError,
-    { parcelaId: string; status: string }
+    { parcelaId: string; status: string } // parâmetros esperados
   >({
     mutationFn: ({ parcelaId, status }) =>
       updateStatusParcela(contratoId, parcelaId, status),
 
     onSuccess: (data) => {
-      queryClient.setQueryData(
-        ["parcelas", contratoId],
-        (old: Parcela[] | undefined) =>
-          old?.map((p) => (p.id === data.id ? data : p))
-      );
+      // Atualiza o cache local do contrato
+      queryClient.setQueryData<Parcela>(["parcelas", contratoId], (old) => {
+        if (!old) return old;
+
+        const updated = {
+          ...old,
+          pagamentos: old.pagamentos.map((p) => (p.id === data.id ? data : p)),
+        };
+
+        return updated;
+      });
     },
 
     onError: (error) => {

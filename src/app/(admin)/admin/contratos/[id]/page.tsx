@@ -27,6 +27,9 @@ import {
   XCircle,
   Clock,
   Hash,
+  Circle,
+  RefreshCcw,
+  MessageCircleReply,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -39,6 +42,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import dayjs from "dayjs";
 
 export default function ParcelasContrato() {
   const { id } = useParams();
@@ -47,6 +57,7 @@ export default function ParcelasContrato() {
   const idAsString = Array.isArray(id) ? id[0] : id;
 
   const { data: parcelas, isLoading, error } = useParcelas(idAsString);
+  const parcelaData = parcelas?.pagamentos;
 
   useEffect(() => {
     if (!idAsString) {
@@ -122,9 +133,47 @@ export default function ParcelasContrato() {
     );
   };
 
+  const handleMessage = (
+    telefone: string,
+    nome: string,
+    valor: number,
+    vencimento: string | Date,
+    parcela: number,
+    veiculo?: string
+  ) => {
+    const numeroLimpo = telefone.replace(/\D/g, "");
+    const numeroComDDI = numeroLimpo.startsWith("55")
+      ? numeroLimpo
+      : `55${numeroLimpo}`;
+
+    const valorFormatado = valor.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+
+    const vencimentoFormatado = dayjs(vencimento).format("DD/MM/YYYY");
+
+    const message = [
+      `Prezado(a) ${nome},`,
+      ``,
+      `Segue a chave Pix para pagamento da sua ${parcela}ª parcela referente ao veiculo ${veiculo}:`,
+      ``,
+      `*Chave Pix*: 49.506.679/0001-84`,
+      `*Valor*: ${valorFormatado}`,
+      `*Vencimento*: ${vencimentoFormatado}`,
+      ``,
+      `Após o pagamento, por gentileza, envie o comprovante.`,
+    ].join("\n");
+
+    const url = `https://wa.me/${numeroComDDI}?text=${encodeURIComponent(
+      message
+    )}`;
+    window.open(url, "_blank");
+  };
+
   // Calcular estatísticas
   const calcularEstatisticas = () => {
-    if (!parcelas)
+    if (!parcelaData)
       return {
         total: 0,
         pagas: 0,
@@ -134,16 +183,16 @@ export default function ParcelasContrato() {
         valorPago: 0,
       };
 
-    const pagas = parcelas.filter((p) => p.status === "PAGO").length;
-    const pendentes = parcelas.filter((p) => p.status === "PENDENTE").length;
-    const atrasadas = parcelas.filter((p) => p.status === "ATRASADO").length;
-    const valorTotal = parcelas.reduce((acc, p) => acc + p.valorParcela, 0);
-    const valorPago = parcelas
+    const pagas = parcelaData.filter((p) => p.status === "PAGO").length;
+    const pendentes = parcelaData.filter((p) => p.status === "PENDENTE").length;
+    const atrasadas = parcelaData.filter((p) => p.status === "ATRASADO").length;
+    const valorTotal = parcelaData.reduce((acc, p) => acc + p.valorParcela!, 0);
+    const valorPago = parcelaData
       .filter((p) => p.status === "PAGO")
-      .reduce((acc, p) => acc + p.valorParcela, 0);
+      .reduce((acc, p) => acc + p.valorParcela!, 0);
 
     return {
-      total: parcelas.length,
+      total: parcelaData.length,
       pagas,
       pendentes,
       atrasadas,
@@ -286,7 +335,7 @@ export default function ParcelasContrato() {
 
         {/* Tabela de Parcelas */}
         <div className="bg-card rounded-xl shadow-lg overflow-hidden">
-          {parcelas && parcelas.length > 0 ? (
+          {parcelaData && parcelaData.length > 0 ? (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
@@ -319,73 +368,140 @@ export default function ParcelasContrato() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {parcelas.map((parcela) => (
-                    <TableRow key={parcela.id}>
+                  {parcelaData.map((p) => (
+                    <TableRow key={p.id}>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono">
-                            #{parcela.numeroParcela}
-                          </span>
+                          <span className="font-mono">#{p.numeroParcela}</span>
                         </div>
                       </TableCell>
                       <TableCell>
-                        {new Date(parcela.dataVencimento).toLocaleDateString(
+                        {new Date(p.dataVencimento!).toLocaleDateString(
                           "pt-BR"
                         )}
                       </TableCell>
                       <TableCell className="font-semibold">
-                        {parcela.valorParcela.toLocaleString("pt-BR", {
+                        {p.valorParcela!.toLocaleString("pt-BR", {
                           style: "currency",
                           currency: "BRL",
                         })}
                       </TableCell>
-                      <TableCell>{getStatusBadge(parcela.status)}</TableCell>
+                      <TableCell>{getStatusBadge(p.status)}</TableCell>
                       <TableCell>
-                        {parcela.dataVencimento
-                          ? new Date(parcela.dataVencimento).toLocaleDateString(
+                        {p.dataVencimento
+                          ? new Date(p.dataVencimento).toLocaleDateString(
                               "pt-BR"
                             )
                           : "-"}
                       </TableCell>
-                      <TableCell className="text-center">
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              disabled={parcela.status === "PAGO"}
-                            >
-                              {parcela.status === "PAGO"
-                                ? "Pago"
-                                : "Marcar como Pago"}
-                            </Button>
-                          </AlertDialogTrigger>
+                      <TableCell className="text-center space-x-2">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={p.status === "PAGO"}
+                                    title={
+                                      p.status === "PAGO"
+                                        ? "Pago"
+                                        : "Marcar como Pago"
+                                    }
+                                  >
+                                    {p.status === "PAGO" ? (
+                                      <CheckCircle className="text-green-500 w-5 h-5" />
+                                    ) : (
+                                      <Circle className="text-gray-400 w-5 h-5" />
+                                    )}
+                                  </Button>
+                                </AlertDialogTrigger>
 
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Confirmar pagamento
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Tem certeza que deseja marcar esta parcela como{" "}
-                                <strong>paga</strong>? Essa ação não poderá ser
-                                desfeita.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                      Confirmar pagamento
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Tem certeza que deseja marcar esta parcela
+                                      como <strong>paga</strong>? Essa ação não
+                                      poderá ser desfeita.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
 
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                              <AlertDialogAction
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>
+                                      Cancelar
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() =>
+                                        handleMarcarComoPago(p.id!)
+                                      }
+                                      className="bg-yellow-500 hover:bg-yellow-600 cursor-pointer text-amber-100"
+                                    >
+                                      Confirmar
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-yellow-500">
+                              <p className="text-white">
+                                Confirmar pagamento da parcela
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="secondary"
+                                size="sm"
                                 onClick={() =>
-                                  handleMarcarComoPago(parcela.id!)
+                                  handleMessage(
+                                    parcelas.contrato.usuario?.telefone || "",
+                                    "Cliente",
+                                    p.valorParcela!,
+                                    p.dataVencimento!,
+                                    p.numeroParcela,
+                                    parcelas.contrato.veiculo?.nome
+                                  )
                                 }
-                                className="bg-yellow-500 hover:bg-yellow-600 cursor-pointer text-amber-100"
                               >
-                                Confirmar
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                                <MessageCircleReply className="w-5 h-5" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-green-500">
+                              <p className="text-white">
+                                Enviar parcela para o cliente
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() =>
+                                  toast.info(
+                                    `Funcionalidade de editar parcela ${p.numeroParcela} em desenvolvimento.`
+                                  )
+                                }
+                              >
+                                <RefreshCcw className="w-5 h-5" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-red-500">
+                              <p className="text-white">
+                                Recalcular juros da parcela
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </TableCell>
                     </TableRow>
                   ))}
