@@ -6,8 +6,19 @@ function useBreakpoint() {
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
     handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    
+    // Debounce resize events to improve performance
+    let timeoutId: NodeJS.Timeout;
+    const debouncedResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(handleResize, 150);
+    };
+    
+    window.addEventListener("resize", debouncedResize);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener("resize", debouncedResize);
+    };
   }, []);
 
   if (width >= 1536) return "2xl";

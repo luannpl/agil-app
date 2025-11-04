@@ -23,6 +23,7 @@ export default function CardVeiculos(props: Veiculo) {
       : [{ url: "/agil-logo.png" }];
 
   useEffect(() => {
+    // Only set up interval if there are multiple images
     if (images.length <= 1) return;
 
     const interval = setInterval(() => {
@@ -31,6 +32,7 @@ export default function CardVeiculos(props: Veiculo) {
       );
     }, 5000);
 
+    // Clean up interval on unmount
     return () => clearInterval(interval);
   }, [images.length]);
 

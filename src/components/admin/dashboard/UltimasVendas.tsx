@@ -8,8 +8,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { UltimaVenda } from "@/types/dashboard";
 import { formatarPreco } from "@/utils/formatarPreco";
+import { memo } from "react";
 
-export function UltimasVendas({
+export const UltimasVendas = memo(function UltimasVendas({
   ultimasVendas,
 }: {
   ultimasVendas: UltimaVenda[];
@@ -52,4 +53,4 @@ export function UltimasVendas({
       </CardContent>
     </Card>
   );
-}
+});
