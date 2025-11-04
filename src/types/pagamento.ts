@@ -11,3 +11,19 @@ export type Pagamento = {
   createdAt?: string;
   updatedAt?: string;
 };
+
+export type ParcelaAtualizada = {
+  id: string;
+  valorParcela: number;
+  valorParcelaInicial: number;
+  numeroParcela: number;
+  dataVencimento: string;
+  status: "PAGO" | "PENDENTE" | "ATRASADO";
+  contratoId: string;
+  createdAt: string;
+  updatedAt: string;
+  multa: string;
+  juros: string;
+  diasAtraso: number;
+  valorAtualizado: string;
+};

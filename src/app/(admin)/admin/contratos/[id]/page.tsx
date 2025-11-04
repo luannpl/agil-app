@@ -49,6 +49,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import dayjs from "dayjs";
+import { useUpdateValorParcelaAtrasada } from "@/hooks/usePagamentos";
 
 export default function ParcelasContrato() {
   const { id } = useParams();
@@ -169,6 +170,17 @@ export default function ParcelasContrato() {
       message
     )}`;
     window.open(url, "_blank");
+  };
+  const { mutate: recalculateParcela } = useUpdateValorParcelaAtrasada();
+  const handleRefreshParcela = (parcelaId: string) => {
+    recalculateParcela(parcelaId, {
+      onSuccess: () => {
+        toast.success("Valor da parcela recalculado com sucesso!");
+      },
+      onError: () => {
+        toast.error("Erro ao recalcular valor da parcela!");
+      },
+    });
   };
 
   // Calcular estatísticas
@@ -486,11 +498,7 @@ export default function ParcelasContrato() {
                               <Button
                                 variant="secondary"
                                 size="sm"
-                                onClick={() =>
-                                  toast.info(
-                                    `Funcionalidade de editar parcela ${p.numeroParcela} em desenvolvimento.`
-                                  )
-                                }
+                                onClick={() => handleRefreshParcela(p.id!)}
                               >
                                 <RefreshCcw className="w-5 h-5" />
                               </Button>
