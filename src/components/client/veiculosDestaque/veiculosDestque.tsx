@@ -15,7 +15,21 @@ type Props = {
   veiculos: Array<Veiculo> | undefined;
 };
 
-// Hook para detectar breakpoint atual
+// Skeleton component for loading state
+const CardVeiculoSkeleton = () => (
+  <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <Skeleton className="h-48 w-full" />
+    <div className="p-4 space-y-3">
+      <Skeleton className="h-6 w-3/4" />
+      <Skeleton className="h-4 w-1/2" />
+      <Skeleton className="h-4 w-full" />
+      <div className="flex justify-between items-center pt-2">
+        <Skeleton className="h-6 w-24" />
+        <Skeleton className="h-8 w-20" />
+      </div>
+    </div>
+  </div>
+);
 
 export default function VeiculosDestaque({ isLoading, veiculos }: Props) {
   const breakpoint = useBreakpoint();
@@ -63,21 +77,6 @@ export default function VeiculosDestaque({ isLoading, veiculos }: Props) {
       </>
     );
   }, [veiculos, qtdCards]);
-
-  const CardVeiculoSkeleton = () => (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <Skeleton className="h-48 w-full" />
-      <div className="p-4 space-y-3">
-        <Skeleton className="h-6 w-3/4" />
-        <Skeleton className="h-4 w-1/2" />
-        <Skeleton className="h-4 w-full" />
-        <div className="flex justify-between items-center pt-2">
-          <Skeleton className="h-6 w-24" />
-          <Skeleton className="h-8 w-20" />
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8 py-14">
