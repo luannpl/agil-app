@@ -32,7 +32,7 @@ import {
   Info,
 } from "lucide-react";
 import { maskCEP, maskCPF, maskPhone } from "@/utils/masks";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { CreateUsuarioDTO } from "@/types/usuario";
 
 const usuarioSchema = z
@@ -109,7 +109,7 @@ export default function CadastroUsuario() {
 
   const [buscandoCep, setBuscandoCep] = useState(false);
 
-  const buscarCep = async (cep: string) => {
+  const buscarCep = useCallback(async (cep: string) => {
     const cepLimpo = cep.replace(/\D/g, "");
     if (cepLimpo.length !== 8) return;
 
@@ -138,7 +138,7 @@ export default function CadastroUsuario() {
     } finally {
       setBuscandoCep(false);
     }
-  };
+  }, [setValue]);
 
   // Monitora o valor do campo CEP
   const cepValue = watch("cep");
@@ -149,7 +149,7 @@ export default function CadastroUsuario() {
     if (cepLimpo?.length === 8) {
       buscarCep(cepValue!);
     }
-  }, [cepValue]);
+  }, [cepValue, buscarCep]);
 
   const { mutate: cadastrarUsuario, isPending } = useCreateUsuario();
 

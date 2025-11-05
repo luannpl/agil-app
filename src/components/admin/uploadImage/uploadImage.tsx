@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/kibo-ui/dropzone";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import NextImage from "next/image";
 
 interface UploadImageProps {
   files: File[] | undefined;
@@ -408,12 +409,14 @@ const UploadImage = ({ files, onFilesChange }: UploadImageProps) => {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {imagesToProcess.map((imageData, index) => (
             <div key={imageData.id} className="relative group">
-              <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+              <div className="aspect-square bg-muted rounded-lg overflow-hidden relative">
                 {imageData.src ? (
-                  <img
+                  <NextImage
                     src={imageData.src}
                     alt={`Imagem ${index + 1}`}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">

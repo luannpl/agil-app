@@ -8,32 +8,52 @@ import {
   EmptyCardVariant,
 } from "../emptyStateCard/emptyStateCard";
 import useBreakpoint from "@/hooks/useBreakPoint";
+import { useMemo } from "react";
 
 type Props = {
   isLoading: boolean;
   veiculos: Array<Veiculo> | undefined;
 };
 
-// Hook para detectar breakpoint atual
+// Skeleton component for loading state
+const CardVeiculoSkeleton = () => (
+  <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <Skeleton className="h-48 w-full" />
+    <div className="p-4 space-y-3">
+      <Skeleton className="h-6 w-3/4" />
+      <Skeleton className="h-4 w-1/2" />
+      <Skeleton className="h-4 w-full" />
+      <div className="flex justify-between items-center pt-2">
+        <Skeleton className="h-6 w-24" />
+        <Skeleton className="h-8 w-20" />
+      </div>
+    </div>
+  </div>
+);
 
 export default function VeiculosDestaque({ isLoading, veiculos }: Props) {
   const breakpoint = useBreakpoint();
 
-  const getQtdCards = () => {
+  // Memoize the number of cards to avoid recalculation
+  const qtdCards = useMemo(() => {
     if (breakpoint === "lg") return 6; // entre 1024 e 1535px
     if (breakpoint === "2xl") return 4; // >=1536px
     return 4; // <1024px
-  };
+  }, [breakpoint]);
 
-  const renderSkeletons = () =>
-    Array.from({ length: getQtdCards() }).map((_, index) => (
-      <CardVeiculoSkeleton key={index} />
-    ));
+  // Memoize skeleton rendering
+  const skeletons = useMemo(
+    () =>
+      Array.from({ length: qtdCards }).map((_, index) => (
+        <CardVeiculoSkeleton key={index} />
+      )),
+    [qtdCards]
+  );
 
-  const renderVeiculos = () => {
-    const qtd = getQtdCards();
-    const veiculosExibidos = veiculos?.slice(0, qtd) || [];
-    const cardsRestantes = qtd - veiculosExibidos.length;
+  // Memoize vehicles rendering
+  const veiculosContent = useMemo(() => {
+    const veiculosExibidos = veiculos?.slice(0, qtdCards) || [];
+    const cardsRestantes = qtdCards - veiculosExibidos.length;
 
     const emptyStateVariants: EmptyCardVariant[] = [
       "coming-soon",
@@ -56,22 +76,7 @@ export default function VeiculosDestaque({ isLoading, veiculos }: Props) {
           ))}
       </>
     );
-  };
-
-  const CardVeiculoSkeleton = () => (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <Skeleton className="h-48 w-full" />
-      <div className="p-4 space-y-3">
-        <Skeleton className="h-6 w-3/4" />
-        <Skeleton className="h-4 w-1/2" />
-        <Skeleton className="h-4 w-full" />
-        <div className="flex justify-between items-center pt-2">
-          <Skeleton className="h-6 w-24" />
-          <Skeleton className="h-8 w-20" />
-        </div>
-      </div>
-    </div>
-  );
+  }, [veiculos, qtdCards]);
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8 py-14">
@@ -80,7 +85,7 @@ export default function VeiculosDestaque({ isLoading, veiculos }: Props) {
           Veículos em Destaque
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-          {isLoading ? renderSkeletons() : renderVeiculos()}
+          {isLoading ? skeletons : veiculosContent}
         </div>
       </div>
     </div>

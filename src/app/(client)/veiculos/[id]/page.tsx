@@ -29,6 +29,7 @@ import { Contato } from "@/types/contato";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateContato } from "@/hooks/useContato";
 import { toast } from "sonner";
+import Image from "next/image";
 
 const contatoSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -109,10 +110,13 @@ export default function VehicleDetailsPage({
                           : "opacity-0"
                       }`}
                     >
-                      <img
+                      <Image
                         src={imagem.url || "/agil-logo.png"}
                         alt={`${veiculo?.nome} - Imagem ${index + 1}`}
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 800px"
+                        priority={index === 0}
                       />
                     </div>
                   ))}
@@ -168,16 +172,18 @@ export default function VehicleDetailsPage({
                       <button
                         key={index}
                         onClick={() => goToImage(index)}
-                        className={`aspect-video bg-gray-200 rounded overflow-hidden cursor-pointer transition-all duration-300 ${
+                        className={`aspect-video bg-gray-200 rounded overflow-hidden cursor-pointer transition-all duration-300 relative ${
                           index === currentImageIndex
                             ? "ring-2 ring-yellow-500 opacity-100"
                             : "opacity-60 hover:opacity-100"
                         }`}
                       >
-                        <img
+                        <Image
                           src={imagem.url || "/agil-logo.png"}
                           alt={`Miniatura ${index + 1}`}
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 25vw, 100px"
                         />
                       </button>
                     ))}

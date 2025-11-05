@@ -25,7 +25,7 @@ import {
   Edit3,
 } from "lucide-react";
 import { maskCEP, maskCPF, maskPhone } from "@/utils/masks";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 const editarPerfilSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -116,7 +116,7 @@ export default function EditarPerfil() {
     }
   }, [user, reset]);
 
-  const buscarCep = async (cep: string) => {
+  const buscarCep = useCallback(async (cep: string) => {
     const cepLimpo = cep.replace(/\D/g, "");
     if (cepLimpo.length !== 8) return;
 
@@ -145,7 +145,7 @@ export default function EditarPerfil() {
     } finally {
       setBuscandoCep(false);
     }
-  };
+  }, [setValue]);
 
   // Monitora o valor do campo CEP
   const cepValue = watch("cep");
@@ -156,7 +156,7 @@ export default function EditarPerfil() {
     if (cepLimpo?.length === 8) {
       buscarCep(cepValue!);
     }
-  }, [cepValue]);
+  }, [cepValue, buscarCep]);
 
   const { mutate: atualizarPerfil, isPending } = useUpdateUsuario();
 
