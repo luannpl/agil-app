@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://agil-api.onrender.com/api/:path*",
+        destination: "https://api.agilconsultoriaautomotiva.com.br/api/:path*",
       },
     ];
   },
