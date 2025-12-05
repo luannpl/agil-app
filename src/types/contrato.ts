@@ -19,6 +19,12 @@ export type Contrato = {
   veiculo?: Veiculo;
 };
 
+export type Parcelas = {
+  numero: number;
+  valor: string;
+  vencimento: string;
+};
+
 export type DadosContrato = {
   compradorNome: string;
   compradorCPF: string;
@@ -48,6 +54,8 @@ export type DadosContrato = {
   valorTotal: string;
   dataContrato: string;
   sinal: string;
+
+  parcelas: Parcelas[];
 };
 
 export type Parcela = {

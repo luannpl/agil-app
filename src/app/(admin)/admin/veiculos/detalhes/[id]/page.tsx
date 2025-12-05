@@ -138,11 +138,11 @@ export default function DetalhesVeiculoPage() {
                 </Button>
               </Link>
             </div>
-            <div className="w-full">
+            {/* <div className="w-full">
               <Button variant="auth" className="w-full">
                 Editar
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
       )}

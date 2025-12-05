@@ -40,8 +40,8 @@ const usuarioSchema = z
     nome: z.string().min(1, "Nome é obrigatório"),
     email: z.string().email("Email inválido"),
     telefone: z.string().min(1, "Telefone é obrigatório"),
-    senha: z.string().min(4, "Senha deve ter no mínimo 4 caracteres"),
-    confirmarSenha: z.string().min(4, "Confirmação de senha é obrigatória"),
+    senha: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
+    confirmarSenha: z.string().min(6, "Confirmação de senha é obrigatória"),
     tipo: z.enum(["admin", "vendedor", "despachante", "cliente"], {
       errorMap: () => {
         return { message: "Tipo é obrigatório" };
@@ -359,7 +359,7 @@ export default function CadastroUsuario() {
                       "transition-all duration-fast",
                       errors.senha && "border-error border-dashed"
                     )}
-                    placeholder="Mínimo 4 caracteres"
+                    placeholder="Mínimo 6 caracteres"
                     {...register("senha")}
                   />
                   {errors.senha && (

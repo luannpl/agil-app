@@ -38,6 +38,7 @@ import { Contrato } from "@/types/contrato";
 import { gerarDocumentoContrato } from "@/utils/gerarContrato";
 import { ClienteResponse } from "@/types/usuario";
 import { Veiculo } from "@/types/veiculo";
+import { gerarParcelas } from "@/utils/gerarParcelas";
 
 const contratoSchema = z.object({
   cpf: z
@@ -242,6 +243,11 @@ export default function CadastroContrato() {
     };
 
     const avista = data.totalParcelas > 1 ? false : true;
+    const parcelasGeradas = gerarParcelas(
+      data.totalParcelas,
+      data.valorParcela,
+      data.dataPagamento // primeira data
+    );
 
     const dados = {
       compradorNome: cliente?.nome || "Erro ao buscar cliente",
@@ -273,6 +279,7 @@ export default function CadastroContrato() {
       valorTotal: data.valorTotalFinanciamento,
       dataContrato: new Date().toLocaleDateString("pt-BR"),
       sinal: data.sinal || "Sem sinal",
+      parcelas: parcelasGeradas,
     };
 
     criarContratoMutation(dadosContrato, {
@@ -627,7 +634,7 @@ export default function CadastroContrato() {
                   )}
                 </div>
 
-                <div className="space-y-1.5">
+                {/* <div className="space-y-1.5">
                   <Label htmlFor="parcelaAtual" className="text-sm font-medium">
                     <span className="flex items-center gap-1">
                       <Hash className="w-4 h-4" />
@@ -650,7 +657,7 @@ export default function CadastroContrato() {
                       {errors.parcelaAtual.message}
                     </p>
                   )}
-                </div>
+                </div> */}
 
                 <div className="space-y-1.5">
                   <Label
@@ -696,7 +703,7 @@ export default function CadastroContrato() {
                     </p>
                   )}
                 </div>
-                <div className="space-y-1.5">
+                {/* <div className="space-y-1.5">
                   <Label htmlFor="status" className="text-sm font-medium">
                     <span className="flex items-center gap-1">
                       <CheckCircle className="w-4 h-4" />
@@ -734,7 +741,7 @@ export default function CadastroContrato() {
                       {errors.status.message}
                     </p>
                   )}
-                </div>
+                </div> */}
               </div>
             </div>
 
