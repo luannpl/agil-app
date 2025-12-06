@@ -3,10 +3,24 @@ import { useColumns } from "@/hooks/useColumns";
 import { DataTable } from "@/components/admin/table/data-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UsuarioResponse } from "@/types/usuario";
-import { useUsuarios } from "@/hooks/useUsuario";
+import { useDeleteUsuario, useUsuarios } from "@/hooks/useUsuario";
+import { toast } from "sonner";
 
 export default function ListaUsuarios() {
   const { data: usuarios } = useUsuarios();
+
+  const { mutate: deleteUsuario } = useDeleteUsuario();
+
+  const handleDelete = (id: string) => {
+    deleteUsuario(id, {
+      onSuccess: () => {
+        toast.success("Usuário excluído com sucesso!");
+      },
+      onError: () => {
+        toast.error("Erro ao excluir o usuário.");
+      },
+    });
+  };
 
   const usuarioAdmin: UsuarioResponse[] | undefined = usuarios?.filter(
     (u) => u.tipo == "admin"
@@ -25,6 +39,7 @@ export default function ListaUsuarios() {
 
   const columns = useColumns<UsuarioResponse>(usuarios ?? [], "usuarios", {
     only: ["id", "nome", "email"],
+    onDelete: handleDelete,
   });
   return (
     <div className="p-4">

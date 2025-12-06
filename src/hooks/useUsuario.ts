@@ -2,6 +2,7 @@ import {
   alterarSenha,
   buscarClientePorCPF,
   createUsuario,
+  deleteUsuario,
   getFuncionarios,
   getUsuarios,
   login,
@@ -100,6 +101,17 @@ export function useUpdateUsuario() {
       queryClient.invalidateQueries({ queryKey: ["usuarios"] });
       queryClient.invalidateQueries({ queryKey: ["funcionarios"] });
       refetchUser();
+    },
+  });
+}
+
+export function useDeleteUsuario() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteUsuario,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["usuarios"] });
     },
   });
 }

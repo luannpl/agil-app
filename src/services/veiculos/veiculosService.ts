@@ -7,6 +7,11 @@ export async function getVeiculos(): Promise<Veiculo[]> {
   return data;
 }
 
+export async function getVeiculosDisponiveis(): Promise<Veiculo[]> {
+  const { data } = await api.get("/veiculos/disponiveis");
+  return data;
+}
+
 export async function getVeiculosDestaques(): Promise<Veiculo[]> {
   const { data } = await api.get("/veiculos/destaques");
   return data;

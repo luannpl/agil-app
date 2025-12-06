@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { MultiSelect, Option } from "@/components/ui/multi-select";
 import CardVeiculos from "@/components/client/cardVeiculos/cardVeiculos";
-import { useVeiculos } from "@/hooks/useVeiculos";
+import { useVeiculosDisponiveis } from "@/hooks/useVeiculos";
 
 export default function Veiculos() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,7 +11,7 @@ export default function Veiculos() {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
 
-  const {data: veiculos} = useVeiculos();
+  const { data: veiculos } = useVeiculosDisponiveis();
 
   const vehicleOptions: Option[] = [
     { label: "Carro", value: "carro" },

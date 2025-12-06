@@ -13,6 +13,7 @@ import {
   deleteVeiculo,
   getVeiculosDestaques,
   buscarVeiculoPorPlaca,
+  getVeiculosDisponiveis,
 } from "@/services/veiculos/veiculosService";
 import { CreateVeiculoResponse, Veiculo } from "@/types/veiculo";
 import { AxiosError } from "axios";
@@ -22,6 +23,13 @@ export function useVeiculos() {
   return useQuery<Veiculo[]>({
     queryKey: ["veiculos"],
     queryFn: getVeiculos,
+  });
+}
+
+export function useVeiculosDisponiveis() {
+  return useQuery<Veiculo[]>({
+    queryKey: ["veiculosDisponiveis"],
+    queryFn: getVeiculosDisponiveis,
   });
 }
 
