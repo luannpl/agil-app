@@ -1,70 +1,96 @@
 "use client";
-import { Car, DollarSign, Package, Zap, ChartArea } from "lucide-react";
+import { Car, DollarSign, Package, Zap, ChartArea, Loader2 } from "lucide-react";
 import { MetricsCard } from "@/components/admin/dashboard/MetricsCard";
 import { UltimasVendas } from "@/components/admin/dashboard/UltimasVendas";
 import { TopMarcas } from "@/components/admin/dashboard/TopMarcas";
 import { useDashboardData } from "@/hooks/useDashboard";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
   const { data: dashboardData, isLoading } = useDashboardData();
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+    }).format(value);
+  };
+
+  const formatCompactCurrency = (value: number) => {
+    if (value >= 1000000) {
+      return `R$ ${(value / 1000000).toFixed(1)}M`;
+    } else if (value >= 1000) {
+      return `R$ ${(value / 1000).toFixed(0)}K`;
+    }
+    return formatCurrency(value);
+  };
+
   if (isLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <Skeleton className="h-32 w-32 rounded-full" />
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="flex flex-col items-center gap-2">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Carregando dashboard...</p>
+        </div>
       </div>
     );
   }
+
   return (
-    <div className="space-y-6 px-6">
-      <div>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-yellow-500/10 rounded-lg">
-            <ChartArea className="w-6 h-6 text-yellow-500" />
+    <div className="w-full space-y-6 p-4 sm:p-6 lg:p-8">
+      {/* Header */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-yellow-500/10 rounded-xl shadow-sm">
+            <ChartArea className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" strokeWidth={2.5} />
           </div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
             Dashboard
           </h1>
         </div>
-        <p className="text-muted-foreground">
+        <p className="text-sm sm:text-base text-muted-foreground">
           Bem-vindo ao painel de controle da Ágil Veículos!
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* Metrics Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricsCard
-          title="Estoque de Veiculos"
+          title="Estoque de Veículos"
           value={dashboardData?.totalVeiculosEstoque.toString() || "0"}
-          // description="8 novos esta semana"
           icon={Car}
-          // trend={{ value: 12.5, isPositive: true }}
+          gradient="from-blue-500 to-blue-600"
+          iconColor="text-blue-600"
+          description="Total de veículos em estoque"
         />
         <MetricsCard
           title="Estoque em Valor"
-          value={`R$ ${
-            dashboardData?.totalEstoqueEmValor.toFixed(2) || "0.00"
-          }`}
-          // description="Meta: R$ 6M"
+          value={formatCompactCurrency(dashboardData?.totalEstoqueEmValor || 0)}
+          description={formatCurrency(dashboardData?.totalEstoqueEmValor || 0)}
           icon={DollarSign}
-          // trend={{ value: 8.2, isPositive: true }}
+          gradient="from-green-500 to-green-600"
+          iconColor="text-green-600"
         />
         <MetricsCard
           title="Total de Clientes"
           value={dashboardData?.totalClientes.toString() || "0"}
-          // description="54 novos leads"
+          description="Clientes cadastrados"
           icon={Zap}
-          // trend={{ value: 18.7, isPositive: true }}
+          gradient="from-purple-500 to-purple-600"
+          iconColor="text-purple-600"
         />
         <MetricsCard
-          title="Total de Vendas no Mês"
+          title="Vendas no Mês"
           value={dashboardData?.totalContratosMes.toString() || "0"}
-          // description="15 novos esta semana"
+          description="Contratos fechados"
           icon={Package}
-          // trend={{ value: 3.1, isPositive: false }}
+          gradient="from-orange-500 to-orange-600"
+          iconColor="text-orange-600"
         />
       </div>
-      <div className="flex flex-col lg:flex-row gap-4">
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="w-full">
           <UltimasVendas ultimasVendas={dashboardData?.ultimasVendas || []} />
         </div>
@@ -74,49 +100,6 @@ export default function Dashboard() {
           />
         </div>
       </div>
-
-      {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <SalesChart />
-        <TopCars />
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <RecentSales />
-
-        <div className="col-span-2 space-y-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Taxa de Conversão
-              </CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">68%</div>
-              <Progress value={68} className="mt-2" />
-              <p className="text-xs text-muted-foreground mt-2">
-                +5% em relação ao mês anterior
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Satisfação do Cliente
-              </CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">4.8/5.0</div>
-              <Progress value={96} className="mt-2" />
-              <p className="text-xs text-muted-foreground mt-2">
-                Baseado em 342 avaliações
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </div> */}
     </div>
   );
 }
