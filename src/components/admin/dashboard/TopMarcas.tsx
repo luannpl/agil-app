@@ -6,8 +6,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { MarcaMaisVendida } from "@/types/dashboard";
+import { memo } from "react";
 
-export function TopMarcas({
+export const TopMarcas = memo(function TopMarcas({
   marcasMaisVendidas,
 }: {
   marcasMaisVendidas: MarcaMaisVendida[];
@@ -46,4 +47,4 @@ export function TopMarcas({
       </CardContent>
     </Card>
   );
-}
+});

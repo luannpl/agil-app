@@ -1,6 +1,9 @@
+// Cache the formatter to avoid creating it on every call
+const priceFormatter = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+});
+
 export const formatarPreco = (valor: number) => {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(valor);
+  return priceFormatter.format(valor);
 };

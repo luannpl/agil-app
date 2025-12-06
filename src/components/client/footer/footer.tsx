@@ -8,6 +8,7 @@ import {
   Car,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const Footer = () => {
   const navigationLinks = [
@@ -69,9 +70,11 @@ const Footer = () => {
           {/* Company info */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <img
+              <Image
                 src="/agil-logo.png"
                 alt="Ágil Veículos"
+                width={48}
+                height={48}
                 className="h-12 w-auto"
               />
               <div>
