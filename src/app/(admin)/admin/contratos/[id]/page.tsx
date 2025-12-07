@@ -327,92 +327,110 @@ export default function ParcelasContrato() {
         </div>
 
         {/* Estatísticas Rápidas */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 lg:gap-4 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
           <Card className="min-w-0">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 lg:px-6">
-              <CardTitle className="text-xs lg:text-sm font-medium truncate">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 p-4">
+              <CardTitle className="text-sm font-medium">
                 Total
               </CardTitle>
-              <Hash className="h-3 w-3 lg:h-4 lg:w-4 text-muted-foreground flex-shrink-0" />
+              <div className="p-2 rounded-lg bg-blue-500/10">
+                <Hash className="h-4 w-4 text-blue-500" />
+              </div>
             </CardHeader>
-            <CardContent className="px-3 lg:px-6">
-              <div className="text-lg lg:text-2xl font-bold">{stats.total}</div>
+            <CardContent className="p-4 pt-0">
+              <div className="text-2xl font-bold">{stats.total}</div>
+              <p className="text-xs text-muted-foreground mt-1">parcelas</p>
             </CardContent>
           </Card>
 
           <Card className="min-w-0">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 lg:px-6">
-              <CardTitle className="text-xs lg:text-sm font-medium truncate">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 p-4">
+              <CardTitle className="text-sm font-medium">
                 Pagas
               </CardTitle>
-              <CheckCircle className="h-3 w-3 lg:h-4 lg:w-4 text-green-500 flex-shrink-0" />
+              <div className="p-2 rounded-lg bg-green-500/10">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+              </div>
             </CardHeader>
-            <CardContent className="px-3 lg:px-6">
-              <div className="text-lg lg:text-2xl font-bold text-green-600">
+            <CardContent className="p-4 pt-0">
+              <div className="text-2xl font-bold text-green-600">
                 {stats.pagas}
               </div>
+              <p className="text-xs text-muted-foreground mt-1">confirmadas</p>
             </CardContent>
           </Card>
 
           <Card className="min-w-0">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 lg:px-6">
-              <CardTitle className="text-xs lg:text-sm font-medium truncate">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 p-4">
+              <CardTitle className="text-sm font-medium">
                 Pendentes
               </CardTitle>
-              <Clock className="h-3 w-3 lg:h-4 lg:w-4 text-yellow-500 flex-shrink-0" />
+              <div className="p-2 rounded-lg bg-yellow-500/10">
+                <Clock className="h-4 w-4 text-yellow-500" />
+              </div>
             </CardHeader>
-            <CardContent className="px-3 lg:px-6">
-              <div className="text-lg lg:text-2xl font-bold text-yellow-600">
+            <CardContent className="p-4 pt-0">
+              <div className="text-2xl font-bold text-yellow-600">
                 {stats.pendentes}
               </div>
+              <p className="text-xs text-muted-foreground mt-1">aguardando</p>
             </CardContent>
           </Card>
 
           <Card className="min-w-0">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 lg:px-6">
-              <CardTitle className="text-xs lg:text-sm font-medium truncate">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 p-4">
+              <CardTitle className="text-sm font-medium">
                 Atrasadas
               </CardTitle>
-              <AlertCircle className="h-3 w-3 lg:h-4 lg:w-4 text-red-500 flex-shrink-0" />
+              <div className="p-2 rounded-lg bg-red-500/10">
+                <AlertCircle className="h-4 w-4 text-red-500" />
+              </div>
             </CardHeader>
-            <CardContent className="px-3 lg:px-6">
-              <div className="text-lg lg:text-2xl font-bold text-red-600">
+            <CardContent className="p-4 pt-0">
+              <div className="text-2xl font-bold text-red-600">
                 {stats.atrasadas}
               </div>
+              <p className="text-xs text-muted-foreground mt-1">vencidas</p>
             </CardContent>
           </Card>
 
           <Card className="min-w-0">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 lg:px-6">
-              <CardTitle className="text-xs lg:text-sm font-medium truncate">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 p-4">
+              <CardTitle className="text-sm font-medium">
                 Valor Total
               </CardTitle>
-              <DollarSign className="h-3 w-3 lg:h-4 lg:w-4 text-muted-foreground flex-shrink-0" />
+              <div className="p-2 rounded-lg bg-purple-500/10">
+                <DollarSign className="h-4 w-4 text-purple-500" />
+              </div>
             </CardHeader>
-            <CardContent className="px-3 lg:px-6">
-              <div className="text-sm lg:text-lg font-bold">
+            <CardContent className="p-4 pt-0">
+              <div className="text-xl font-bold">
                 {stats.valorTotal.toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",
                 })}
               </div>
+              <p className="text-xs text-muted-foreground mt-1">do contrato</p>
             </CardContent>
           </Card>
 
           <Card className="min-w-0">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 lg:px-6">
-              <CardTitle className="text-xs lg:text-sm font-medium truncate">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 p-4">
+              <CardTitle className="text-sm font-medium">
                 Valor Pago
               </CardTitle>
-              <DollarSign className="h-3 w-3 lg:h-4 lg:w-4 text-green-500 flex-shrink-0" />
+              <div className="p-2 rounded-lg bg-green-500/10">
+                <DollarSign className="h-4 w-4 text-green-500" />
+              </div>
             </CardHeader>
-            <CardContent className="px-3 lg:px-6">
-              <div className="text-sm lg:text-lg font-bold text-green-600">
+            <CardContent className="p-4 pt-0">
+              <div className="text-xl font-bold text-green-600">
                 {stats.valorPago.toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",
                 })}
               </div>
+              <p className="text-xs text-muted-foreground mt-1">recebido</p>
             </CardContent>
           </Card>
         </div>
