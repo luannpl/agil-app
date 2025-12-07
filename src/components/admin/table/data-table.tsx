@@ -136,7 +136,7 @@ export function DataTable<TData, TValue>({
           </span>{" "}
           resultado(s)
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 py-2">
           <Button
             variant="outline"
             size="sm"

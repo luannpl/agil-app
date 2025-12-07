@@ -3,11 +3,13 @@ import { useColumns } from "@/hooks/useColumns";
 import { DataTable } from "@/components/admin/table/data-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Veiculo } from "@/types/veiculo";
 import { useDeleteVeiculo, useVeiculos } from "@/hooks/useVeiculos";
 import { toast } from "sonner";
-import { Car, CheckCircle2, XCircle, TrendingUp, Loader2 } from "lucide-react";
+import { Car, CheckCircle2, XCircle, TrendingUp, Loader2, Plus } from "lucide-react";
 import { useMemo } from "react";
+import Link from "next/link";
 
 export default function ListaVeiculos() {
   const { data: veiculos, isLoading } = useVeiculos();
@@ -115,13 +117,24 @@ export default function ListaVeiculos() {
   return (
     <div className="w-full space-y-6 p-4 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-          Gerenciamento de Veículos
-        </h1>
-        <p className="text-sm sm:text-base text-muted-foreground">
-          Visualize e gerencie todo o inventário de veículos
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="space-y-2">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            Gerenciamento de Veículos
+          </h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
+            Visualize e gerencie todo o inventário de veículos
+          </p>
+        </div>
+        <Link href="/admin/veiculos">
+          <Button 
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-medium w-full md:w-auto"
+            size="default"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Novo Veículo
+          </Button>
+        </Link>
       </div>
 
       {/* Statistics Cards */}
@@ -161,7 +174,7 @@ export default function ListaVeiculos() {
       {/* Tabs with Tables */}
       <Card className="shadow-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-xl sm:text-2xl py-4">Lista de Veículos</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl pt-4">Lista de Veículos</CardTitle>
           <CardDescription className="text-xs sm:text-sm">
             Filtre os veículos por status e gerencie o inventário
           </CardDescription>

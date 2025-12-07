@@ -12,10 +12,12 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useParcelas, useUpdateStatusParcela } from "@/hooks/useContratos";
 import { AxiosError } from "axios";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   FileText,
@@ -43,6 +45,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -59,6 +69,19 @@ export default function ParcelasContrato() {
 
   const { data: parcelas, isLoading, error } = useParcelas(idAsString);
   const parcelaData = parcelas?.pagamentos;
+
+  // Estados para o Dialog de PIX
+  const [isPixDialogOpen, setIsPixDialogOpen] = useState(false);
+  const [pixKey, setPixKey] = useState("");
+  const [selectedParcela, setSelectedParcela] = useState<{
+    id: string;
+    telefone: string;
+    nome: string;
+    valor: number;
+    vencimento: string | Date;
+    parcela: number;
+    veiculo?: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!idAsString) {
@@ -134,7 +157,11 @@ export default function ParcelasContrato() {
     );
   };
 
-  const handleMessage = (
+  const { mutate: recalculateParcela } = useUpdateValorParcelaAtrasada();
+
+  // Função para abrir o Dialog de PIX e recalcular
+  const handleOpenPixDialog = (
+    parcelaId: string,
     telefone: string,
     nome: string,
     valor: number,
@@ -142,24 +169,61 @@ export default function ParcelasContrato() {
     parcela: number,
     veiculo?: string
   ) => {
-    const numeroLimpo = telefone.replace(/\D/g, "");
+    // Primeiro, recalcula a parcela
+    toast.loading("Recalculando valor da parcela...");
+    
+    recalculateParcela(parcelaId, {
+      onSuccess: () => {
+        toast.dismiss();
+        toast.success("Valor recalculado com sucesso!");
+        
+        // Depois abre o Dialog
+        setSelectedParcela({
+          id: parcelaId,
+          telefone,
+          nome,
+          valor,
+          vencimento,
+          parcela,
+          veiculo,
+        });
+        setPixKey(""); // Limpa o campo
+        setIsPixDialogOpen(true);
+      },
+      onError: () => {
+        toast.dismiss();
+        toast.error("Erro ao recalcular. Tente novamente.");
+      },
+    });
+  };
+
+  // Função para enviar mensagem com PIX
+  const handleSendMessageWithPix = () => {
+    if (!selectedParcela) return;
+    
+    if (!pixKey.trim()) {
+      toast.error("Por favor, insira a chave PIX");
+      return;
+    }
+
+    const numeroLimpo = selectedParcela.telefone.replace(/\D/g, "");
     const numeroComDDI = numeroLimpo.startsWith("55")
       ? numeroLimpo
       : `55${numeroLimpo}`;
 
-    const valorFormatado = valor.toLocaleString("pt-BR", {
+    const valorFormatado = selectedParcela.valor.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
     });
 
-    const vencimentoFormatado = dayjs(vencimento).format("DD/MM/YYYY");
+    const vencimentoFormatado = dayjs(selectedParcela.vencimento).format("DD/MM/YYYY");
 
     const message = [
-      `Prezado(a) ${nome},`,
+      `Prezado(a) ${selectedParcela.nome},`,
       ``,
-      `Segue a chave Pix para pagamento da sua ${parcela}ª parcela referente ao veiculo ${veiculo}:`,
+      `Segue a chave Pix para pagamento da sua ${selectedParcela.parcela}ª parcela referente ao veículo ${selectedParcela.veiculo}:`,
       ``,
-      `*Chave Pix*: 49.506.679/0001-84`,
+      `*Chave Pix*: ${pixKey}`,
       `*Valor*: ${valorFormatado}`,
       `*Vencimento*: ${vencimentoFormatado}`,
       ``,
@@ -169,9 +233,17 @@ export default function ParcelasContrato() {
     const url = `https://wa.me/${numeroComDDI}?text=${encodeURIComponent(
       message
     )}`;
+    
     window.open(url, "_blank");
+    
+    // Fecha o Dialog
+    setIsPixDialogOpen(false);
+    setPixKey("");
+    setSelectedParcela(null);
+    
+    toast.success("Mensagem enviada com sucesso!");
   };
-  const { mutate: recalculateParcela } = useUpdateValorParcelaAtrasada();
+  
   const handleRefreshParcela = (parcelaId: string) => {
     recalculateParcela(parcelaId, {
       onSuccess: () => {
@@ -472,7 +544,8 @@ export default function ParcelasContrato() {
                                 variant="secondary"
                                 size="sm"
                                 onClick={() =>
-                                  handleMessage(
+                                  handleOpenPixDialog(
+                                    p.id!,
                                     parcelas.contrato.usuario?.telefone || "",
                                     "Cliente",
                                     p.valorParcela!,
@@ -529,6 +602,87 @@ export default function ParcelasContrato() {
           )}
         </div>
       </div>
+
+      {/* Dialog para inserir PIX */}
+      <Dialog open={isPixDialogOpen} onOpenChange={setIsPixDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="p-2 bg-yellow-500/10 rounded-lg">
+                <DollarSign className="w-5 h-5 text-yellow-500" />
+              </div>
+              Inserir Chave PIX
+            </DialogTitle>
+            <DialogDescription>
+              Insira a chave PIX para enviar ao cliente. O valor da parcela foi recalculado automaticamente.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            {selectedParcela && (
+              <div className="rounded-lg bg-yellow-500/10 border border-yellow-500/20 p-4 space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Parcela:</span>
+                  <span className="font-semibold">#{selectedParcela.parcela}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Valor:</span>
+                  <span className="font-bold text-yellow-600">
+                    {selectedParcela.valor.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Vencimento:</span>
+                  <span className="font-semibold">
+                    {dayjs(selectedParcela.vencimento).format("DD/MM/YYYY")}
+                  </span>
+                </div>
+              </div>
+            )}
+            
+            <div className="space-y-2">
+              <Label htmlFor="pix-key" className="text-sm font-medium">
+                Chave PIX
+              </Label>
+              <Input
+                id="pix-key"
+                placeholder="Digite a chave PIX (CPF, CNPJ, Email, Telefone ou Chave Aleatória)"
+                value={pixKey}
+                onChange={(e) => setPixKey(e.target.value)}
+                className="w-full"
+                autoFocus
+              />
+              <p className="text-xs text-muted-foreground">
+                Esta chave será enviada ao cliente via WhatsApp
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsPixDialogOpen(false);
+                setPixKey("");
+                setSelectedParcela(null);
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              className="bg-yellow-500 hover:bg-yellow-600 text-black font-medium"
+              onClick={handleSendMessageWithPix}
+              disabled={!pixKey.trim()}
+            >
+              <MessageCircleReply className="w-4 h-4 mr-2" />
+              Enviar Cobrança
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

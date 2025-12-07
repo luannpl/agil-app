@@ -3,11 +3,13 @@ import { useColumns } from "@/hooks/useColumns";
 import { DataTable } from "@/components/admin/table/data-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { UsuarioResponse } from "@/types/usuario";
 import { useDeleteUsuario, useUsuarios } from "@/hooks/useUsuario";
 import { toast } from "sonner";
-import { Users, UserCog, ShoppingCart, Shield, Loader2 } from "lucide-react";
+import { Users, UserCog, ShoppingCart, Shield, Loader2, Plus } from "lucide-react";
 import { useMemo } from "react";
+import Link from "next/link";
 
 export default function ListaUsuarios() {
   const { data: usuarios, isLoading } = useUsuarios();
@@ -90,13 +92,24 @@ export default function ListaUsuarios() {
   return (
     <div className="w-full space-y-6 p-4 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-          Gerenciamento de Usuários
-        </h1>
-        <p className="text-sm sm:text-base text-muted-foreground">
-          Visualize e gerencie todos os usuários do sistema
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="space-y-2">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            Gerenciamento de Usuários
+          </h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
+            Visualize e gerencie todos os usuários do sistema
+          </p>
+        </div>
+        <Link href="/admin/usuarios">
+          <Button 
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-medium w-full md:w-auto"
+            size="default"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Novo Usuário
+          </Button>
+        </Link>
       </div>
 
       {/* Statistics Cards */}
@@ -136,7 +149,7 @@ export default function ListaUsuarios() {
       {/* Tabs with Tables */}
       <Card className="shadow-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-xl sm:text-2xl py-4">Lista de Usuários</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl pt-4">Lista de Usuários</CardTitle>
           <CardDescription className="text-xs sm:text-sm">
             Filtre os usuários por tipo e gerencie suas informações
           </CardDescription>
