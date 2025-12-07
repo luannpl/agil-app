@@ -110,27 +110,27 @@ export default function DetalhesVeiculoPage() {
             {/* Card: Informações Básicas */}
             <div className="rounded-2xl bg-white/5 backdrop-blur-md border border-white/20 shadow-lg p-6 hover:shadow-xl transition-shadow">
               <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-blue-400" />
+                <FileText className="w-5 h-5 text-yellow-400" />
                 Informações Básicas
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <InfoItem
-                  icon={<Car className="w-5 h-5" />}
+                  icon={<Car className="w-5 h-5 text-yellow-400" />}
                   label="Marca"
                   value={veiculo.marca}
                 />
                 <InfoItem
-                  icon={<Hash className="w-5 h-5" />}
+                  icon={<Hash className="w-5 h-5 text-yellow-400" />}
                   label="Placa"
                   value={veiculo.placa}
                 />
                 <InfoItem
-                  icon={<Calendar className="w-5 h-5" />}
+                  icon={<Calendar className="w-5 h-5 text-yellow-400" />}
                   label="Ano"
                   value={veiculo.ano.toString()}
                 />
                 <InfoItem
-                  icon={<Palette className="w-5 h-5" />}
+                  icon={<Palette className="w-5 h-5 text-yellow-400" />}
                   label="Cor"
                   value={veiculo.cor}
                 />
@@ -140,29 +140,29 @@ export default function DetalhesVeiculoPage() {
             {/* Card: Especificações Técnicas */}
             <div className="rounded-2xl bg-white/5 backdrop-blur-md border border-white/20 shadow-lg p-6 hover:shadow-xl transition-shadow">
               <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <Settings className="w-5 h-5 text-purple-400" />
+                <Settings className="w-5 h-5 text-yellow-400" />
                 Especificações Técnicas
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <InfoItem
-                  icon={<Fuel className="w-5 h-5" />}
+                  icon={<Fuel className="w-5 h-5 text-yellow-400" />}
                   label="Combustível"
                   value={veiculo.combustivel}
                   capitalize
                 />
                 <InfoItem
-                  icon={<Settings className="w-5 h-5" />}
+                  icon={<Settings className="w-5 h-5 text-yellow-400" />}
                   label="Sistema"
                   value={veiculo.sistema}
                   capitalize
                 />
                 <InfoItem
-                  icon={<Gauge className="w-5 h-5" />}
+                  icon={<Gauge className="w-5 h-5  text-yellow-400" />}
                   label="Quilometragem"
                   value={`${veiculo.quilometragem.toLocaleString("pt-BR")} km`}
                 />
                 <InfoItem
-                  icon={<Tag className="w-5 h-5" />}
+                  icon={<Tag className="w-5 h-5 text-yellow-400" />}
                   label="Tipo"
                   value={veiculo.tipo}
                   capitalize
