@@ -57,6 +57,11 @@ export async function getFuncionarios(): Promise<UsuarioResponse[]> {
   return data;
 }
 
+export async function getUsuarioById(id: string): Promise<UsuarioResponse> {
+  const { data } = await api.get(`/usuarios/${id}`);
+  return data;
+}
+
 export async function alterarSenha({
   senhaAtual,
   novaSenha,

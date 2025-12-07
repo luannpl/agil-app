@@ -4,6 +4,7 @@ import {
   createUsuario,
   deleteUsuario,
   getFuncionarios,
+  getUsuarioById,
   getUsuarios,
   login,
   logout,
@@ -17,7 +18,7 @@ import {
   AlterarSenhaForm,
   ClienteResponse,
 } from "@/types/usuario";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, UseQueryResult } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -81,6 +82,20 @@ export function useUsuarios() {
   return useQuery<UsuarioResponse[]>({
     queryKey: ["usuarios"],
     queryFn: getUsuarios,
+  });
+}
+
+export function useUsuarioById(
+  id: string | undefined
+): UseQueryResult<UsuarioResponse, AxiosError> {
+  return useQuery<UsuarioResponse, AxiosError>({
+    queryKey: ["usuarioById", id],
+    queryFn: () => getUsuarioById(id!),
+    enabled: !!id,
+    retry: (failureCount, error) => {
+      if (error.response?.status === 404) return false;
+      return failureCount < 3;
+    },
   });
 }
 
