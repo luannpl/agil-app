@@ -1,16 +1,29 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 import { useVeiculo } from "@/hooks/useVeiculos";
 import { formatarPreco } from "@/utils/formatarPreco";
 import { AxiosError } from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
-
 import Link from "next/link";
+import {
+  Car,
+  Calendar,
+  Palette,
+  MapPin,
+  Gauge,
+  DollarSign,
+  Fuel,
+  Settings,
+  ArrowLeft,
+  Tag,
+  FileText,
+  Hash,
+} from "lucide-react";
 
 export default function DetalhesVeiculoPage() {
   const { id } = useParams();
@@ -35,7 +48,10 @@ export default function DetalhesVeiculoPage() {
   if (isLoading || !idAsString) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
-        <Skeleton className="h-32 w-32 rounded-full" />
+        <div className="flex flex-col items-center gap-4">
+          <Skeleton className="h-32 w-32 rounded-full" />
+          <Skeleton className="h-4 w-48" />
+        </div>
       </div>
     );
   }
@@ -45,107 +61,184 @@ export default function DetalhesVeiculoPage() {
   }
 
   return (
-    <div className="p-4 rounded-2xl bg-white/5 backdrop-blur-md border border-white/20 shadow-lg pb-8">
-      <h1 className="text-2xl font-bold mb-4">Detalhes do Veículo </h1>
+    <div className="min-h-screen pb-8 space-y-6">
+      {/* Header com Gradiente */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-yellow  -600 via-yellow-600 to-yellow-600 p-8 shadow-2xl">
+        <div className="absolute inset-0 bg-black/20 backdrop-blur-sm"></div>
+        <div className="relative z-10">
+          {/* Breadcrumb */}
+          <Link
+            href="/admin/veiculos/view"
+            className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors mb-4 group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span className="text-sm font-medium">Voltar para Veículos</span>
+          </Link>
+
+          {/* Título e Badge */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
+                <Car className="w-10 h-10" />
+                {veiculo?.nome}
+              </h1>
+              <p className="text-white/90 text-lg">{veiculo?.descricao}</p>
+            </div>
+            <div className="flex gap-2">
+              {!veiculo?.vendido ? (
+                <Badge className="bg-green-500/80 text-white border-green-400/30 hover:bg-green-500 px-4 py-2 text-sm">
+                  Disponível
+                </Badge>
+              ) : (
+                <Badge className="bg-red-500/80 text-white border-red-400/30 hover:bg-red-500 px-4 py-2 text-sm">
+                  Vendido
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Decoração de fundo */}
+        <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+      </div>
+
       {veiculo && (
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="w-full">
-              <Label className="mb-2 px-1 text-md">Nome do Veículo</Label>
-              <Input value={veiculo.nome} readOnly />
-            </div>
-            <div className="w-full">
-              <Label className="mb-2 px-1 text-md">Descrição</Label>
-              <Input value={veiculo.descricao} readOnly />
-            </div>
-            <div className="w-full">
-              <Label className="mb-2 px-1 text-md">Placa</Label>
-              <Input value={veiculo.placa} readOnly />
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="w-full">
-              <Label className="mb-2 px-1 text-md">Marca</Label>
-              <Input value={veiculo.marca} readOnly />
-            </div>
-            <div className="w-full">
-              <Label className="mb-2 px-1 text-md">Cor</Label>
-              <Input value={veiculo.cor} readOnly />
-            </div>
-            <div className="w-full">
-              <Label className="mb-2 px-1 text-md">Ano</Label>
-              <Input value={veiculo.ano} readOnly />
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="w-full">
-              <Label className="mb-2 px-1 text-md">Valor</Label>
-              <Input value={formatarPreco(veiculo.valor)} readOnly />
-            </div>
-            <div className="w-full">
-              <Label className="mb-2 px-1 text-md">Quilometragem</Label>
-              <Input value={veiculo.quilometragem} readOnly />
-            </div>
-            <div className="w-full">
-              <Label className="mb-2 px-1 text-md">Localização</Label>
-              <Input value={veiculo.localizacao} readOnly />
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="w-full">
-              <Label className="mb-2 px-1 text-md">Combustível</Label>
-              <Input
-                className="capitalize"
-                value={veiculo.combustivel}
-                readOnly
-              />
-            </div>
-            <div className="w-full">
-              <Label className="mb-2 px-1 text-md">Tipo</Label>
-              <Input className="capitalize" value={veiculo.tipo} readOnly />
-            </div>
-            <div className="w-full">
-              <Label className="mb-2 px-1 text-md">Sistema</Label>
-              <Input className="capitalize" value={veiculo.sistema} readOnly />
-            </div>
-          </div>
-
-          {/* <Dialog>
-              <DialogTrigger asChild>
-                <div className="w-full">
-                  <Label className="mb-2 px-1 text-md">Imagem</Label>
-                  <Input
-                    readOnly
-                    value="Clique aqui para ver a imagem do veículo"
-                    className="cursor-pointer text-gray-500"
-                  />
-                </div>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl">
-                <img
-                  src={veiculo?.imagem || "/placeholder.svg"}
-                  alt={veiculo?.nome}
-                  className="w-full h-auto object-contain rounded-lg"
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Coluna Principal - Informações Básicas */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Card: Informações Básicas */}
+            <div className="rounded-2xl bg-white/5 backdrop-blur-md border border-white/20 shadow-lg p-6 hover:shadow-xl transition-shadow">
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <FileText className="w-5 h-5 text-blue-400" />
+                Informações Básicas
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <InfoItem
+                  icon={<Car className="w-5 h-5" />}
+                  label="Marca"
+                  value={veiculo.marca}
                 />
-              </DialogContent>
-            </Dialog> */}
-
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="w-full">
-              <Link href="/admin/veiculos/view" className="w-full">
-                <Button className="w-full" variant="secondary">
-                  Voltar
-                </Button>
-              </Link>
+                <InfoItem
+                  icon={<Hash className="w-5 h-5" />}
+                  label="Placa"
+                  value={veiculo.placa}
+                />
+                <InfoItem
+                  icon={<Calendar className="w-5 h-5" />}
+                  label="Ano"
+                  value={veiculo.ano.toString()}
+                />
+                <InfoItem
+                  icon={<Palette className="w-5 h-5" />}
+                  label="Cor"
+                  value={veiculo.cor}
+                />
+              </div>
             </div>
-            {/* <div className="w-full">
-              <Button variant="auth" className="w-full">
-                Editar
-              </Button>
-            </div> */}
+
+            {/* Card: Especificações Técnicas */}
+            <div className="rounded-2xl bg-white/5 backdrop-blur-md border border-white/20 shadow-lg p-6 hover:shadow-xl transition-shadow">
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <Settings className="w-5 h-5 text-purple-400" />
+                Especificações Técnicas
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <InfoItem
+                  icon={<Fuel className="w-5 h-5" />}
+                  label="Combustível"
+                  value={veiculo.combustivel}
+                  capitalize
+                />
+                <InfoItem
+                  icon={<Settings className="w-5 h-5" />}
+                  label="Sistema"
+                  value={veiculo.sistema}
+                  capitalize
+                />
+                <InfoItem
+                  icon={<Gauge className="w-5 h-5" />}
+                  label="Quilometragem"
+                  value={`${veiculo.quilometragem.toLocaleString("pt-BR")} km`}
+                />
+                <InfoItem
+                  icon={<Tag className="w-5 h-5" />}
+                  label="Tipo"
+                  value={veiculo.tipo}
+                  capitalize
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Coluna Lateral - Detalhes Comerciais */}
+          <div className="space-y-6">
+            {/* Card: Valor */}
+            <div className="rounded-2xl bg-gradient-to-br from-green-600/20 to-emerald-600/20 backdrop-blur-md border border-green-500/30 shadow-lg p-6 hover:shadow-xl transition-all hover:scale-[1.02]">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 rounded-xl bg-green-500/20">
+                  <DollarSign className="w-6 h-6 text-green-400" />
+                </div>
+                <span className="text-sm text-white/70 font-medium">
+                  Valor do Veículo
+                </span>
+              </div>
+              <p className="text-4xl font-bold text-white mb-4">
+                {formatarPreco(veiculo.valor)}
+              </p>
+              <Separator className="my-4 bg-white/10" />
+              <p className="text-xs text-white/60">
+                Preço sujeito a negociação
+              </p>
+            </div>
+
+            {/* Card: Localização */}
+            <div className="rounded-2xl bg-gradient-to-br from-blue-600/20 to-cyan-600/20 backdrop-blur-md border border-blue-500/30 shadow-lg p-6 hover:shadow-xl transition-all hover:scale-[1.02]">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 rounded-xl bg-blue-500/20">
+                  <MapPin className="w-6 h-6 text-blue-400" />
+                </div>
+                <span className="text-sm text-white/70 font-medium">
+                  Localização
+                </span>
+              </div>
+              <p className="text-2xl font-bold text-white mb-4">
+                {veiculo.localizacao}
+              </p>
+              <Separator className="my-4 bg-white/10" />
+              <p className="text-xs text-white/60">
+                Endereço do veículo
+              </p>
+            </div>
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// Componente auxiliar para exibir informações
+interface InfoItemProps {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  capitalize?: boolean;
+}
+
+function InfoItem({ icon, label, value, capitalize }: InfoItemProps) {
+  return (
+    <div className="group">
+      <div className="flex items-center gap-2 mb-2">
+        <div className="text-blue-400 group-hover:text-blue-300 transition-colors">
+          {icon}
+        </div>
+        <span className="text-sm text-white/60 font-medium">{label}</span>
+      </div>
+      <p
+        className={`text-lg font-semibold text-white pl-7 ${capitalize ? "capitalize" : ""}`}
+      >
+        {value}
+      </p>
     </div>
   );
 }
